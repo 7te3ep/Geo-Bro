@@ -106,15 +106,3 @@ nav > a > i {
     height: fit-content;
     overflow-y: scroll;
 }
-
-#content::before {
-    display: block;
-    position: fixed;
-    bottom: 8.9vh;
-    left: 0px;
-    width: 100vw;
-    height: 10px;
-    content: "";
-    background: rgb(69,197,215);
-    background: linear-gradient(180deg, rgba(45,42,50,0) 0%, rgba(69,197,215,1) 100%);
-}
