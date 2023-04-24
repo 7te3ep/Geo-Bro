@@ -26,7 +26,7 @@ body {
     width: 100vw;
     max-width: 100vw;
     max-height: 100vh;
-    overflow-x: hidden;
+    overflow: hidden;
     background-color: #45C5D7;
 }
 
