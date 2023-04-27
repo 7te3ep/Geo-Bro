@@ -1,29 +1,65 @@
 .container {
     display: flex;
+    flex-wrap: wrap;
     flex-direction: column;
     justify-content: center;
-    align-items: center;
     height: fit-content;
     padding: 15px;
-    margin: 10px 0px;
-}
-
-.large {
+    margin: 15px 0px;
     width: 100%;
 }
 
+.scrollable {
+    flex-wrap: nowrap;
+    height: 25vh;
+    margin: 15px 0px;
+    overflow-y: scroll;
+}
+
+.gallery {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content:center;
+    height: fit-content;
+    margin: 15px 0px;
+    width: 100%;
+    gap: 10px;
+}
+
+.card {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    align-items:flex-start;
+    padding: 15px;
+    width: 100%;
+}
+
+.card > p {
+    padding: 2px 0px;
+}
+
+.title {
+    font-size:clamp(18px,5vw,25px);
+    display: flex;
+    width: 100%;
+    font-weight: bolder;
+    padding-left: 5px;
+    font-size: 20px;
+}
+
 .light {
-    background-color: #D9D9D9;
+    background-color: rgba(217, 217, 217, .9);
     color: #2D2A32;
 }
 
 .dark {
-    background-color: #2D2A32;
+    background-color: rgba(45, 42, 50, .9);
     color: #D9D9D9;
 }
 
 .electricBlue {
-    background-color:#45C5D7;
+    background-color:rgba(69, 197, 215, .9);
     color: #2D2A32;
 }
 
@@ -33,4 +69,53 @@
     -moz-border-radius: 20px;
     -ms-border-radius: 20px;
     -o-border-radius: 20px;
+}
+
+.blob {
+    z-index: -100;
+    position: fixed;
+}
+
+.wall {
+    width: 55vw;
+    left: -5px;
+    bottom: -1px;
+}
+
+.floor {
+    height: 55vh;
+    right: -5px;
+    top: -1px;
+}
+
+.center {
+    display: flex;
+    width: 100%;
+    justify-content: center;
+    padding: 10px;
+}
+
+.btn {
+    font-size:clamp(18px,4vw,23px);
+    padding:10px 15px;
+    width: fit-content;
+    background: rgb(217,217,217);
+    background: linear-gradient(125deg, rgba(217,217,217,1) 0%, rgba(69,197,215,1) 100%);
+    color: #2D2A32;
+    box-shadow: 3px 3px 5px #2D2A32;
+    transition: transform  0.15s ease, color  0.15s ease,background-color 0.15s ease;
+    -webkit-transition: transform  0.15s ease, color  0.15s ease,background-color 0.15s ease;
+    -moz-transition: transform  0.15s ease, color  0.15s ease,background-color 0.15s ease;
+    -ms-transition: transform  0.15s ease, color  0.15s ease,background-color 0.15s ease;
+    -o-transition: transform  0.15s ease, color  0.15s ease,background-color 0.15s ease;
+}
+
+.btn:active {
+    transform: scale(1.05);
+    -webkit-transform: scale(1.05);
+    -moz-transform: scale(1.05);
+    -ms-transform: scale(1.05);
+    -o-transform: scale(1.05);
+    background: #2D2A32;
+    color: #D9D9D9;
 }

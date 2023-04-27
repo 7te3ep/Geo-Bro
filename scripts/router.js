@@ -6,9 +6,7 @@ export class Router {
 
     window.onpopstate = () => {
       this.handleLocation(location.pathname);
-    };
-
-
+    }
   }
 
   async pageNavigation ( link , event ) {
