@@ -2,29 +2,29 @@ import { Router } from "./scripts/router.js";
 import { authanticate } from "./server.js";
 const getElById = id => document.getElementById(id)
 const queryAll = identifier => document.querySelectorAll(identifier)
-window.scrollTo(0, 1);
+const loader = visibility => document.querySelector(".loader").style.display = visibility ? "flex" : "none"
 
+loader(true)
 authanticate.then(result => {
     getElById("userImg").src = result.photoURL
     getElById("userName").innerHTML = result.displayName
-    router.handleLocation("/home")
+    router.handleLocation("/dashboard")
 })
     
 const router = new Router( 
     getElById("content") , 
 
     {404:"views/404.html" , 
-     "/": "views/index.html",
+     "/dashboard": "views/dashboard.html",
      "/feur": "views/feur.html",
      "/home":"views/home.html"
-    } 
+    },
+    loader
 )
-
-router.handleLocation(location.pathname)
 
 queryAll("a").forEach(link => {
     link.addEventListener('click', event => {
-      router.pageNavigation( link , event)
+        router.pageNavigation( link , event)
     })
 })
 

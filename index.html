@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport' />
     <link rel="stylesheet" href="./style/ui.css">
+    <link rel="stylesheet" href="./style/loader.css">
     <link rel="stylesheet" href="./style/base.css">
     <script src="https://kit.fontawesome.com/1555c59d50.js" crossorigin="anonymous"></script>
     <title>Geo Bro - modern geography games</title>
@@ -28,10 +29,13 @@
     </div>
 
     <nav id="botNav" class="ui">
-        <a href="/home"><i class="fa-solid fa-house"></i></a>
+        <a href="/dashboard"><i class="fa-solid fa-house"></i></a>
         <a href="/feur"><i class="fa-solid fa-earth-europe"></i></a>
         <a href="/eeee"><i class="fa-solid fa-user-group"></i></a>
     </nav>
+    <div class="loader">
+        <span id="loader"></span>
+    </div>
     <script src="./app.js" type="module"></script>
 </body>
 </html>
