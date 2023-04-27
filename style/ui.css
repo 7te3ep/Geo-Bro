@@ -13,6 +13,9 @@
     user-select: none;
 }
 
+img {
+    display: block;
+}
 
 *::-webkit-scrollbar { 
     display: none;  /* Safari and Chrome */

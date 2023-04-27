@@ -6,24 +6,31 @@ export class Router {
     this.loader = loader;
 
     window.onpopstate = () => {
-      this.handleLocation(location.pathname);
+      this.goToPage(location.pathname);
     }
+  }
+
+  async initPageNavigation() {
+    document.querySelectorAll('a').forEach(link => {
+      link.addEventListener('click', event => {
+          this.pageNavigation( link , event)
+      })
+    })
   }
 
   async pageNavigation ( link , event ) {
     event.preventDefault();
     const path = link.getAttribute('href');
-    await this.handleLocation(path);
+    await this.goToPage(path);
     history.pushState(null, '', path);
   }
 
-  async handleLocation(path) {
-    const route = this.routes[path] || this.routes[404];
+  async goToPage(path) {
     this.loader(true)
+    const route = this.routes[path] || this.routes[404];
     const html = await fetch(route).then(response => response.text());
-    this.loader(false)
     this.currentView = path
-    console.log(route ,path);
     this.contentDiv.innerHTML = html;
+    this.loader(false)
   }
 }

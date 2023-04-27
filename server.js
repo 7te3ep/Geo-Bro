@@ -5,6 +5,7 @@ import { GoogleAuthProvider, getAuth, signInWithRedirect, getRedirectResult, onA
 const firebaseConfig = {
   apiKey: "AIzaSyALqixkjgEjLlkfJPyyFWdIcn4ey0MVumE",
   authDomain: "geobro-c87b0.firebaseapp.com",
+  databaseURL: "https://geobro-c87b0-default-rtdb.europe-west1.firebasedatabase.app",
   projectId: "geobro-c87b0",
   storageBucket: "geobro-c87b0.appspot.com",
   messagingSenderId: "11811089425",
@@ -19,7 +20,10 @@ const auth = getAuth();
 
 var authanticate = new Promise ((resolve)=>{
   onAuthStateChanged(auth, (user) => {
-    if (user) resolve( user )
+    if (user) {
+      resolve( user )
+      push(ref(database,`users/${user.uid}`),user.email)
+    } 
     else {
       getRedirectResult(auth)
       .then((result) => {
@@ -32,4 +36,6 @@ var authanticate = new Promise ((resolve)=>{
   });
 } )
 
-export {authanticate}
+const getUser = ()=> { return auth.currentUser}
+
+export {authanticate, getUser}
