@@ -2,7 +2,7 @@ import { Router } from "./scripts/router.js";
 import { authanticate } from "./server.js";
 const getElById = id => document.getElementById(id)
 const queryAll = identifier => document.querySelectorAll(identifier)
-
+window.scrollTo(0, 1);
 
 authanticate.then(result => {
     getElById("userImg").src = result.photoURL
