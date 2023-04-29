@@ -1,4 +1,5 @@
 import { Gbro } from "./scripts/Gbro.js";
+import { Router } from "./scripts/Router.js";
 import { Server } from "./scripts/Server.js";
 
 const ui = {
@@ -14,10 +15,13 @@ const loader = (visibility) =>
 
 const geoBro = new Gbro(
    new Server(),
+   new Router({
+      contentDiv: document.getElementById("content"),
+      loader: loader
+   }),
    loader,
    ui
 );
 
 geoBro.init()
-      
-      
+
