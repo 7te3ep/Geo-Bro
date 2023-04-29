@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
    <head>
       <meta charset="UTF-8" />
       <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -8,24 +7,23 @@
          content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"
          name="viewport"
       />
-      <link rel="stylesheet" href="./styles/base.css">
-      <link rel="stylesheet" href="./styles/ui.css" />
-      <link rel="stylesheet" href="./styles/loader.css" />
-      <link rel="stylesheet" href="./styles/design.css" />
-
-      <script src="./index.js" type="module" defer ></script>
-      <script src="https://kit.fontawesome.com/1555c59d50.js" crossorigin="anonymous"></script>
-      <title>Geo Bro | modern geography games</title>
+      <link rel="stylesheet" href="./style/ui.css" />
+      <link rel="stylesheet" href="./style/loader.css" />
+      <link rel="stylesheet" href="./style/base.css" />
+      <script
+         src="https://kit.fontawesome.com/1555c59d50.js"
+         crossorigin="anonymous"
+      ></script>
+      <title>Geo Bro - modern geography games</title>
    </head>
-
    <body>
       <div class="ui" id="top">
-         <a href="" id="logo"> Geo Bro </a>
+         <a href="" id="logo">Geo Bro</a>
          <a href="" id="userDisplay" class="ui">
             <img src="" id="userImg" />
             <div>
                <p id="userName">Account</p>
-               <p>
+               <p id="coinsDisplay">
                   <i class="fa-solid fa-globe"></i>
                   <span id="userCoin"></span>
                </p>
@@ -33,18 +31,16 @@
          </a>
       </div>
 
-      <div id="content">
+      <div id="content"></div>
 
-      </div>
-   
       <nav id="botNav" class="ui">
          <a href="/dashboard"><i class="fa-solid fa-house"></i></a>
          <a href="/games"><i class="fa-solid fa-earth-europe"></i></a>
-         <a href="/eeee"><i class="fa-solid fa-user-group"></i></a>
+         <a href="/social"><i class="fa-solid fa-user-group"></i></a>
       </nav>
-   
       <div class="loader">
          <span id="loader"></span>
       </div>
+      <script src="./index.js" type="module"></script>
    </body>
 </html>
