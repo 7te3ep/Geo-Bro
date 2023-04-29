@@ -1,0 +1,45 @@
+* {
+   margin: 0;
+   padding: 0;
+   box-sizing: border-box;
+   font-family: Verdana, Geneva, Tahoma, sans-serif, Helvetica, sans-serif;
+   font-weight: bold;
+   font-size: clamp(15px, 4vw, 20px);
+   max-width: 100vw;
+   overflow-x: hidden;
+   text-decoration: none;
+   -ms-overflow-style: none; /* Internet Explorer 10+ */
+   scrollbar-width: none; /* Firefox */
+   user-select: none;
+}
+
+img {
+   display: block;
+}
+
+*::-webkit-scrollbar {
+   display: none; /* Safari and Chrome */
+}
+
+html {
+   scroll-behavior: smooth;
+}
+
+body {
+   display: flex;
+   flex-direction: column;
+   justify-content: space-between;
+   align-items: center;
+   height: 100vh;
+   width: 100vw;
+   max-width: 100vw;
+   max-height: 100vh;
+   overflow: hidden;
+   background: rgb(185, 229, 235);
+   background: linear-gradient(
+      125deg,
+      rgba(185, 229, 235, 1) 0%,
+      rgba(69, 197, 215, 1) 31%,
+      rgba(112, 151, 185, 1) 100%
+   );
+}
