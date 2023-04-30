@@ -1,15 +1,17 @@
 export class DashBoard {
-   constructor(){
+   constructor(server, authUser){
       this.getEl = id => document.getElementById(id) 
       this.elements = {}
       this.link = "/dashboard"
       this.path = "views/dashboard.html"
+      this.server = server
+      this.authUser = authUser
    }
 
-   async update(userData) {
-      const data = userData.data
-      this.elements.userLevel.innerHTML = data.level
-      this.elements.expBar.style.width = `${data.exp}%`
+   async update() {
+      const userData = (await this.server.getUserData(this.authUser)).data
+      this.elements.userLevel.innerHTML = userData.level
+      this.elements.expBar.style.width = `${userData.exp}%`
    }
 
    async init(router) {
@@ -20,15 +22,17 @@ export class DashBoard {
 }
 
 export class Games {
-   constructor(){
+   constructor(server, authUser){
       this.getEl = id => document.getElementById(id) 
       this.elements = {}
       this.link = "/games"
       this.path = "views/games.html"
+      this.server = server
+      this.authUser = authUser
    }
 
-   async update(userData) {
-      const data = userData.data
+   async update() {
+      const userData = (await this.server.getUserData(this.authUser)).data
    }
 
    async init(router) {
@@ -37,21 +41,24 @@ export class Games {
 }
 
 export class Social {
-   constructor(){
+   constructor(server , authUser){
       this.getEl = id => document.getElementById(id) 
       this.elements = {}
       this.link = "/social"
       this.path = "views/social.html"
+      this.server = server
+      this.authUser = authUser
    }
 
-   async update(userData) {
-      const data = userData.data
-      this.elements.userID.innerHTML = data.id
-      this.updateFriendsList(userData)
+   async update() {
+      const userData = (await this.server.getUserData(this.authUser)).data
+      this.elements.userID.innerHTML = userData.id
+      this.updateFriendsList()
    }
 
-   async updateFriendsList (userData) {
-      const userFriends = Object.values(userData.data.friends || {} )  
+   async updateFriendsList () {
+      const userData = (await this.server.getUserData(this.authUser)).data
+      const userFriends = Object.values(userData.friends || {} )  
       this.elements.friendList.innerHTML = ""
       userFriends.forEach((friend)=>{
          const friendToShow = `<div class="card rounded light row"><span id="friendName">${friend.name}</span><div class="btn good">Duel</div></div>`
@@ -59,17 +66,17 @@ export class Social {
       })
    }
 
-   async init(router, server, user) {
+   async init(router) {
       await router.loadPage(this.link,this.path)
       this.elements["addFriendInput"] = this.getEl("addFriendInput")
       this.elements["addFriendBtn"] = this.getEl("addFriendBtn")
       this.elements["userID"] = this.getEl("userID")
       this.elements["friendList"] = this.getEl("friendList")
+   
       this.elements.addFriendBtn.addEventListener("click",async () => {
-         await server.addFriend(user , this.elements.addFriendInput.value)
+         await this.server.addFriend(this.authUser , this.elements.addFriendInput.value)
          this.elements.addFriendInput.value = ""
-         const userData = await server.getUserData(user)
-         await this.update(userData)
+         await this.update()
       })
    }
 }

@@ -59,20 +59,21 @@ export class Server {
       });
    }
 
-   async addFriend(currentUser,friendToAddID){
-      var snapshot =  await get(ref(this.db, `users`))
-      var users = Object.entries(snapshot.val())
+   async addFriend(authUser,friendToAddID){
+      const authUserData = (await this.getUserData(authUser)).data
+      const authUserUID = authUser.uid
+      var users =  await get(ref(this.db, `users`))
+      users = Object.entries(users.val())
       for (let user of users){
          const userUID = user[0]
          const userID = user[1].data.id
          const userName = user[1].data.name
-         const friendRef = ref(this.db, `users/${currentUser.uid}/data/friends/${userUID}`)
+         const friendRef = ref(this.db, `users/${authUserUID}/data/friends/${userUID}`)
          const alreadyFriend = (await get(friendRef)).exists()
          if (userID == friendToAddID && !alreadyFriend) {
-            let currentUserFriends = await this.getUserData(currentUser)
-            currentUserFriends = currentUserFriends.data.friends || {}
+            let currentUserFriends = authUserData.friends || {}
             currentUserFriends[userUID] = {name:userName}
-            await this.updateUserOnDb(currentUser, {friends:currentUserFriends})
+            await this.updateUserOnDb(authUser, {friends:currentUserFriends})
         }
       }
    }

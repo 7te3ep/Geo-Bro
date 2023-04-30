@@ -39,15 +39,15 @@ export class Gbro {
    }
 
    async loadView(view){
-      this.currentView = new view()
-      await this.currentView.init(this.router, this.server, this.user)
+      this.currentView = new view(this.server, this.user)
+      await this.currentView.init(this.router)
       await this.initLinks()
       await this.updateView()
    }
 
    async updateView() {
       const userData = await this.server.getUserData(this.user)
-      await this.currentView.update(userData, this.user.uid)
+      await this.currentView.update()
    }
 
    async updateUserUi() {
