@@ -13,25 +13,26 @@ export class Server {
    }
 
    async authenthicate(){
-      return new Promise((resolve) => {
-         const onAuth = (user) => {
-            if (user) resolve(user);
-            else {
-               getRedirectResult(this.auth).then((result) => {
-                  if (!result){
-                     signInWithRedirect(this.auth, this.provider);
-                     this.createUser(user);
-                  } 
-                  resolve(user);
+      return new Promise(async (resolve) => {
+         const onAuth =async (user) => {
+            if (!user) {
+               await getRedirectResult(this.auth).then(async (result) => {
+                  if (!result) await signInWithRedirect(this.auth, this.provider);
                })
             }
+            var snapshot = await get(ref(this.db, `users/${user.uid}`))
+            if (!snapshot.exists()){
+               await this.createUser(user);
+            }
+            resolve(user);
          }
-         onAuthStateChanged(this.auth, onAuth);
+         await onAuthStateChanged(this.auth, onAuth);
       })
    }
 
    async getUserData(user) {
       var snapshot =  await get(ref(this.db, `users/${user.uid}`))
+      console.log(snapshot.val());
       return snapshot.val()
    }
 
@@ -46,13 +47,14 @@ export class Server {
    }
 
    async createUser(user) {
-      set(ref(this.db, `users/${user.uid}`), {
+      await set(ref(this.db, `users/${user.uid}`), {
          data: {
             email: user.email,
             name: user.displayName,
             level: 0,
             exp: 50,
             coins: 10,
+            friends:["aa","b"],
          },
       });
    }
