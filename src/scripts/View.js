@@ -51,8 +51,8 @@ export class Social {
    }
 
    async updateFriendsList (userData) {
-      const userFriends = Object.values(userData.data.friends)  || []
-      if (userFriends.length == 0) return
+      const userFriends = Object.values(userData.data.friends || {} )  
+      this.elements.friendList.innerHTML = ""
       userFriends.forEach((friend)=>{
          const friendToShow = `<div class="card rounded light row"><span id="friendName">${friend.name}</span><div class="btn good">Duel</div></div>`
          this.elements.friendList.innerHTML += friendToShow
@@ -65,10 +65,11 @@ export class Social {
       this.elements["addFriendBtn"] = this.getEl("addFriendBtn")
       this.elements["userID"] = this.getEl("userID")
       this.elements["friendList"] = this.getEl("friendList")
-      this.elements.addFriendBtn.addEventListener("click", () => {
-         server.addFriend(user , this.elements.addFriendInput.value)
+      this.elements.addFriendBtn.addEventListener("click",async () => {
+         await server.addFriend(user , this.elements.addFriendInput.value)
          this.elements.addFriendInput.value = ""
-         this.update(this.server.getUserData(this.user))
+         const userData = await server.getUserData(user)
+         await this.update(userData)
       })
    }
 }

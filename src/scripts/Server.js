@@ -36,13 +36,13 @@ export class Server {
    }
 
    async updateUserOnDb (user, data) {
-      Object.entries(data).forEach(dataKey => {
+      for (let dataKey of Object.entries(data)){
          const key = dataKey[0]
          const value = dataKey[1]
          const newValue = {}
          newValue[key] = value
-         update(ref(this.db, `users/${user.uid}/data/`), newValue)
-      })
+         await update(ref(this.db, `users/${user.uid}/data/`), newValue)
+      }
    }
 
    async createUser(user) {
@@ -53,24 +53,28 @@ export class Server {
             level: 0,
             exp: 50,
             coins: 10,
-            friends:[],
+            friends:{},
             id: ((new Date().getTime()).toString()).slice(4) + (Math.round(Math.random()*100)).toString()
          },
       });
    }
 
    async addFriend(currentUser,friendToAddID){
-      var users =  await get(ref(this.db, `users`))
-      users = users.val()
-      Object.entries(users).forEach(async (user) => {
+      var snapshot =  await get(ref(this.db, `users`))
+      var users = Object.entries(snapshot.val())
+      for (let user of users){
+         const userUID = user[0]
          const userID = user[1].data.id
-         if (userID == friendToAddID) {
+         const userName = user[1].data.name
+         const friendRef = ref(this.db, `users/${currentUser.uid}/data/friends/${userUID}`)
+         const alreadyFriend = (await get(friendRef)).exists()
+         if (userID == friendToAddID && !alreadyFriend) {
             let currentUserFriends = await this.getUserData(currentUser)
-            currentUserFriends = currentUserFriends.data.friends || []
-            currentUserFriends.push({uid:user[0],name:user[1].data.name})
+            currentUserFriends = currentUserFriends.data.friends || {}
+            currentUserFriends[userUID] = {name:userName}
             await this.updateUserOnDb(currentUser, {friends:currentUserFriends})
-         }
-      })
+        }
+      }
    }
 
    signOut(){
