@@ -101,7 +101,6 @@
    font-size: clamp(18px, 4vw, 25px);
    padding: 5px 12px;
    width: fit-content;
-   background:#5FAD41;
    color:#2d2a32;
    transition: transform 0.15s ease, color 0.15s ease,      background-color 0.15s ease;
    -webkit-transition: transform 0.15s ease, color 0.15s ease,      background-color 0.15s ease;
@@ -113,6 +112,14 @@
    -moz-border-radius: 8px;
    -ms-border-radius: 8px;
    -o-border-radius: 8px;
+}
+
+.good {
+   background:#5FAD41;
+}
+
+.bad {
+   background-color: #FF3C38;
 }
 
 .btn:active {

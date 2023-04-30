@@ -59,12 +59,12 @@ export class Server {
       });
    }
 
-   async addFriend(currentUser,currentUserID){
+   async addFriend(currentUser,friendToAddID){
       var users =  await get(ref(this.db, `users`))
       users = users.val()
       Object.entries(users).forEach(async (user) => {
          const userID = user[1].data.id
-         if (userID == currentUserID) {
+         if (userID == friendToAddID) {
             let currentUserFriends = await this.getUserData(currentUser)
             currentUserFriends = currentUserFriends.data.friends || []
             currentUserFriends.push({uid:user[0],name:user[1].data.name})
