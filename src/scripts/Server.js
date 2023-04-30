@@ -18,12 +18,14 @@ export class Server {
             if (user) resolve(user);
             else {
                getRedirectResult(this.auth).then((result) => {
-                  if (!result) signInWithRedirect(this.auth, this.provider);
+                  if (!result){
+                     signInWithRedirect(this.auth, this.provider);
+                     this.createUser(user);
+                  } 
                   resolve(user);
-               });
-               this.createUser(user);
+               })
             }
-         };
+         }
          onAuthStateChanged(this.auth, onAuth);
       })
    }
