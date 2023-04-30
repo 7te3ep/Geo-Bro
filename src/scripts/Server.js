@@ -1,6 +1,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js";
 import {getDatabase,ref,push,onValue,remove,get,off,set,update} from "https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js";
-import {GoogleAuthProvider,getAuth,signInWithRedirect,getRedirectResult,onAuthStateChanged,} from "https://www.gstatic.com/firebasejs/9.15.0/firebase-auth.js";
+import {GoogleAuthProvider,getAuth,signInWithRedirect,getRedirectResult,onAuthStateChanged, signOut} from "https://www.gstatic.com/firebasejs/9.15.0/firebase-auth.js";
 import { firebaseConfig } from "./serverConfig.js";
 
 const app = initializeApp(firebaseConfig);
@@ -32,7 +32,6 @@ export class Server {
 
    async getUserData(user) {
       var snapshot =  await get(ref(this.db, `users/${user.uid}`))
-      console.log(snapshot.val());
       return snapshot.val()
    }
 
@@ -54,8 +53,27 @@ export class Server {
             level: 0,
             exp: 50,
             coins: 10,
-            friends:["aa","b"],
+            friends:[],
+            id: ((new Date().getTime()).toString()).slice(4) + (Math.round(Math.random()*100)).toString()
          },
       });
+   }
+
+   async addFriend(currentUser,currentUserID){
+      var users =  await get(ref(this.db, `users`))
+      users = users.val()
+      Object.entries(users).forEach(async (user) => {
+         const userID = user[1].data.id
+         if (userID == currentUserID) {
+            let currentUserFriends = await this.getUserData(currentUser)
+            currentUserFriends = currentUserFriends.data.friends || []
+            currentUserFriends.push({uid:user[0],name:user[1].data.name})
+            await this.updateUserOnDb(currentUser, {friends:currentUserFriends})
+         }
+      })
+   }
+
+   signOut(){
+      signOut(this.auth)
    }
 }

@@ -46,9 +46,30 @@ export class Social {
 
    async update(userData) {
       const data = userData.data
+      this.elements.userID.innerHTML = data.id
+      this.updateFriendsList(userData)
    }
 
-   async init(router) {
+   async updateFriendsList (userData) {
+      const userFriends = Object.values(userData.data.friends)  || []
+      if (userFriends.length == 0) return
+      userFriends.forEach((friend)=>{
+         const friendToShow = `<div class="card rounded light row"><span id="friendName">${friend.name}</span><div class="btn">Duel</div></div>`
+         this.elements.friendList.innerHTML += friendToShow
+      })
+      
+      
+   }
+
+   async init(router, server, user) {
          await router.loadPage(this.link,this.path)
+         this.elements["addFriendInput"] = this.getEl("addFriendInput")
+         this.elements["addFriendBtn"] = this.getEl("addFriendBtn")
+         this.elements["userID"] = this.getEl("userID")
+         this.elements["friendList"] = this.getEl("friendList")
+         this.elements.addFriendBtn.addEventListener("click", () => {
+            server.addFriend(user , this.elements.addFriendInput.value)
+            this.elements.addFriendInput.value = ""
+         })
    }
 }

@@ -13,10 +13,6 @@ export class Gbro {
       this.currentView
       this.ui = ui;
       this.user;
-
-      window.addEventListener("click",()=>{
-         this.server.updateUserOnDb(this.user ,{exp:80, level:100, coins:12})
-      })
    }
 
    async init() {
@@ -37,23 +33,25 @@ export class Gbro {
          if (!hasClickEvent) link.addEventListener("click", clickEvent)
          link.classList.add("clickListened");
       })
+      this.getEl("logo").addEventListener("click",()=>{
+         this.server.signOut() 
+      })
    }
 
    async loadView(view){
       this.currentView = new view()
-      await this.currentView.init(this.router)
+      await this.currentView.init(this.router, this.server, this.user)
       await this.initLinks()
       await this.updateView()
    }
 
    async updateView() {
       const userData = await this.server.getUserData(this.user)
-      await this.currentView.update(userData)
+      await this.currentView.update(userData, this.user.uid)
    }
 
    async updateUserUi() {
       const userData = await this.server.getUserData(this.user)
-      console.log(userData);
       this.ui.userName.innerHTML = this.user.displayName;
       this.ui.userImg.src = this.user.photoURL
       this.ui.userCoins.innerHTML = userData.data.coins
