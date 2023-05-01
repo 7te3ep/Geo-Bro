@@ -1,3 +1,4 @@
+import {copyToClipboard} from "./copyToClipboard.js"
 export class DashBoard {
    constructor(server, authUser){
       this.getEl = id => document.getElementById(id) 
@@ -82,7 +83,12 @@ export class Social {
       this.elements["addFriendBtn"] = this.getEl("addFriendBtn")
       this.elements["userID"] = this.getEl("userID")
       this.elements["friendList"] = this.getEl("friendList")
-   
+      this.elements["copyToClipboardBtn"] = this.getEl("copyToClipboardBtn")
+      
+      this.elements.copyToClipboardBtn.addEventListener("click",()=>{
+         copyToClipboard(this.elements.userID.innerHTML)
+      })
+
       this.elements.addFriendBtn.addEventListener("click",async () => {
          await this.server.addFriend(this.authUser , this.elements.addFriendInput.value)
          this.elements.addFriendInput.value = ""
