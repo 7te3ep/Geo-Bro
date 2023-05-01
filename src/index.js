@@ -8,17 +8,11 @@ const ui = {
    userCoins: document.getElementById("userCoin")
 };
 
-const loader = (visibility) =>
-   (document.querySelector(".loader").style.display = visibility
-      ? "flex"
-      : "none");
+const loader = (visibility) => document.querySelector(".loader").style.display = visibility ? "flex" : "none";
 
 const geoBro = new Gbro(
    new Server(),
-   new Router({
-      contentDiv: document.getElementById("content"),
-      loader: loader
-   }),
+   new Router({contentDiv: document.getElementById("content")}),
    loader,
    ui
 );

@@ -3,27 +3,24 @@ import {getDatabase,ref,push,onValue,remove,get,off,set,update} from "https://ww
 import {GoogleAuthProvider,getAuth,signInWithRedirect,getRedirectResult,onAuthStateChanged, signOut} from "https://www.gstatic.com/firebasejs/9.15.0/firebase-auth.js";
 import { firebaseConfig } from "./serverConfig.js";
 
-const app = initializeApp(firebaseConfig);
 export class Server {
    constructor() {
-      this.app = app;
-      this.db = getDatabase(app);
+      this.app = initializeApp(firebaseConfig);
+      this.db = getDatabase(this.app);
       this.auth = getAuth();
       this.provider = new GoogleAuthProvider();
    }
 
    async authenthicate(){
       return new Promise(async (resolve) => {
-         const onAuth =async (user) => {
+         const onAuth = async (user) => {
             if (!user) {
-               await getRedirectResult(this.auth).then(async (result) => {
-                  if (!result) await signInWithRedirect(this.auth, this.provider);
-               })
+               const userIsLoggingIn = await getRedirectResult(this.auth)
+               if (!userIsLoggingIn) await signInWithRedirect(this.auth, this.provider);
             }
             var snapshot = await get(ref(this.db, `users/${user.uid}`))
-            if (!snapshot.exists()){
-               await this.createUser(user);
-            }
+            const userExistInDb = snapshot.exists()
+            if (!userExistInDb) await this.createUser(user);
             resolve(user);
          }
          await onAuthStateChanged(this.auth, onAuth);
@@ -32,7 +29,7 @@ export class Server {
 
    async getUserData(user) {
       var snapshot =  await get(ref(this.db, `users/${user.uid}`))
-      return snapshot.val()
+      if (snapshot.exists()) return snapshot.val()
    }
 
    async updateUserOnDb (user, data) {
@@ -61,14 +58,13 @@ export class Server {
 
    async addFriend(authUser,friendToAddID){
       const authUserData = (await this.getUserData(authUser)).data
-      const authUserUID = authUser.uid
-      var users =  await get(ref(this.db, `users`))
+      var users = await get(ref(this.db, `users`))
       users = Object.entries(users.val())
       for (let user of users){
          const userUID = user[0]
          const userID = user[1].data.id
          const userName = user[1].data.name
-         const friendRef = ref(this.db, `users/${authUserUID}/data/friends/${userUID}`)
+         const friendRef = ref(this.db, `users/${authUser.uid}/data/friends/${userUID}`)
          const alreadyFriend = (await get(friendRef)).exists()
          if (userID == friendToAddID && !alreadyFriend) {
             let currentUserFriends = authUserData.friends || {}

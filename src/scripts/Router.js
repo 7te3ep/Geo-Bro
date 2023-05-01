@@ -1,16 +1,15 @@
 export class Router {
-   constructor({ contentDiv, loader }) {
+   constructor({ contentDiv }) {
       this.contentDiv = contentDiv;
-      this.loader = loader;
 
       window.onpopstate = () => {
          this.loadPage(location.pathname);
       };
    }
 
-   async loadPage(link , route) {
+   async loadPage(link , path) {
       history.pushState(null, "", link);
-      const html = await fetch(route).then((response) => response.text());
+      const html = await fetch(path).then((response) => response.text());
       this.contentDiv.innerHTML = html;
    }
 }
