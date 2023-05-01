@@ -1,27 +1,24 @@
-import { DashBoard, Games, Social } from "./View.js";
-
-let route = {
-   "/dashboard": DashBoard,
-   "/games": Games,
-   "/social": Social,
-};
-
 export class Gbro {
-   constructor(server, router, loader, ui) {
+   constructor(server, router, loader, ui, route) {
       this.getEl = (id) => document.getElementById(id);
       this.router = router;
       this.server = server;
       this.loader = loader;
+      this.route = route;
       this.currentView;
       this.ui = ui;
       this.authUser;
+
+      window.onpopstate = async () => {
+         await this.loadView(this.route[location.pathname]);
+      };
    }
 
    async init() {
       this.loader(true);
       this.authUser = await this.server.authenthicate();
       await this.updateUserUi();
-      await this.loadView(DashBoard);
+      await this.loadView(this.route["/dashboard"]);
       this.loader(false);
    }
 
@@ -33,7 +30,7 @@ export class Gbro {
          if (hasClickEvent)  return
          link.addEventListener("click", (event)=>{
             event.preventDefault();
-            this.loadView(route[link.getAttribute("href")]);
+            this.loadView(this.route[link.getAttribute("href")]);
          });
       });
    
@@ -44,8 +41,8 @@ export class Gbro {
 
    async loadView(view) {
       this.loader(true);
-      this.currentView = new view(this.server, this.authUser);
-      await this.currentView.init(this.router);
+      this.currentView = new view(this.server, this.authUser, this.router);
+      await this.currentView.init();
       await this.initLinks();
       await this.currentView.update();
       this.loader(false);

@@ -1,12 +1,13 @@
 import {copyToClipboard} from "./copyToClipboard.js"
 export class DashBoard {
-   constructor(server, authUser){
+   constructor(server, authUser, router){
       this.getEl = id => document.getElementById(id) 
       this.elements = {}
       this.link = "/dashboard"
       this.path = "views/dashboard.html"
       this.server = server
       this.authUser = authUser
+      this.router = router
    }
 
    async update() {
@@ -17,8 +18,8 @@ export class DashBoard {
       this.updateShopGallery()
    }
 
-   async init(router) {
-         await router.loadPage(this.link,this.path)
+   async init() {
+         await this.router.loadPage(this.link,this.path)
          this.elements["userLevel"] = this.getEl('userLevel')
          this.elements["expBar"] = this.getEl('expBar')
          this.elements["newsGallery"] = this.getEl('newsGallery')
@@ -43,7 +44,6 @@ export class DashBoard {
       this.elements.packGallery.innerHTML = ""
       for (let pack of packList) {
          const packName = pack[0]
-         console.log(pack);
          const packType = pack[1].type
          const packArea = pack[1].area
          const packPrice = pack[1].price
@@ -53,34 +53,35 @@ export class DashBoard {
    }
 }
 
-
 export class Games {
-   constructor(server, authUser){
+   constructor(server, authUser, router){
       this.getEl = id => document.getElementById(id) 
       this.elements = {}
       this.link = "/games"
       this.path = "views/games.html"
       this.server = server
       this.authUser = authUser
+      this.router = router
    }
 
    async update() {
       const userData = (await this.server.getUserData(this.authUser)).data
    }
 
-   async init(router) {
-         await router.loadPage(this.link,this.path)
+   async init() {
+      await this.router.loadPage(this.link,this.path)
    }
 }
 
 export class Social {
-   constructor(server , authUser){
+   constructor(server , authUser, router){
       this.getEl = id => document.getElementById(id) 
       this.elements = {}
       this.link = "/social"
       this.path = "views/social.html"
       this.server = server
       this.authUser = authUser
+      this.router = router
    }
 
    async update() {
@@ -109,8 +110,8 @@ export class Social {
       })
    }
 
-   async init(router) {
-      await router.loadPage(this.link,this.path)
+   async init() {
+      await this.router.loadPage(this.link,this.path)
       this.elements["addFriendInput"] = this.getEl("addFriendInput")
       this.elements["addFriendBtn"] = this.getEl("addFriendBtn")
       this.elements["userID"] = this.getEl("userID")
@@ -126,5 +127,25 @@ export class Social {
          this.elements.addFriendInput.value = ""
          await this.update()
       })
+   }
+}
+
+export class CountryGame {
+   constructor(server, authUser, router){
+      this.getEl = id => document.getElementById(id) 
+      this.elements = {}
+      this.link = "/country"
+      this.path = "views/countryGames.html"
+      this.server = server
+      this.authUser = authUser
+      this.router = router
+   }
+
+   async update() {
+      const userData = (await this.server.getUserData(this.authUser)).data
+   }
+
+   async init() {
+         await this.router.loadPage(this.link,this.path)
    }
 }

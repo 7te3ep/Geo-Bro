@@ -1,10 +1,6 @@
 export class Router {
    constructor({ contentDiv }) {
       this.contentDiv = contentDiv;
-
-      window.onpopstate = () => {
-         this.loadPage(location.pathname);
-      };
    }
 
    async loadPage(link , path) {
