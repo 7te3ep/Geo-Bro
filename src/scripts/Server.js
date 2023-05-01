@@ -74,6 +74,13 @@ export class Server {
       }
    }
 
+   async delFriend(authUser, friendUID) {
+      const userData = (await this.getUserData(authUser)).data
+      let userFriends = userData.friends || {}
+      delete userFriends[friendUID]
+      await this.updateUserOnDb(authUser, {friends:userFriends})
+   }
+
    signOut(){
       signOut(this.auth)
    }

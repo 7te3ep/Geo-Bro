@@ -58,11 +58,21 @@ export class Social {
 
    async updateFriendsList () {
       const userData = (await this.server.getUserData(this.authUser)).data
-      const userFriends = Object.values(userData.friends || {} )  
+      const userFriends = Object.entries(userData.friends || {} )  
       this.elements.friendList.innerHTML = ""
-      userFriends.forEach((friend)=>{
-         const friendToShow = `<div class="card rounded light row"><span id="friendName">${friend.name}</span><div class="btn good">Duel</div></div>`
+      for (let friend of userFriends) {
+         const friendUID = friend[0]
+         const friendData = friend[1]
+         const friendToShow = `<div class="card rounded light row"><span id="friendName">${friendData.name}</span><div class="btn good">Duel</div><div class="btn bad delFriendBtn" id="${friendUID}">X</div></div>`
          this.elements.friendList.innerHTML += friendToShow
+      }
+
+      document.querySelectorAll(".delFriendBtn").forEach((delBtn)=>{
+         delBtn.addEventListener("click",async ()=>{
+            const friendToDelID = delBtn.id
+            this.server.delFriend(this.authUser ,friendToDelID)
+            await this.update()
+         })
       })
    }
 
