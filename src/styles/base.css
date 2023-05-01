@@ -11,7 +11,7 @@
 
 .scrollable {
    flex-wrap: nowrap;
-   height: 25vh;
+   max-height: 25vh;
    margin: 15px 0px;
    overflow-y: scroll;
 }
@@ -49,17 +49,17 @@
 }
 
 .light {
-   background-color: rgba(217, 217, 217, 0.9);
+   background-color: rgba(217, 217, 217, 0.95);
    color: #2d2a32;
 }
 
 .dark {
-   background-color: rgba(45, 42, 50, 0.9);
+   background-color: rgba(45, 42, 50, 0.95);
    color: #d9d9d9;
 }
 
 .electricBlue {
-   background-color: rgba(69, 197, 215, 0.9);
+   background-color: rgba(69, 197, 215, 0.95);
    color: #2d2a32;
 }
 

@@ -13,14 +13,46 @@ export class DashBoard {
       const userData = (await this.server.getUserData(this.authUser)).data
       this.elements.userLevel.innerHTML = userData.level
       this.elements.expBar.style.width = `${userData.exp}%`
+      this.updateNewsGallery()
+      this.updateShopGallery()
    }
 
    async init(router) {
          await router.loadPage(this.link,this.path)
          this.elements["userLevel"] = this.getEl('userLevel')
          this.elements["expBar"] = this.getEl('expBar')
+         this.elements["newsGallery"] = this.getEl('newsGallery')
+         this.elements["packGallery"] = this.getEl('packGallery')
+   }
+
+   async updateNewsGallery(){
+      const newsOnDb = await this.server.getNews()
+      const newsList = Object.entries(newsOnDb || {} )  
+      this.elements.newsGallery.innerHTML = ""
+      for (let news of newsList) {
+         const newsTitle = news[0]
+         const newsContent = news[1]
+         const newsToShow = `<div class="container rounded electricBlue"><p class="title">${newsTitle}</p><p>${newsContent}</p></div>`
+         this.elements.newsGallery.innerHTML += newsToShow
+      }
+   }
+
+   async updateShopGallery(){
+      const packsOnDb = await this.server.getShopPacks()
+      const packList = Object.entries(packsOnDb || {} )  
+      this.elements.packGallery.innerHTML = ""
+      for (let pack of packList) {
+         const packName = pack[0]
+         console.log(pack);
+         const packType = pack[1].type
+         const packArea = pack[1].area
+         const packPrice = pack[1].price
+         const packToShow = `<div class="card rounded dark"><p class="title">${packName}</p><p>Area: ${packArea}</p><p>Type:  ${packType}</p><p> ${packPrice}</p></div>`
+         this.elements.packGallery.innerHTML += packToShow
+      }
    }
 }
+
 
 export class Games {
    constructor(server, authUser){

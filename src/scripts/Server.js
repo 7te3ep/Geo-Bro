@@ -81,6 +81,14 @@ export class Server {
       await this.updateUserOnDb(authUser, {friends:userFriends})
    }
 
+   async getNews(){
+      return (await get(ref(this.db, `news`))).val()
+   }
+
+   async getShopPacks(){
+      return (await get(ref(this.db, `shopPacks`))).val()
+   }
+
    signOut(){
       signOut(this.auth)
    }
