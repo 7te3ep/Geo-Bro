@@ -1,13 +1,15 @@
 import { Gbro } from "./scripts/Gbro.js";
 import { Router } from "./scripts/Router.js";
 import { Server } from "./scripts/Server.js";
-import { DashBoard, Games, Social, CountryGame } from "../scripts/View.js";
-
+import {  CountryGame, HostLobby, Lobby } from "../scripts/View.js";
+import {  DashBoard, Games, Social } from "../scripts/mainViews.js";
 let route = {
    "/dashboard": DashBoard,
    "/games": Games,
    "/social": Social,
-   "/country": CountryGame
+   "/country": CountryGame,
+   "/hostLobby": HostLobby,
+   "/lobby": Lobby,
 };
 const ui = {
    userName: document.getElementById("userName"),

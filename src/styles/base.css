@@ -112,6 +112,7 @@
    -moz-border-radius: 8px;
    -ms-border-radius: 8px;
    -o-border-radius: 8px;
+   min-width: fit-content;
 }
 
 .good {
@@ -163,7 +164,7 @@
 input {
    border: none;
    inset: none;
-   width: 80%;
+   width: 60%;
    padding: 5px 10px;
 }
 

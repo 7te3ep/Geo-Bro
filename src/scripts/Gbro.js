@@ -27,10 +27,11 @@ export class Gbro {
          const hasClickEvent = link.classList.contains("clickListened");
          link.classList.add("clickListened");
 
-         if (hasClickEvent)  return
-         link.addEventListener("click", (event)=>{
+         if (hasClickEvent) return
+         link.addEventListener("click",async (event)=>{
             event.preventDefault();
-            this.loadView(this.route[link.getAttribute("href")]);
+            const path = link.getAttribute("href")
+            if (path) this.loadView(this.route[path]);
          });
       });
    
@@ -44,6 +45,7 @@ export class Gbro {
       this.currentView = new view(this.server, this.authUser, this.router);
       await this.currentView.init();
       await this.initLinks();
+      console.log("start update");
       await this.currentView.update();
       this.loader(false);
    }

@@ -1,5 +1,5 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js";
-import {getDatabase,ref,push,onValue,remove,get,off,set,update} from "https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js";
+import {getDatabase,ref,push,onValue,remove,get,off,set,update } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js";
 import {GoogleAuthProvider,getAuth,signInWithRedirect,getRedirectResult,onAuthStateChanged, signOut} from "https://www.gstatic.com/firebasejs/9.15.0/firebase-auth.js";
 import { firebaseConfig } from "./serverConfig.js";
 export class Server {
@@ -31,6 +31,12 @@ export class Server {
       if (snapshot.exists()) return snapshot.val()
    }
 
+   async getData(path) {
+      var snapshot =  await get(ref(this.db,path))
+      if (snapshot.exists()) return snapshot.val()
+      else return null
+   }
+
    async updateUserOnDb (user, data) {
       for (let dataKey of Object.entries(data)){
          const key = dataKey[0]
@@ -53,6 +59,14 @@ export class Server {
             id: ((new Date().getTime()).toString()).slice(4) + (Math.round(Math.random()*100)).toString()
          },
       });
+   }
+
+   async exeOnChange(path,func){
+      await onValue(ref(this.db,path),await func);
+   }
+
+   async stopExeOnChange(path){
+      off(ref(this.db, path))
    }
 
    async addFriend(authUser,friendToAddID){
@@ -86,6 +100,37 @@ export class Server {
 
    async getShopPacks(){
       return (await get(ref(this.db, `shopPacks`))).val()
+   }
+
+   async newLobbyOnDb(host){
+      const lobbyId = parseInt(Math.ceil(Math.random() * Date.now()).toPrecision(6).toString().replace(".", ""))
+      await set(ref(this.db, `lobbys/${lobbyId}`), {
+            players:{},
+            game:{
+               started:false,
+            }
+      });
+      await set(ref(this.db, `hosts/${host.uid}`), {
+         id:lobbyId,
+         name:host.displayName
+      });
+      return lobbyId
+   }
+
+   async playerConnectToLobby(authUser , lobbyId ){
+      const lobbyExist = (await get(ref(this.db, `lobbys/${lobbyId}`))).exists()
+      if (!lobbyExist) return false
+      const lobbyPlayersRef = ref(this.db, `lobbys/${lobbyId}/players/`)
+      let playersInLobby = (await get(lobbyPlayersRef)).val() || {}
+      playersInLobby[authUser.uid] = {
+         name:authUser.displayName,
+         img: authUser.photoURL,
+      }
+      await set(lobbyPlayersRef,playersInLobby);
+      return true
+   }
+   async exist(snapshot){
+      return snapshot.exists()
    }
 
    signOut(){

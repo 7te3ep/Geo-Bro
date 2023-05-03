@@ -100,7 +100,7 @@ i, a {
    justify-content: space-between;
 }
 
-#userImg {
+.userImg {
    margin-right: 8px;
    width: 5vh;
    height: 5vh;
