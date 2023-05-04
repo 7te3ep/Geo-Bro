@@ -45,7 +45,6 @@ export class Gbro {
       this.currentView = new view(this.server, this.authUser, this.router);
       await this.currentView.init();
       await this.initLinks();
-      console.log("start update");
       await this.currentView.update();
       this.loader(false);
    }

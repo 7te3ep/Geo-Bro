@@ -1,3 +1,5 @@
+import { copyToClipboard } from "./copyToClipboard.js"
+
 export class HostLobby {
    constructor(server, authUser, router){
       this.getEl = id => document.getElementById(id) 
@@ -34,6 +36,10 @@ export class HostLobby {
       this.elements["playersList"] = this.getEl("playersList")
       await this.server.playerConnectToLobby(this.authUser, this.lobbyID)
       await this.server.exeOnChange(`lobbys/${this.lobbyID}`,()=>{this.updateOnValue()})
+
+      this.getEl("copyToClipboardBtn").addEventListener('click',()=>{
+         copyToClipboard(this.lobbyID)
+      })
    }
 
    async updatePlayerList(){
@@ -93,7 +99,10 @@ export class Lobby {
       await this.server.exeOnChange(`lobbys/${this.lobbyID}`,()=>{return this.updateOnValue()})
       this.elements["playersList"] = this.getEl("playersList")
       this.elements["lobbyId"] = this.getEl("lobbyId")
-      console.log("init finished");
+      
+      this.getEl("copyToClipboardBtn").addEventListener('click',()=>{
+         copyToClipboard(this.lobbyID)
+      })
    }
 
    async findLobby() {
