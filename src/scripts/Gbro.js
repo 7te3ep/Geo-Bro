@@ -51,7 +51,7 @@ export class Gbro {
    }
 
    async updateUserUi() {
-      const userData = await this.server.getUserData(this.authUser);
+      const userData = await this.server.getData(`users/${this.authUser.uid}`);
       this.ui.userCoins.innerHTML = userData.data.coins;
       this.ui.userName.innerHTML = this.authUser.displayName;
       this.ui.userImg.src = this.authUser.photoURL;

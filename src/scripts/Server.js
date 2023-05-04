@@ -25,12 +25,7 @@ export class Server {
          await onAuthStateChanged(this.auth, onAuth);
       })
    }
-
-   async getUserData(user) {
-      var snapshot =  await get(ref(this.db, `users/${user.uid}`))
-      if (snapshot.exists()) return snapshot.val()
-   }
-
+   
    async getData(path) {
       var snapshot =  await get(ref(this.db,path))
       if (snapshot.exists()) return snapshot.val()
@@ -46,6 +41,17 @@ export class Server {
          await update(ref(this.db, `users/${user.uid}/data/`), newValue)
       }
    }
+
+   async updateOnDb (path, data) {
+      for (let dataKey of Object.entries(data)){
+         const key = dataKey[0]
+         const value = dataKey[1]
+         const newValue = {}
+         newValue[key] = value
+         await update(ref(this.db, path), newValue)
+      }
+   }
+
 
    async createUser(user) {
       await set(ref(this.db, `users/${user.uid}`), {
@@ -70,7 +76,7 @@ export class Server {
    }
 
    async addFriend(authUser,friendToAddID){
-      const authUserData = (await this.getUserData(authUser)).data
+      const authUserData = (await this.getData(`users/${authUser.uid}`)).data
       var users = await get(ref(this.db, `users`))
       users = Object.entries(users.val())
       for (let user of users){
@@ -88,18 +94,10 @@ export class Server {
    }
 
    async delFriend(authUser, friendUID) {
-      const userData = (await this.getUserData(authUser)).data
+      const userData = (await this.getData(`users/${authUser.uid}`)).data
       let userFriends = userData.friends || {}
       delete userFriends[friendUID]
       await this.updateUserOnDb(authUser, {friends:userFriends})
-   }
-
-   async getNews(){
-      return (await get(ref(this.db, `news`))).val()
-   }
-
-   async getShopPacks(){
-      return (await get(ref(this.db, `shopPacks`))).val()
    }
 
    async newLobbyOnDb(host){
@@ -128,9 +126,6 @@ export class Server {
       }
       await set(lobbyPlayersRef,playersInLobby);
       return true
-   }
-   async exist(snapshot){
-      return snapshot.exists()
    }
 
    signOut(){

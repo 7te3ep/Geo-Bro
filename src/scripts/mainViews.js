@@ -12,7 +12,7 @@ export class DashBoard {
    }
 
    async update() {
-      const userData = (await this.server.getUserData(this.authUser)).data
+      const userData = (await this.server.getData(`users/${this.authUser.uid}`)).data
       this.elements.userLevel.innerHTML = userData.level
       this.elements.expBar.style.width = `${userData.exp}%`
       this.updateNewsGallery()
@@ -28,19 +28,19 @@ export class DashBoard {
    }
 
    async updateNewsGallery(){
-      const newsOnDb = await this.server.getNews()
+      const newsOnDb = await this.server.getData("news")
       const newsList = Object.entries(newsOnDb || {} )  
       this.elements.newsGallery.innerHTML = ""
       for (let news of newsList) {
          const newsTitle = news[0]
          const newsContent = news[1]
-         const newsToShow = `<div class="container rounded electricBlue"><p class="title">${newsTitle}</p><p>${newsContent}</p></div>`
+         const newsToShow = `<div class="container rounded electricBlue row"><p class="title">${newsTitle}</p><p>${newsContent}</p></div>`
          this.elements.newsGallery.innerHTML += newsToShow
       }
    }
 
    async updateShopGallery(){
-      const packsOnDb = await this.server.getShopPacks()
+      const packsOnDb = await this.server.getData("shopPacks")
       const packList = Object.entries(packsOnDb || {} )  
       this.elements.packGallery.innerHTML = ""
       for (let pack of packList) {
@@ -66,7 +66,7 @@ export class Games {
    }
 
    async update() {
-      const userData = (await this.server.getUserData(this.authUser)).data
+      const userData = (await this.server.getData(`users/${this.authUser.uid}`)).data
    }
 
    async init() {
@@ -101,19 +101,19 @@ export class Social {
    }
 
    async update() {
-      const userData = (await this.server.getUserData(this.authUser)).data
+      const userData = (await this.server.getData(`users/${this.authUser.uid}`)).data
       this.elements.userID.innerHTML = userData.id
       this.updateFriendsList()
    }
 
    async updateFriendsList () {
-      const userData = (await this.server.getUserData(this.authUser)).data
+      const userData = (await this.server.getData(`users/${this.authUser.uid}`)).data
       const userFriends = Object.entries(userData.friends || {} )  
       this.elements.friendList.innerHTML = ""
       for (let friend of userFriends) {
          const friendUID = friend[0]
          const friendData = friend[1]
-         const friendToShow = `<div class="card rounded light row"><span id="friendName">${friendData.name}</span><div class="btn good">Duel</div><div class="btn bad delFriendBtn" id="${friendUID}">X</div></div>`
+         const friendToShow = `<div class="card rounded light"><span id="friendName">${friendData.name}</span><div class="btn good">Duel</div><div class="btn bad delFriendBtn" id="${friendUID}">X</div></div>`
          this.elements.friendList.innerHTML += friendToShow
       }
 

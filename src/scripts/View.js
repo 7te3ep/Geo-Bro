@@ -41,7 +41,7 @@ export class HostLobby {
       const lobbyData = await this.server.getData(`lobbys/${this.lobbyID}`)
       const players = Object.values(lobbyData.players || {}) 
       for (let player of players){
-         const playerEl = `<div class="card electricBlue rounded row"><img class="userImg" src="${player.img}"><p>${player.name}</p><div class="btn rounded bad">Kick</div></div>`
+         const playerEl = `<div class="card electricBlue rounded row"><div class="row"><img class="userImg" src="${player.img}"><p>${player.name}</p></div><div class="btn rounded bad">Kick</div></div>`
          this.elements.playersList.innerHTML += playerEl
       }
    }
@@ -94,7 +94,7 @@ export class Lobby {
       const lobbyData = await this.server.getData(`lobbys/${this.lobbyID}`)
       const players = Object.values(lobbyData.players || {}) 
       for (let player of players){
-         const playerEl = `<div class="card electricBlue rounded row"><img class="userImg" src="${player.img}"><p>${player.name}</p><div class="btn rounded bad">Kick</div></div>`
+         const playerEl = `<div class="card electricBlue rounded "><div class="row"><img class="userImg" src="${player.img}"><p>${player.name}</p></div></div>`
          this.elements.playersList.innerHTML += playerEl
       }
    }
@@ -112,7 +112,7 @@ export class CountryGame {
    }
 
    async update() {
-      const userData = (await this.server.getUserData(this.authUser)).data
+      const userData = (await this.server.getData(`users/${this.authUser.uid}`)).data
    }
 
    async init() {
