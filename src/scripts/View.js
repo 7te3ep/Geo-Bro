@@ -39,11 +39,28 @@ export class HostLobby {
    async updatePlayerList(){
       this.elements.playersList.innerHTML = " "
       const lobbyData = await this.server.getData(`lobbys/${this.lobbyID}`)
-      const players = Object.values(lobbyData.players || {}) 
+      const players = Object.entries(lobbyData.players || {}) 
       for (let player of players){
-         const playerEl = `<div class="card electricBlue rounded row"><div class="row"><img class="userImg" src="${player.img}"><p>${player.name}</p></div><div class="btn rounded bad">Kick</div></div>`
+         const playerData = player[1]
+         let isHost = false
+         if (player[0] == this.authUser.uid) isHost = true
+         const deleteBtn = isHost ? "" : `<div class="btn rounded bad kickBtn" id="${player[0]}" >Kick</div>`
+         const playerEl = `<div class="card electricBlue rounded row"><div class="row"><img class="userImg" src="${playerData.img}"><p>${playerData.name}</p></div>`+deleteBtn+`</div>`
          this.elements.playersList.innerHTML += playerEl
       }
+
+      document.querySelectorAll(".kickBtn").forEach((kickBtn)=>{
+         kickBtn.addEventListener("click",async ()=>{
+            const playerUid = kickBtn.id
+            await this.deletePlayerOfLobby(playerUid)
+         })
+      })
+   }
+
+   async deletePlayerOfLobby(playerUid){
+      let playersOnLobby = await this.server.getData(`lobbys/${this.lobbyID}/players`)
+      delete playersOnLobby[playerUid]
+      this.server.setData(`lobbys/${this.lobbyID}/players`, playersOnLobby)
    }
 }
 
@@ -65,6 +82,8 @@ export class Lobby {
    }
 
    async updateOnValue() {
+      const hasBeenKicked = await this.server.getData(`lobbys/${this.lobbyID}/players/${this.authUser.uid}`)
+      if (!hasBeenKicked) this.getEl('navGames').click()
       await this.updatePlayerList()
    }
 
@@ -81,7 +100,7 @@ export class Lobby {
       const lobbys = Object.entries(await this.server.getData('lobbys'))
       for (let lobby of lobbys) {
          const lobbyID = lobby[0]
-         const lobbyPlayers = Object.entries(lobby[1].players)
+         const lobbyPlayers = Object.entries(lobby[1].players || {})
          for (let player of lobbyPlayers) {
             const isUserLobby = player[0] == this.authUser.uid
             if (isUserLobby) this.lobbyID = lobbyID

@@ -32,14 +32,8 @@ export class Server {
       else return null
    }
 
-   async updateUserOnDb (user, data) {
-      for (let dataKey of Object.entries(data)){
-         const key = dataKey[0]
-         const value = dataKey[1]
-         const newValue = {}
-         newValue[key] = value
-         await update(ref(this.db, `users/${user.uid}/data/`), newValue)
-      }
+   async setData (path, data) {
+      await set(ref(this.db, path), data);
    }
 
    async updateOnDb (path, data) {
@@ -88,7 +82,7 @@ export class Server {
          if (userID == friendToAddID && !alreadyFriend) {
             let currentUserFriends = authUserData.friends || {}
             currentUserFriends[userUID] = {name:userName}
-            await this.updateUserOnDb(authUser, {friends:currentUserFriends})
+            await this.setData(`users/${authUser.uid}/data/friends`, currentUserFriends)
         }
       }
    }
@@ -97,7 +91,7 @@ export class Server {
       const userData = (await this.getData(`users/${authUser.uid}`)).data
       let userFriends = userData.friends || {}
       delete userFriends[friendUID]
-      await this.updateUserOnDb(authUser, {friends:userFriends})
+      await this.setData(`users/${authUser.uid}/data/friends`, userFriends)
    }
 
    async newLobbyOnDb(host){
