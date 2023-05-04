@@ -25,6 +25,10 @@ export class DashBoard {
          this.elements["packGallery"] = this.getEl('packGallery')
    }
 
+   async quit() {
+      
+   }
+
    async updateNewsGallery(){
       const newsOnDb = await this.server.getData("news")
       const newsList = Object.entries(newsOnDb || {} )  

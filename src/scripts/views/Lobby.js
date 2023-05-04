@@ -19,8 +19,9 @@ export class Lobby {
 
    async updateOnValue() {
       const hasBeenKicked = await this.server.getData(`lobbys/${this.lobbyID}/players/${this.authUser.uid}`)
-      if (!hasBeenKicked) this.getEl('navGames').click()
+      if (!hasBeenKicked) return this.getEl('navGames').click()
       await this.updatePlayerList()
+      
    }
 
    async init() {
@@ -55,5 +56,17 @@ export class Lobby {
          const playerEl = `<div class="card electricBlue rounded "><div class="row"><img class="userImg" src="${player.img}"><p>${player.name}</p></div></div>`
          this.elements.playersList.innerHTML += playerEl
       }
+   }
+
+   async deletePlayerOfLobby(playerUid){
+      let playersOnLobby = await this.server.getData(`lobbys/${this.lobbyID}/players`)
+      if (!playersOnLobby) return
+      delete playersOnLobby[playerUid]
+      this.server.setData(`lobbys/${this.lobbyID}/players`, playersOnLobby)
+   }
+
+   async quit() {
+      this.server.stopExeOnChange(`lobbys/${this.lobbyID}`)
+      await this.deletePlayerOfLobby(this.authUser.uid)
    }
 }

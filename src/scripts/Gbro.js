@@ -10,6 +10,7 @@ export class Gbro {
       this.authUser;
 
       window.onpopstate = async () => {
+         await this.currentView.quit()
          await this.loadView(this.route[location.pathname]);
       };
    }
@@ -20,6 +21,12 @@ export class Gbro {
       await this.updateUserUi();
       await this.loadView(this.route["/dashboard"]);
       this.loader(false);
+   
+      window.onbeforeunload = async (event)=>{
+         event.preventDefault()
+         await this.currentView.quit()
+         return null
+      }
    }
 
    async initLinks() {
@@ -31,8 +38,12 @@ export class Gbro {
          link.addEventListener("click",async (event)=>{
             event.preventDefault();
             const path = link.getAttribute("href")
-            if (path) this.loadView(this.route[path]);
+            if (path){
+               await this.currentView.quit();
+               this.loadView(this.route[path]);
+            } 
          });
+
       });
    
       this.getEl("logo").addEventListener("click", () => {

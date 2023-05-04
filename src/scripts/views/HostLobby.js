@@ -68,4 +68,14 @@ export class HostLobby {
       delete playersOnLobby[playerUid]
       this.server.setData(`lobbys/${this.lobbyID}/players`, playersOnLobby)
    }
+
+   async quit() {
+      this.server.stopExeOnChange(`lobbys/${this.lobbyID}`)
+      const lobbys = await this.server.getData("lobbys")
+      const hosts = await this.server.getData("hosts")
+      delete lobbys[this.lobbyID]
+      delete hosts[this.authUser.uid]
+      await this.server.setData("lobbys", lobbys)
+      await this.server.setData("hosts", hosts)
+   }
 }

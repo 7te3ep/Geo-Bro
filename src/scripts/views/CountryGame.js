@@ -54,4 +54,8 @@ export class CountryGame {
 
    d3.select("svg").attr('id',"map").on("dblclick.zoom", null); // Désactive le zoom avec un double click               
    }
+
+   async quit() {
+      
+   }
 }

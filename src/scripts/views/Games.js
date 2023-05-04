@@ -31,4 +31,8 @@ export class Games {
          canConnect = true
       })
    }
+
+   async quit() {
+      
+   }
 }
