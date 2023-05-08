@@ -56,7 +56,7 @@ export class Server {
             exp: 50,
             coins: 10,
             friends:{},
-            id: ((new Date().getTime()).toString()).slice(4) + (Math.round(Math.random()*100)).toString()
+            id: parseInt(Math.ceil(Math.random() * Date.now()).toPrecision(6).toString().replace(".", ""))
          },
       });
    }
@@ -71,6 +71,7 @@ export class Server {
 
    async addFriend(authUser,friendToAddID){
       const authUserData = (await this.getData(`users/${authUser.uid}`)).data
+      if (friendToAddID == authUserData.id) return
       var users = await get(ref(this.db, `users`))
       users = Object.entries(users.val())
       for (let user of users){

@@ -5,8 +5,10 @@
    justify-content: center;
    height: fit-content;
    padding: 15px;
+   padding: 15px;
    margin: 15px 0px;
    width: 100%;
+   box-shadow: 1px 1px 5px rgba(45, 42, 50, 0.5);
 }
 
 .scrollable {
@@ -24,6 +26,7 @@
    margin: 15px 0px;
    width: 100%;
    gap: 10px;
+   
 }
 
 .card {
@@ -43,7 +46,7 @@
    display: inline;
    font-size: clamp(18px, 5vw, 25px);
    width: 100%;
-   font-weight: bolder;
+   font-weight: bold;
    padding-left: 5px;
    font-size: 20px;
 }
@@ -72,19 +75,32 @@
 }
 
 .blob {
+   opacity: .9;
    z-index: -100;
    position: fixed;
 }
 
-.wall {
+.left-bottom {
    width: 55vw;
    left: -5px;
    bottom: -1px;
 }
 
-.floor {
+.right-bottom {
+   width: 55vw;
+   right: -5px;
+   bottom: -1px;
+}
+
+.right-top {
    height: 55vh;
    right: -5px;
+   top: -1px;
+}
+
+.left-top {
+   height: 55vh;
+   left: -5px;
    top: -1px;
 }
 
