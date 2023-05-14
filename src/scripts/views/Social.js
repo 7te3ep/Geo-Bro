@@ -56,8 +56,6 @@ export class Social {
          await this.update()
       })
    }
-
-   async quit() {
-      
+   async quit() {  
    }
 }

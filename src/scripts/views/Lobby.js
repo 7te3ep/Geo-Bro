@@ -34,6 +34,7 @@ export class Lobby {
       this.getEl("copyToClipboardBtn").addEventListener('click',()=>{
          copyToClipboard(this.lobbyID)
       })
+      await this.server.onDisconnectRemove(`lobbys/${this.lobbyID}/players/${this.authUser.uid}`)
    }
 
    async findLobby() {

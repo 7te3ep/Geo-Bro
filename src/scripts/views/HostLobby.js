@@ -40,6 +40,9 @@ export class HostLobby {
       this.getEl("copyToClipboardBtn").addEventListener('click',()=>{
          copyToClipboard(this.lobbyID)
       })
+
+      await this.server.onDisconnectRemove(`lobbys/${this.lobbyID}`)
+      await this.server.onDisconnectRemove(`hosts/${this.authUser.uid}`)
    }
 
    async updatePlayerList(){

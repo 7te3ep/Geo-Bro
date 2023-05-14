@@ -20,13 +20,8 @@ export class Gbro {
       this.authUser = await this.server.authenthicate();
       await this.updateUserUi();
       await this.loadView(this.route["/dashboard"]);
+      await this.server.userPresenceHandler(this.authUser,()=>{this.currentView.quit()})
       this.loader(false);
-   
-      window.onbeforeunload = async (event)=>{
-         event.preventDefault()
-         await this.currentView.quit()
-         return null
-      }
    }
 
    async initLinks() {

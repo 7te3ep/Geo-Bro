@@ -1,5 +1,5 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js";
-import {getDatabase,ref,push,onValue,remove,get,off,set,update } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js";
+import {getDatabase,ref,push,onValue,remove,get,off,set,update , onDisconnect } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js";
 import {GoogleAuthProvider,getAuth,signInWithRedirect,getRedirectResult,onAuthStateChanged, signOut} from "https://www.gstatic.com/firebasejs/9.15.0/firebase-auth.js";
 import { firebaseConfig } from "./serverConfig.js";
 export class Server {
@@ -27,6 +27,7 @@ export class Server {
    }
    
    async getData(path) {
+      console.log(path);
       var snapshot =  await get(ref(this.db,path))
       if (snapshot.exists()) return snapshot.val()
       else return null
@@ -62,6 +63,7 @@ export class Server {
    }
 
    async exeOnChange(path,func){
+      console.log(path,func)
       await onValue(ref(this.db,path),await func);
    }
 
@@ -121,6 +123,22 @@ export class Server {
       }
       await set(lobbyPlayersRef,playersInLobby);
       return true
+   }
+
+   async onDisconnectRemove(path) {
+      const valuePath = ref(this.db, path)
+      await onValue(valuePath,async (snap) => {
+         if (!snap.exists()) return
+         await onDisconnect(valuePath).remove();
+      })
+   }
+
+   async userPresenceHandler(user){
+      const userStatus = ref(this.db,`users/${user.uid}/data/status`)
+      await onValue(userStatus,async (snap) => {
+         await onDisconnect(userStatus).set(false);
+         await set(userStatus, true);
+       });
    }
 
    signOut(){

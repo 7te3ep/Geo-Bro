@@ -13,8 +13,8 @@ export class DashBoard {
       const userData = (await this.server.getData(`users/${this.authUser.uid}`)).data
       this.elements.userLevel.innerHTML = userData.level
       this.elements.expBar.style.width = `${userData.exp}%`
-      this.updateNewsGallery()
-      this.updateShopGallery()
+      await this.updateNewsGallery()
+      await this.updateShopGallery()
    }
 
    async init() {
@@ -23,7 +23,9 @@ export class DashBoard {
          this.elements["expBar"] = this.getEl('expBar')
          this.elements["newsGallery"] = this.getEl('newsGallery')
          this.elements["packGallery"] = this.getEl('packGallery')
-   }
+         
+         await this.server.exeOnChange("news",()=>{this.update()})
+      }
 
    async quit() {
       

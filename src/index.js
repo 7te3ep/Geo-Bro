@@ -28,4 +28,3 @@ const geoBro = new Gbro(
 );
 
 geoBro.init()
-
