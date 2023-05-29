@@ -1,3 +1,10 @@
+svg {
+   left: 0px;
+   top: 0px;
+   position: absolute;
+   z-index: 1;
+}
+
 .container {
    display: flex;
    flex-wrap: wrap;

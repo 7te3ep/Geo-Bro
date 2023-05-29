@@ -19,9 +19,10 @@ export class Lobby {
 
    async updateOnValue() {
       const hasBeenKicked = await this.server.getData(`lobbys/${this.lobbyID}/players/${this.authUser.uid}`)
+      const gameStarted = await this.server.getData(`lobbys/${this.lobbyID}/game/started`)
       if (!hasBeenKicked) return this.getEl('navGames').click()
-      await this.updatePlayerList()
-      
+      else if (gameStarted) this.elements.gameLaunch.click() 
+      else await this.updatePlayerList()
    }
 
    async init() {
@@ -30,6 +31,7 @@ export class Lobby {
       await this.server.exeOnChange(`lobbys/${this.lobbyID}`,()=>{return this.updateOnValue()})
       this.elements["playersList"] = this.getEl("playersList")
       this.elements["lobbyId"] = this.getEl("lobbyId")
+      this.elements["gameLaunch"] = this.getEl("gameLaunch")
       
       this.getEl("copyToClipboardBtn").addEventListener('click',()=>{
          copyToClipboard(this.lobbyID)

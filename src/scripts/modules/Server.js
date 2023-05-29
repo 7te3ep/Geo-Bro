@@ -27,7 +27,6 @@ export class Server {
    }
    
    async getData(path) {
-      console.log(path);
       var snapshot =  await get(ref(this.db,path))
       if (snapshot.exists()) return snapshot.val()
       else return null
@@ -63,7 +62,6 @@ export class Server {
    }
 
    async exeOnChange(path,func){
-      console.log(path,func)
       await onValue(ref(this.db,path),await func);
    }
 

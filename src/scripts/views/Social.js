@@ -25,7 +25,7 @@ export class Social {
       for (let friend of userFriends) {
          const friendUID = friend[0]
          const friendData = friend[1]
-         const friendToShow = `<div class="card rounded light row"><span id="friendName">${friendData.name}</span><div class="btn good">Duel</div><div class="btn bad delFriendBtn" id="${friendUID}">X</div></div>`
+         const friendToShow = `<div class="card rounded light row"><span id="friendName">${friendData.name}</span><div class="btn bad delFriendBtn" id="${friendUID}">X</div></div>`
          this.elements.friendList.innerHTML += friendToShow
       }
 
@@ -45,7 +45,7 @@ export class Social {
       this.elements["userID"] = this.getEl("userID")
       this.elements["friendList"] = this.getEl("friendList")
       this.elements["copyToClipboardBtn"] = this.getEl("copyToClipboardBtn")
-      
+      this.elements["navSocial"] = this.getEl("navSocial")
       this.elements.copyToClipboardBtn.addEventListener("click",()=>{
          copyToClipboard(this.elements.userID.innerHTML)
       })
@@ -57,5 +57,6 @@ export class Social {
       })
    }
    async quit() {  
+      await this.server.stopExeOnChange("hosts")
    }
 }

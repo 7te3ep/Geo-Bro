@@ -34,7 +34,7 @@ export class Gbro {
             event.preventDefault();
             const path = link.getAttribute("href")
             if (path){
-               await this.currentView.quit();
+               if (path != "/country") await this.currentView.quit();
                this.loadView(this.route[path]);
             } 
          });
