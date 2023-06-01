@@ -1,7 +1,7 @@
 import { Gbro } from "./scripts/Gbro.js";
 import { Router } from "./scripts/modules/Router.js";
 import { Server } from "./scripts/modules/Server.js";
-import {DashBoard , Games , Social , Lobby , HostLobby, CountryGame } from "./scripts/View.js"
+import { DashBoard , Games , Social , Lobby , HostLobby, CountryGame } from "./scripts/View.js"
 
 let route = {
    "/dashboard": DashBoard,

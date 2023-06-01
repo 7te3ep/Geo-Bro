@@ -9,11 +9,12 @@ export class CountryGame {
       this.authUser = authUser
       this.isHost = false
       this.router = router
+      this.currentRound = 0
+      this.countries
    }
 
    async updateOnValue () {
       const gameExist = await this.server.getData(`lobbys/${this.lobbyID}`)
-      console.log(this.lobbyID);
       if (!gameExist) this.getEl('navGames').click()
    }
 
@@ -21,11 +22,31 @@ export class CountryGame {
 
    }
 
+   async round() {
+      this.elements.display.innerHTML =this.countries[this.currentRound]
+   }
+
+   async generateGameData() {
+      let countriesData = ( await ( await fetch('../assets/countries.geo.json') ).json() )
+      countriesData = countriesData.features.map( countrie => countrie.properties.name)
+      let pickedCoutries = []
+      for (let i = 0 ; i < 10; i++){
+         const randomIndexInArray = Math.round(Math.random()*countriesData.length)
+         pickedCoutries.push(countriesData[randomIndexInArray])
+      }
+      this.server.setData(`lobbys/${this.lobbyID}/game/countrys`,pickedCoutries)
+      
+   }
+
    async init() {
       await this.router.loadPage(this.link,this.path)
       await this.hostConnectToLobby()
       if (!this.isHost) await this.findLobby()
+      if (this.isHost) await this.generateGameData()
+      this.countries = (await this.server.getData(`lobbys/${this.lobbyID}/game/countrys`) )
       await this.server.exeOnChange(`lobbys/${this.lobbyID}`,()=>{return this.updateOnValue()})
+      this.elements["display"] = this.getEl("display")
+      await this.round()
       const width = window.innerWidth
       const height = window.innerHeight
 
@@ -59,12 +80,20 @@ export class CountryGame {
           .attr('d', path)
           .style("fill", function(){return "rgb("+Math.random()*255+","+Math.random()*255+","+Math.random()*255+")"})
           .on("click",(e)=>{
-            pathClicked(e)
+            this.pathClicked(e)
           });
       });
 
    d3.select("svg").attr('id',"map").on("dblclick.zoom", null); // Désactive le zoom avec un double click               
    }
+
+   async pathClicked(e){
+      if (this.countries[this.currentRound] ==e.properties.name ){
+         alert("won")
+      } 
+      this.currentRound ++
+      this.round()
+  }
 
    async hostConnectToLobby() {
       const hostDataPath = `hosts/${this.authUser.uid}`

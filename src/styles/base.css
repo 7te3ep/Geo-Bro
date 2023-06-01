@@ -5,6 +5,11 @@ svg {
    z-index: 1;
 }
 
+#display {
+   position: relative;
+   z-index: 100;
+}
+
 .container {
    display: flex;
    flex-wrap: wrap;
