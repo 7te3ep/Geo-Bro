@@ -9,6 +9,7 @@ export class Lobby {
       this.server = server
       this.authUser = authUser
       this.router = router
+      this.quitted = false
       this.lobbyHostName
       this.lobbyID
    }
@@ -20,8 +21,12 @@ export class Lobby {
    async updateOnValue() {
       const hasBeenKicked = await this.server.getData(`lobbys/${this.lobbyID}/players/${this.authUser.uid}`)
       const gameStarted = await this.server.getData(`lobbys/${this.lobbyID}/game/started`)
+      console.log("Lobby Init",gameStarted);
       if (!hasBeenKicked) return this.getEl('navGames').click()
-      else if (gameStarted) this.elements.gameLaunch.click() 
+      else if (gameStarted && !this.quitted) {
+         this.elements.gameLaunch.click()
+         this.quitted = true
+      } 
       else await this.updatePlayerList()
    }
 

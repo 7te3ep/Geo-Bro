@@ -48,6 +48,7 @@ export class HostLobby {
    async updatePlayerList(){
       this.elements.playersList.innerHTML = " "
       const lobbyData = await this.server.getData(`lobbys/${this.lobbyID}`)
+      if (!lobbyData) return
       const players = Object.entries(lobbyData.players || {}) 
       for (let player of players){
          const playerData = player[1]

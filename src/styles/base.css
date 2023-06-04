@@ -1,13 +1,16 @@
 svg {
    left: 0px;
-   top: 0px;
+   bottom: 0px;
    position: absolute;
    z-index: 1;
 }
 
 #display {
+   color: #111;
    position: relative;
    z-index: 100;
+   font-weight: bolder;
+   font-size: 5vw;
 }
 
 .container {

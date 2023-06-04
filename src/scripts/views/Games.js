@@ -24,7 +24,7 @@ export class Games {
       this.elements.joinLobbyBtn.addEventListener('click',async ()=>{
          const lobbyId = this.elements.lobbyIdInput.value
          let lobbyExist = await this.server.getData(`lobbys/${lobbyId}`)
-         if (!lobbyExist) return
+         if (!lobbyExist || lobbyId == "") return
          await this.server.playerConnectToLobby(this.authUser , lobbyId )
          this.elements.joinLobbyBtn.href = "/lobby"
          if (!canConnect) this.elements.joinLobbyBtn.click()
