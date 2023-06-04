@@ -9,10 +9,30 @@ export class CountryGame {
       this.authUser = authUser
       this.isHost = false
       this.router = router
-      this.currentRound = 0
-      this.countries
+      this.currentRound
+      this.countries = []
       this.guess = ""
       this.score = 0
+   }
+
+   async init() {
+      await this.router.loadPage(this.link,this.path)
+      document.querySelectorAll(".scoreBoard").forEach((el)=>el.style.display = "none")
+      this.elements["display"] = this.getEl("display")
+      this.elements["nextRoundBtn"] = this.getEl("nextRoundBtn")
+      this.elements["playerList"] = this.getEl("playerList")
+      this.initMap()
+      await this.hostTryConnectToLobby()
+      if (!this.isHost) await this.findLobby()
+      await this.server.exeOnChange(`lobbys/${this.lobbyID}`,()=>{return this.updateOnValue()})
+      if (this.isHost){
+         await this.generateGameData()
+      }
+
+      this.elements.nextRoundBtn.addEventListener("click",async ()=>{
+         await this.server.setData(`lobbys/${this.lobbyID}/game/state`,"game")
+         await this.server.setData(`lobbys/${this.lobbyID}/game/round`,this.currentRound + 1)
+      })
    }
 
    async updateOnValue () {
@@ -21,32 +41,34 @@ export class CountryGame {
          this.getEl('navGames').click()
          return
       } 
-      if (this.isHost) return
-      if (gameData.game.round != this.currentRound) this.endRound()
-      if (gameData.game.started == true) this.hidePanelAndStartGame()
-   }
-
-   async update(){
-
+      const roundOnDb = gameData.game.round
+      if (roundOnDb != this.currentRound && roundOnDb != undefined){
+         if (this.countries[this.currentRound] == this.guess) this.score += 1 
+         this.currentRound = roundOnDb
+         await this.hideGamePanel()
+         this.startRound()
+      } 
+      const gameState = await this.server.getData(`lobbys/${this.lobbyID}/game/state`)
+      if (gameState == "pannel"){
+         this.showGamePanel()
+      }
    }
 
    async startRound() {
-      this.elements.display.innerHTML =this.countries[this.currentRound]
-      if (this.isHost) setTimeout(async()=> this.endRound(),7000)
+      this.countries = await this.server.getData(`lobbys/${this.lobbyID}/game/countries`)
+      this.elements.display.innerHTML = this.countries[this.currentRound]
+      if (this.isHost) setTimeout(async()=> this.endRound(),5000)
    }
 
    async endRound() {
-      if (this.countries[this.currentRound] == this.guess) this.score += 1 
-      this.currentRound ++ 
-      await this.server.setData(`lobbys/${this.lobbyID}/players/${this.authUser.uid}/score`,this.score)
-      if (this.isHost) await this.server.setData(`lobbys/${this.lobbyID}/game/round`,this.currentRound)
-      if (this.isHost) await this.server.setData(`lobbys/${this.lobbyID}/game/started`,false)
-      if (!this.isHost) this.currentRound = await this.server.getData(`lobbys/${this.lobbyID}/game/round`)
-      if  (this.currentRound % 3 == 0 ) await this.showGamePanel() 
-      else this.startRound()
+      if (this.isHost){
+         if (this.currentRound %  3 == 0 && this.currentRound != 0) await this.server.setData(`lobbys/${this.lobbyID}/game/state`,"pannel")
+         else await this.server.setData(`lobbys/${this.lobbyID}/game/round`,this.currentRound + 1)
+      } 
    }
 
    async showGamePanel() {
+      await this.server.setData(`lobbys/${this.lobbyID}/players/${this.authUser.uid}/score`,this.score)
       this.elements.display.innerHTML = ""
       document.querySelectorAll(".scoreBoard").forEach((el)=>el.style.display = "block")
       if (!this.isHost) this.elements.nextRoundBtn.style.display = "none"
@@ -60,11 +82,10 @@ export class CountryGame {
       })
    }
 
-   async hidePanelAndStartGame() {
+   async hideGamePanel() {
       document.querySelectorAll(".scoreBoard").forEach((el)=>el.style.display = "none")
       document.querySelector("svg").style.display = "block"
-      if (this.isHost) await this.server.setData(`lobbys/${this.lobbyID}/game/started`,true)
-      this.startRound()
+      
    }
 
    async generateGameData() {
@@ -75,34 +96,15 @@ export class CountryGame {
          const randomIndexInArray = Math.round(Math.random()*(countriesData.length-1))
          pickedCoutries.push(countriesData[randomIndexInArray])
       }
-      await this.server.setData(`lobbys/${this.lobbyID}/game/countrys`,pickedCoutries)
-      await this.server.setData(`lobbys/${this.lobbyID}/game/round`,this.currentRound)
-   }
-
-   async init() {
-      await this.router.loadPage(this.link,this.path)
-      document.querySelectorAll(".scoreBoard").forEach((el)=>el.style.display = "none")
-      await this.hostConnectToLobby()
-      if (!this.isHost) await this.findLobby()
-      if (this.isHost) await this.generateGameData()
-      await this.server.exeOnChange(`lobbys/${this.lobbyID}`,()=>{return this.updateOnValue()})
-      this.elements["display"] = this.getEl("display")
-      this.elements["nextRoundBtn"] = this.getEl("nextRoundBtn")
-      this.elements["playerList"] = this.getEl("playerList")
-      this.initMap()
-      this.countries = (await this.server.getData(`lobbys/${this.lobbyID}/game/countrys`) )
-      await this.startRound()
-
-      this.elements.nextRoundBtn.addEventListener("click",()=>{
-         this.hidePanelAndStartGame()
-      })
+      await this.server.setData(`lobbys/${this.lobbyID}/game/countries`,pickedCoutries)
+      await this.server.setData(`lobbys/${this.lobbyID}/game/round`,0)
    }
 
    async pathClicked(e){
       this.guess = e.properties.name
   }
 
-   async hostConnectToLobby() {
+   async hostTryConnectToLobby() {
       const hostDataPath = `hosts/${this.authUser.uid}`
       const hostData = await this.server.getData(hostDataPath)
       if (!hostData) return
@@ -128,6 +130,10 @@ export class CountryGame {
       if (!playersOnLobby) return
       delete playersOnLobby[playerUid]
       this.server.setData(`lobbys/${this.lobbyID}/players`, playersOnLobby)
+   }
+
+   async update(){
+
    }
 
    async quit() {
