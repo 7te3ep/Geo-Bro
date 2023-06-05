@@ -18,6 +18,7 @@ export class CountryGame {
    async init() {
       await this.router.loadPage(this.link,this.path)
       document.querySelectorAll(".scoreBoard").forEach((el)=>el.style.display = "none")
+      this.getEl("content").style.paddingTop = "2vh"
       this.elements["display"] = this.getEl("display")
       this.elements["nextRoundBtn"] = this.getEl("nextRoundBtn")
       this.elements["playerList"] = this.getEl("playerList")
@@ -137,6 +138,7 @@ export class CountryGame {
    }
 
    async quit() {
+      this.getEl("content").style.paddingTop = "10vh"
       if (this.isHost) {
          this.isHost = false
          this.server.stopExeOnChange(`lobbys/${this.lobbyID}`)

@@ -18,7 +18,6 @@ export class Gbro {
    async init() {
       this.loader(true);
       this.authUser = await this.server.authenthicate();
-      await this.updateUserUi();
       await this.loadView(this.route["/dashboard"]);
       await this.server.userPresenceHandler(this.authUser,()=>{this.currentView.quit()})
       this.loader(false);
@@ -40,10 +39,6 @@ export class Gbro {
          });
 
       });
-   
-      this.getEl("logo").addEventListener("click", () => {
-         this.server.signOut();
-      });
    }
 
    async loadView(view) {
@@ -53,12 +48,5 @@ export class Gbro {
       await this.initLinks();
       await this.currentView.update();
       this.loader(false);
-   }
-
-   async updateUserUi() {
-      const userData = await this.server.getData(`users/${this.authUser.uid}`);
-      this.ui.userCoins.innerHTML = userData.data.coins;
-      this.ui.userName.innerHTML = this.authUser.displayName;
-      this.ui.userImg.src = this.authUser.photoURL;
    }
 }
