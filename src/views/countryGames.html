@@ -1,7 +1,13 @@
-<div class="container rounded dark">First player</div>
-<div id="display" style="padding-top: 10vh;" class="center"></div>
-<div id="nextRoundBtn" class="btn good rounded scoreBoard">Next Round</div>
+<div class="row centered rounded game">
+   <div class="tag rounded light game"><p id="first" class="playerScore">1. player</p> <p class="playerScore" id="second">2. player</p> <p class="playerScore" id="third">3. player</p></div>
+   <div class="tag rounded light game"><p style="font-size: 15px;" id="score">0pt</p> <p id="streak">⚫⚫⚫</p></div>
+</div>
+
+<div id="display" class="center title game"></div>
 <div id="scoreBoard" class="container rounded dark scoreBoard">
    <div class="title">ScoreBoard</div>
    <div id="playerList" class="gallery"></div>
+</div>
+<div class="game" id="skipButton" style="padding: 10px; background-color:#2d2a32; width:fit-content; border-radius: 10px; position: absolute; bottom :11vh; right: 4vw; z-index: 1000;">
+   <i style="font-size: 50px; color: #d9d9d9;" class="fa-solid fa-forward"></i>
 </div>

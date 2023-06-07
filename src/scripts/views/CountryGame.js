@@ -9,10 +9,11 @@ export class CountryGame {
       this.authUser = authUser
       this.isHost = false
       this.router = router
-      this.currentRound
       this.countries = []
-      this.guess = ""
+      this.gameState = "idling"
+      this.round = 0
       this.score = 0
+      this.streak = 0
    }
 
    async init() {
@@ -20,8 +21,13 @@ export class CountryGame {
       document.querySelectorAll(".scoreBoard").forEach((el)=>el.style.display = "none")
       this.getEl("content").style.paddingTop = "2vh"
       this.elements["display"] = this.getEl("display")
-      this.elements["nextRoundBtn"] = this.getEl("nextRoundBtn")
       this.elements["playerList"] = this.getEl("playerList")
+      this.elements["score"] = this.getEl("score")
+      this.elements["streak"] = this.getEl("streak")
+      this.elements["first"] = this.getEl("first")
+      this.elements["second"] = this.getEl("second")
+      this.elements["third"] = this.getEl("third")
+      this.elements["skipButton"] = this.getEl("skipButton")
       this.initMap()
       await this.hostTryConnectToLobby()
       if (!this.isHost) await this.findLobby()
@@ -30,9 +36,8 @@ export class CountryGame {
          await this.generateGameData()
       }
 
-      this.elements.nextRoundBtn.addEventListener("click",async ()=>{
-         await this.server.setData(`lobbys/${this.lobbyID}/game/state`,"game")
-         await this.server.setData(`lobbys/${this.lobbyID}/game/round`,this.currentRound + 1)
+      this.elements.skipButton.addEventListener('click',()=>{
+         this.nextTurn(true)
       })
    }
 
@@ -42,38 +47,29 @@ export class CountryGame {
          this.getEl('navGames').click()
          return
       } 
-      const roundOnDb = gameData.game.round
-      if (roundOnDb != this.currentRound && roundOnDb != undefined){
-         if (this.countries[this.currentRound] == this.guess) this.score += 1 
-         this.currentRound = roundOnDb
-         await this.hideGamePanel()
-         this.startRound()
-      } 
-      const gameState = await this.server.getData(`lobbys/${this.lobbyID}/game/state`)
-      if (gameState == "pannel"){
-         this.showGamePanel()
+
+      if (gameData.game.state != this.gameState) {
+         if (gameData.game.state == "playing") this.startGame()
+         if (gameData.game.state == "ended") this.endGame()
       }
+      const players = Object.values(gameData.players).sort(function(a, b) {return b.score - a.score ;});
+      console.log(players.map((el)=>el.score+" "+el.name));
+      this.elements.first.innerHTML = players[0]  ?  "1." + players[0].name  :  "" 
+      this.elements.second.innerHTML = players[1] ? "2." + players[1].name  :  "" 
+      this.elements.third.innerHTML = players[2]  ? "3." + players[2].name  :  ""
    }
 
-   async startRound() {
-      this.countries = await this.server.getData(`lobbys/${this.lobbyID}/game/countries`)
-      this.elements.display.innerHTML = this.countries[this.currentRound]
-      if (this.isHost) setTimeout(async()=> this.endRound(),5000)
+   async startGame () {
+      if (this.isHost) setTimeout(async ()=> await this.server.setData(`lobbys/${this.lobbyID}/game/state`,"ended"),60000)
+      const gameData =  await this.server.getData(`lobbys/${this.lobbyID}/game`)
+      this.countries = gameData.countries
+      this.elements.display.innerHTML = this.countries[this.round]
    }
 
-   async endRound() {
-      if (this.isHost){
-         if (this.currentRound %  3 == 0 && this.currentRound != 0) await this.server.setData(`lobbys/${this.lobbyID}/game/state`,"pannel")
-         else await this.server.setData(`lobbys/${this.lobbyID}/game/round`,this.currentRound + 1)
-      } 
-   }
-
-   async showGamePanel() {
-      await this.server.setData(`lobbys/${this.lobbyID}/players/${this.authUser.uid}/score`,this.score)
-      this.elements.display.innerHTML = ""
-      document.querySelectorAll(".scoreBoard").forEach((el)=>el.style.display = "block")
-      if (!this.isHost) this.elements.nextRoundBtn.style.display = "none"
+   async endGame () {
       document.querySelector("svg").style.display = "none"
+      document.querySelectorAll('.game').forEach((el)=>el.style.display = "none")
+      document.querySelectorAll('.scoreBoard').forEach((el)=>el.style.display = "flex")
       var players = Object.values(await this.server.getData(`lobbys/${this.lobbyID}/players`))
       players = players.sort((a,b)=>b.score-a.score)
       this.elements.playerList.innerHTML = ""
@@ -81,28 +77,37 @@ export class CountryGame {
          const playerToShow = `<div class="card rounded light row"><span id="playerName">${player.name}</span><span id="playerScore">Score : ${player.score}</span></div>`
          this.elements.playerList.innerHTML += playerToShow
       })
+
    }
 
-   async hideGamePanel() {
-      document.querySelectorAll(".scoreBoard").forEach((el)=>el.style.display = "none")
-      document.querySelector("svg").style.display = "block"
-      
+   async nextTurn(skip) {
+      if (this.countries.length == this.round + 1) return this.endGame()
+      if (!skip) this.score += 1 + this.streak
+      this.round += 1
+      if (this.streak < 3 && !skip) this.streak += 1
+      this.elements.streak.innerHTML = "🔥".repeat(this.streak) + "⚫".repeat(3-this.streak)
+      this.elements.display.innerHTML = this.countries[this.round]
+      this.elements.score.innerHTML = this.score + "pt"
+      await this.server.setData(`lobbys/${this.lobbyID}/players/${this.authUser.uid}/score`,this.score)
    }
 
    async generateGameData() {
       let countriesData = ( await ( await fetch('../assets/countries.geo.json') ).json() )
+      console.log(countriesData);
       countriesData = countriesData.features.map( countrie => countrie.properties.name)
       let pickedCoutries = []
-      for (let i = 0 ; i < 30; i++){
+      for (let i = 0 ; i < 15; i++){
          const randomIndexInArray = Math.round(Math.random()*(countriesData.length-1))
          pickedCoutries.push(countriesData[randomIndexInArray])
       }
       await this.server.setData(`lobbys/${this.lobbyID}/game/countries`,pickedCoutries)
-      await this.server.setData(`lobbys/${this.lobbyID}/game/round`,0)
+      await this.server.setData(`lobbys/${this.lobbyID}/game/state`,"playing")
    }
 
    async pathClicked(e){
-      this.guess = e.properties.name
+      if (this.countries[this.round] ==  e.properties.name) return this.nextTurn(false)
+      this.streak = 0
+      this.elements.streak.innerHTML = "🔥".repeat(this.streak) + "⚫".repeat(3-this.streak)
   }
 
    async hostTryConnectToLobby() {
