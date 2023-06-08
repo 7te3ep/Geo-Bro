@@ -53,14 +53,14 @@ export class CountryGame {
          if (gameData.game.state == "ended") this.endGame()
       }
       const players = Object.values(gameData.players).sort(function(a, b) {return b.score - a.score ;});
-      console.log(players.map((el)=>el.score+" "+el.name));
-      this.elements.first.innerHTML = players[0]  ?  "1." + players[0].name  :  "" 
+      this.elements.first.innerHTML = players[0]  ? "1." + players[0].name  :  "" 
       this.elements.second.innerHTML = players[1] ? "2." + players[1].name  :  "" 
       this.elements.third.innerHTML = players[2]  ? "3." + players[2].name  :  ""
+      if (this.countries.length -1 == this.round) await this.upadteScoreBoard()
    }
 
    async startGame () {
-      if (this.isHost) setTimeout(async ()=> await this.server.setData(`lobbys/${this.lobbyID}/game/state`,"ended"),60000)
+      if (this.isHost) setTimeout(async ()=>  await this.server.setData(`lobbys/${this.lobbyID}/game/state`,"ended"),60000)
       const gameData =  await this.server.getData(`lobbys/${this.lobbyID}/game`)
       this.countries = gameData.countries
       this.elements.display.innerHTML = this.countries[this.round]
@@ -70,6 +70,10 @@ export class CountryGame {
       document.querySelector("svg").style.display = "none"
       document.querySelectorAll('.game').forEach((el)=>el.style.display = "none")
       document.querySelectorAll('.scoreBoard').forEach((el)=>el.style.display = "flex")
+      await this.upadteScoreBoard()
+   }
+
+   async upadteScoreBoard() {
       var players = Object.values(await this.server.getData(`lobbys/${this.lobbyID}/players`))
       players = players.sort((a,b)=>b.score-a.score)
       this.elements.playerList.innerHTML = ""
@@ -77,12 +81,12 @@ export class CountryGame {
          const playerToShow = `<div class="card rounded light row"><span id="playerName">${player.name}</span><span id="playerScore">Score : ${player.score}</span></div>`
          this.elements.playerList.innerHTML += playerToShow
       })
-
    }
 
    async nextTurn(skip) {
       if (this.countries.length == this.round + 1) return this.endGame()
       if (!skip) this.score += 1 + this.streak
+      else this.streak = 0
       this.round += 1
       if (this.streak < 3 && !skip) this.streak += 1
       this.elements.streak.innerHTML = "🔥".repeat(this.streak) + "⚫".repeat(3-this.streak)
@@ -99,6 +103,7 @@ export class CountryGame {
       for (let i = 0 ; i < 15; i++){
          const randomIndexInArray = Math.round(Math.random()*(countriesData.length-1))
          pickedCoutries.push(countriesData[randomIndexInArray])
+         countriesData.slice(randomIndexInArray)
       }
       await this.server.setData(`lobbys/${this.lobbyID}/game/countries`,pickedCoutries)
       await this.server.setData(`lobbys/${this.lobbyID}/game/state`,"playing")
