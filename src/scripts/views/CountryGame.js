@@ -10,6 +10,7 @@ export class CountryGame {
       this.isHost = false
       this.router = router
       this.countries = []
+      this.gameParam 
       this.gameState = "idling"
       this.round = 0
       this.score = 0
@@ -32,6 +33,8 @@ export class CountryGame {
       await this.hostTryConnectToLobby()
       if (!this.isHost) await this.findLobby()
       await this.server.exeOnChange(`lobbys/${this.lobbyID}`,()=>{return this.updateOnValue()})
+
+      this.gameParam = await this.server.getData(`lobbys/${this.lobbyID}/param`)
       if (this.isHost){
          await this.generateGameData()
       }
@@ -60,7 +63,7 @@ export class CountryGame {
    }
 
    async startGame () {
-      if (this.isHost) setTimeout(async ()=>  await this.server.setData(`lobbys/${this.lobbyID}/game/state`,"ended"),60000)
+      if (this.isHost) setTimeout(async ()=>  await this.server.setData(`lobbys/${this.lobbyID}/game/state`,"ended"),this.gameParam.time * 1000)
       const gameData =  await this.server.getData(`lobbys/${this.lobbyID}/game`)
       this.countries = gameData.countries
       this.elements.display.innerHTML = this.countries[this.round]
@@ -78,7 +81,7 @@ export class CountryGame {
       players = players.sort((a,b)=>b.score-a.score)
       this.elements.playerList.innerHTML = ""
       players.forEach((player)=>{
-         const playerToShow = `<div class="card rounded light row"><span id="playerName">${player.name}</span><span id="playerScore">Score : ${player.score}</span></div>`
+         const playerToShow = `<div class="card rounded light row"><span id="playerName">${player.name}</span><span id="playerScore">Score : ${player.score ? player.score : 0 }</span></div>`
          this.elements.playerList.innerHTML += playerToShow
       })
    }
@@ -97,10 +100,9 @@ export class CountryGame {
 
    async generateGameData() {
       let countriesData = ( await ( await fetch('../assets/countries.geo.json') ).json() )
-      console.log(countriesData);
       countriesData = countriesData.features.map( countrie => countrie.properties.name)
       let pickedCoutries = []
-      for (let i = 0 ; i < 15; i++){
+      for (let i = 0 ; i < this.gameParam.len; i++){
          const randomIndexInArray = Math.round(Math.random()*(countriesData.length-1))
          pickedCoutries.push(countriesData[randomIndexInArray])
          countriesData.slice(randomIndexInArray)

@@ -9,6 +9,17 @@
    <div class="container electricBlue rounded">
       Host : <span id="lobbyHostName"></span>
    </div>
+   <div class="container electricBlue rounded">
+      <div class="title">Parameters</div>
+      <div class="container light rounded">
+         <div id="gameLenDisplay" class="row">Nombre de pays : </div>
+         <input id="gameLenRange" type="range" min="1" max="100" value="20" step="1">
+      </div>
+      <div class="container light rounded">
+         <div id="timeDisplay" class="row">Temps Maximal : </div>
+         <input id="timeRange" type="range" min="10" max="600" value="60" step="10">
+      </div>
+   </div>
    <div class="container light rounded">
       <div class="title">Players :</div>
       <div id="playersList" class="gallery">

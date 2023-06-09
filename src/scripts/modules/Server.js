@@ -101,6 +101,10 @@ export class Server {
             players:{},
             game:{
                started:false,
+            },
+            param : {
+               time:60,
+               len:20,
             }
       });
       await set(ref(this.db, `hosts/${host.uid}`), {

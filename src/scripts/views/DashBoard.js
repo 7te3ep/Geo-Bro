@@ -14,7 +14,6 @@ export class DashBoard {
       this.elements.userLevel.innerHTML = userData.level
       this.elements.expBar.style.width = `${userData.exp}%`
       await this.updateNewsGallery()
-      await this.updateShopGallery()
    }
 
    async init() {
@@ -22,8 +21,8 @@ export class DashBoard {
          this.elements["userLevel"] = this.getEl('userLevel')
          this.elements["expBar"] = this.getEl('expBar')
          this.elements["newsGallery"] = this.getEl('newsGallery')
-         this.elements["packGallery"] = this.getEl('packGallery')
-         
+         this.elements["userInfo"] = this.getEl('userInfo')
+         this.elements.userInfo.innerHTML = `<img class="userImg" src="${this.authUser.photoURL}"> <p id="playerName">${this.authUser.displayName}</p>`
          await this.server.exeOnChange("news",()=>{this.update()})
       }
 
@@ -40,20 +39,6 @@ export class DashBoard {
          const newsContent = news[1]
          const newsToShow = `<div class="container rounded electricBlue row"><p class="title">${newsTitle}</p><p>${newsContent}</p></div>`
          this.elements.newsGallery.innerHTML += newsToShow
-      }
-   }
-
-   async updateShopGallery(){
-      const packsOnDb = await this.server.getData("shopPacks")
-      const packList = Object.entries(packsOnDb || {} )  
-      this.elements.packGallery.innerHTML = ""
-      for (let pack of packList) {
-         const packName = pack[0]
-         const packType = pack[1].type
-         const packArea = pack[1].area
-         const packPrice = pack[1].price
-         const packToShow = `<div class="card rounded dark"><p class="title">${packName}</p><p>Area: ${packArea}</p><p>Type:  ${packType}</p><p> ${packPrice}</p></div>`
-         this.elements.packGallery.innerHTML += packToShow
       }
    }
 }

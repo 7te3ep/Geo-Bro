@@ -57,6 +57,8 @@ body {
       rgba(69, 197, 215, 1) 31%,
       rgba(112, 151, 185, 1) 100%
    );
+   background-repeat: no-repeat;
+   background-size: cover;
 }
 
 i, a {

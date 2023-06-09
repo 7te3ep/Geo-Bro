@@ -18,8 +18,17 @@ export class HostLobby {
       this.elements.lobbyHostName.innerHTML = this.lobbyHostName
    }
 
+   async updateParameters(len,time){
+      this.elements.timeRange.value = time
+      this.elements.timeDisplay.innerHTML = "Temps de la partie : " + time + "sec"
+      this.elements.gameLenRange.value = len
+      this.elements.gameLenDisplay.innerHTML = "Nombre de pays a trouver : " + len
+   }
+
    async updateOnValue() {
       await this.updatePlayerList()
+      const gameParam = await this.server.getData(`lobbys/${this.lobbyID}/param`)
+      await this.updateParameters(gameParam.len,gameParam.time)
    }
 
    async init() {
@@ -34,11 +43,22 @@ export class HostLobby {
       this.elements["lobbyId"] = this.getEl("lobbyId")
       this.elements["lobbyHostName"] = this.getEl("lobbyHostName")
       this.elements["playersList"] = this.getEl("playersList")
+      this.elements["gameLenRange"] = this.getEl("gameLenRange")
+      this.elements["gameLenDisplay"] = this.getEl("gameLenDisplay")
+      this.elements["timeRange"] = this.getEl("timeRange")
+      this.elements["timeDisplay"] = this.getEl("timeDisplay")
       await this.server.playerConnectToLobby(this.authUser, this.lobbyID)
       await this.server.exeOnChange(`lobbys/${this.lobbyID}`,()=>{this.updateOnValue()})
 
       this.getEl("copyToClipboardBtn").addEventListener('click',()=>{
          copyToClipboard(this.lobbyID)
+      })
+
+      this.elements.timeRange.addEventListener("input",async (event) => {
+         await this.server.setData(`lobbys/${this.lobbyID}/param/time`,this.elements.timeRange.value)
+      })
+      this.elements.gameLenRange.addEventListener("input",async (event) => {
+         await this.server.setData(`lobbys/${this.lobbyID}/param/len`,this.elements.gameLenRange.value)
       })
 
       await this.server.onDisconnectRemove(`lobbys/${this.lobbyID}`)
