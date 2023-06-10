@@ -15,6 +15,7 @@ export class CountryGame {
       this.round = 0
       this.score = 0
       this.streak = 0
+      this.time = 100
    }
 
    async init() {
@@ -29,6 +30,7 @@ export class CountryGame {
       this.elements["second"] = this.getEl("second")
       this.elements["third"] = this.getEl("third")
       this.elements["skipButton"] = this.getEl("skipButton")
+      this.elements["timeDisplay"] = this.getEl("timeDisplay")
       this.initMap()
       await this.hostTryConnectToLobby()
       if (!this.isHost) await this.findLobby()
@@ -64,6 +66,12 @@ export class CountryGame {
 
    async startGame () {
       if (this.isHost) setTimeout(async ()=>  await this.server.setData(`lobbys/${this.lobbyID}/game/state`,"ended"),this.gameParam.time * 1000)
+      const reduceTimeDisplay = setInterval(async ()=>{
+         this.time -= 1
+         this.elements.timeDisplay.style.width = this.time + "%"
+      },this.gameParam.time * 1000 / 100)
+      if (this.time <= 0) clearInterval(reduceTimeDisplay)
+      
       const gameData =  await this.server.getData(`lobbys/${this.lobbyID}/game`)
       this.countries = gameData.countries
       this.elements.display.innerHTML = this.countries[this.round]
@@ -199,10 +207,11 @@ export class CountryGame {
           .attr("stroke", "black") 
           .attr("stroke-width", "0.1px") 
           .attr('d', path)
-          .style("fill", "rgb(194, 255, 236)")
+          .style("fill", "rgb(255, 255, 209)")
           .on("click",function(e){
-            g.selectAll('.country').style("fill", "rgb(194, 255, 236)")
-            d3.select(this).style("fill","rgb(0, 255, 162)")
+            console.log(e)
+            g.selectAll('.country').style("fill", "rgb(255, 255, 209)")
+            d3.select(this).style("fill","rgb(145, 145, 31)")
             classThis.pathClicked(e)
           })
       });
