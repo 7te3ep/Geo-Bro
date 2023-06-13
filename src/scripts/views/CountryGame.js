@@ -107,7 +107,7 @@ export class CountryGame {
    }
 
    async generateGameData() {
-      let countriesData = ( await ( await fetch('../assets/countries.geo.json') ).json() )
+      let countriesData = ( await ( await fetch('../assets/countriesFR.geo.json') ).json() )
       countriesData = countriesData.features.map( countrie => countrie.properties.name)
       let pickedCoutries = []
       for (let i = 0 ; i < this.gameParam.len; i++){
@@ -197,7 +197,7 @@ export class CountryGame {
 
       const g = svg.append('g');
       const classThis = this
-      d3.json('../assets/countries.geo.json')
+      d3.json('../assets/countriesFR.geo.json')
       .then(world => {
         g.selectAll('.country')
           .data(world.features)
