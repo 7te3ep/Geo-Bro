@@ -75,7 +75,7 @@ export class HostLobby {
          let isHost = false
          if (player[0] == this.authUser.uid) isHost = true
          const deleteBtn = isHost ? "" : `<div class="btn rounded bad kickBtn" id="${player[0]}" >Kick</div>`
-         const playerEl = `<div class="card electricBlue rounded row"><div class="row"><img class="userImg" src="${playerData.img}"><p>${playerData.name}</p></div>`+deleteBtn+`</div>`
+         const playerEl = `<div class="card electricBlue rounded row"><div class="row"><img alt="profile image of user" class="userImg" src="${playerData.img}"><p>${playerData.name}</p></div>`+deleteBtn+`</div>`
          this.elements.playersList.innerHTML += playerEl
       }
 

@@ -61,7 +61,7 @@ export class Lobby {
       const lobbyData = await this.server.getData(`lobbys/${this.lobbyID}`)
       const players = Object.values(lobbyData.players || {}) 
       for (let player of players){
-         const playerEl = `<div class="card electricBlue rounded "><div class="row"><img class="userImg" src="${player.img}"><p>${player.name}</p></div></div>`
+         const playerEl = `<div class="card electricBlue rounded "><div class="row"><img alt="profile image of user" class="userImg" src="${player.img}"><p>${player.name}</p></div></div>`
          this.elements.playersList.innerHTML += playerEl
       }
    }
