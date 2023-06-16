@@ -64,7 +64,10 @@ export class CountryGame {
    }
 
    async startGame () {
-      if (this.isHost) setTimeout(async ()=>  await this.server.setData(`lobbys/${this.lobbyID}/game/state`,"ended"),this.gameParam.time * 1000)
+      if (this.isHost) setTimeout(async function () {
+         if (await this.server.getData(`lobbys/${this.lobbyID}`)) await this.server.setData(`lobbys/${this.lobbyID}/game/state`,"ended")
+      } ,this.gameParam.time * 1000)
+
       const reduceTimeDisplay = setInterval(async ()=>{
          this.time -= 1
          this.elements.timeDisplay.style.width = this.time + "%"
@@ -208,7 +211,6 @@ export class CountryGame {
           .attr('d', path)
           .style("fill", "rgb(255, 255, 209)")
           .on("click",function(e){
-            console.log(e)
             g.selectAll('.country').style("fill", "rgb(255, 255, 209)")
             d3.select(this).style("fill","rgb(145, 145, 31)")
             classThis.pathClicked(e)

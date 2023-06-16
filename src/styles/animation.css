@@ -1,10 +1,8 @@
 @keyframes opa {
    0% {
-      margin-bottom: 10vh;
       opacity: 0%;
    }
    100% {
-      margin-bottom:initial;
       opacity: 100%;
    }
 }
