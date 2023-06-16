@@ -1112,27 +1112,6 @@
    },
    {
       "type": "Feature",
-      "id": "ATF",
-      "properties": { "name": "Terres australes et antarctiques françaises" },
-      "geometry": {
-         "type": "Polygon",
-         "coordinates": [
-            [
-               [68.935, -48.625],
-               [69.58, -48.94],
-               [70.525, -49.065],
-               [70.56, -49.255],
-               [70.28, -49.71],
-               [68.745, -49.775],
-               [68.72, -49.2425],
-               [68.8675, -48.83],
-               [68.935, -48.625]
-            ]
-         ]
-      }
-   },
-   {
-      "type": "Feature",
       "id": "AUS",
       "properties": { "name": "Australie" },
       "geometry": {
@@ -1393,7 +1372,7 @@
    {
       "type": "Feature",
       "id": "AUT",
-      "properties": { "name": "L'Autriche" },
+      "properties": { "name": "Autriche" },
       "geometry": {
          "type": "Polygon",
          "coordinates": [
@@ -1732,7 +1711,7 @@
    {
       "type": "Feature",
       "id": "BHS",
-      "properties": { "name": "Les Bahamas" },
+      "properties": { "name": "Bahamas" },
       "geometry": {
          "type": "MultiPolygon",
          "coordinates": [
@@ -4396,7 +4375,7 @@
    {
       "type": "Feature",
       "id": "CZE",
-      "properties": { "name": "République tchèque" },
+      "properties": { "name": "Tchèquie" },
       "geometry": {
          "type": "Polygon",
          "coordinates": [
@@ -5090,7 +5069,7 @@
    {
       "type": "Feature",
       "id": "FLK",
-      "properties": { "name": "les îles Falkland" },
+      "properties": { "name": "Îles Malouines" },
       "geometry": {
          "type": "Polygon",
          "coordinates": [
@@ -6565,7 +6544,7 @@
    {
       "type": "Feature",
       "id": "IRN",
-      "properties": { "name": "L'Iran" },
+      "properties": { "name": "Iran" },
       "geometry": {
          "type": "Polygon",
          "coordinates": [
@@ -6893,7 +6872,7 @@
    {
       "type": "Feature",
       "id": "JOR",
-      "properties": { "name": "Jordan" },
+      "properties": { "name": "Jordanie" },
       "geometry": {
          "type": "Polygon",
          "coordinates": [
@@ -11142,7 +11121,7 @@
    {
       "type": "Feature",
       "id": "SLV",
-      "properties": { "name": "Le sauveur" },
+      "properties": { "name": "El Salvador" },
       "geometry": {
          "type": "Polygon",
          "coordinates": [
@@ -12067,7 +12046,7 @@
    {
       "type": "Feature",
       "id": "TZA",
-      "properties": { "name": "République-Unie de Tanzanie" },
+      "properties": { "name": "Tanzanie" },
       "geometry": {
          "type": "Polygon",
          "coordinates": [
@@ -13059,7 +13038,7 @@
    {
       "type": "Feature",
       "id": "PSE",
-      "properties": { "name": "banque de l'Ouest" },
+      "properties": { "name": "Palestine" },
       "geometry": {
          "type": "Polygon",
          "coordinates": [
