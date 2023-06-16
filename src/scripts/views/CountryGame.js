@@ -16,6 +16,7 @@ export class CountryGame {
       this.score = 0
       this.streak = 0
       this.time = 100
+      this.timer = ""
    }
 
    async init() {
@@ -64,15 +65,13 @@ export class CountryGame {
    }
 
    async startGame () {
-      if (this.isHost) setTimeout(async function () {
-         if (await this.server.getData(`lobbys/${this.lobbyID}`)) await this.server.setData(`lobbys/${this.lobbyID}/game/state`,"ended")
-      } ,this.gameParam.time * 1000)
-
-      const reduceTimeDisplay = setInterval(async ()=>{
+      if (this.isHost) setTimeout(async ()=> await this.server.setData(`lobbys/${this.lobbyID}/game/state`,"ended"),this.gameParam.time * 1000)
+      clearInterval(this.timer)
+      this.timer  = setInterval(async ()=>{
          this.time -= 1
          this.elements.timeDisplay.style.width = this.time + "%"
       },this.gameParam.time * 1000 / 100)
-      if (this.time <= 0) clearInterval(reduceTimeDisplay)
+      if (this.time <= 0) clearInterval(this.timer)
       
       const gameData =  await this.server.getData(`lobbys/${this.lobbyID}/game`)
       this.countries = gameData.countries
@@ -115,14 +114,29 @@ export class CountryGame {
       for (let i = 0 ; i < this.gameParam.len; i++){
          const randomIndexInArray = Math.round(Math.random()*(countriesData.length-1))
          pickedCoutries.push(countriesData[randomIndexInArray])
-         countriesData.slice(randomIndexInArray)
+         countriesData.splice(randomIndexInArray, 1)
       }
       await this.server.setData(`lobbys/${this.lobbyID}/game/countries`,pickedCoutries)
       await this.server.setData(`lobbys/${this.lobbyID}/game/state`,"playing")
    }
 
    async pathClicked(e){
-      if (this.countries[this.round] ==  e.properties.name) return this.nextTurn(false)
+      if (this.countries[this.round] ==  e.properties.name){
+         document.getElementById("valid").classList.remove("emojiGoOut")
+         document.getElementById("valid").classList.add("emojiEnter")
+         setTimeout(()=>{
+            document.getElementById("valid").classList.remove("emojiEnter")
+            document.getElementById("valid").classList.add("emojiGoOut")
+         },500)
+         return this.nextTurn(false)
+      } 
+
+      document.getElementById("invalid").classList.remove("emojiGoOut")
+      document.getElementById("invalid").classList.add("emojiEnter")
+      setTimeout(()=>{
+         document.getElementById("invalid").classList.remove("emojiEnter")
+         document.getElementById("invalid").classList.add("emojiGoOut")
+      },500)
       this.streak = 0
       this.elements.streak.innerHTML = "🔥".repeat(this.streak) + "⚫".repeat(3-this.streak)
   }
@@ -160,6 +174,7 @@ export class CountryGame {
    }
 
    async quit() {
+      clearInterval(this.timer)
       this.getEl("content").style.paddingTop = "10vh"
       if (this.isHost) {
          this.isHost = false
@@ -212,7 +227,7 @@ export class CountryGame {
           .style("fill", "rgb(255, 255, 209)")
           .on("click",function(e){
             g.selectAll('.country').style("fill", "rgb(255, 255, 209)")
-            d3.select(this).style("fill","rgb(145, 145, 31)")
+            d3.select(this).style("fill","rgb(107, 107, 87)")
             classThis.pathClicked(e)
           })
       });

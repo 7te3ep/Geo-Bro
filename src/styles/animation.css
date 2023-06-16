@@ -36,3 +36,49 @@
    animation-duration: 1s;
    animation-fill-mode: forwards;
 }
+
+@keyframes emojiEnter {
+   0%{
+      transform:translate(-100vw,30vw);
+      -webkit-transform:translate(-100vw,30vw);
+      -moz-transform:translate(-100vw,30vw);
+      -ms-transform:translate(-100vw,30vw);
+      -o-transform:translate(-100vw,30vw);
+}
+   100% {
+      transform:translate(30vw,30vw);
+      -webkit-transform:translate(30vw,30vw);
+      -moz-transform:translate(30vw,30vw);
+      -ms-transform:translate(30vw,30vw);
+      -o-transform:translate(30vw,30vw);
+}
+}
+
+@keyframes emojiGoOut{
+   0%{
+      transform:translate(30vw,30vw) ;
+      -webkit-transform:translate(30vw,30vw) ;
+      -moz-transform:translate(30vw,30vw) ;
+      -ms-transform:translate(30vw,30vw) ;
+      -o-transform:translate(30vw,30vw) ;
+} 
+   100%{
+      transform:translate(-100vw,30vw);
+      -webkit-transform:translate(-100vw,30vw);
+      -moz-transform:translate(-100vw,30vw);
+      -ms-transform:translate(-100vw,30vw);
+      -o-transform:translate(-100vw,30vw);
+}
+}
+
+.emojiEnter {
+   animation-name: emojiEnter;
+   animation-duration: 0.5s;
+   animation-fill-mode: forwards;
+}
+
+.emojiGoOut {
+   animation-name: emojiGoOut;
+   animation-duration: 0.5s;
+   animation-fill-mode: forwards;
+}
