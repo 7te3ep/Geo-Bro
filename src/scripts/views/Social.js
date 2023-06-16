@@ -46,6 +46,7 @@ export class Social {
       this.elements["friendList"] = this.getEl("friendList")
       this.elements["copyToClipboardBtn"] = this.getEl("copyToClipboardBtn")
       this.elements["navSocial"] = this.getEl("navSocial")
+      
       this.elements.copyToClipboardBtn.addEventListener("click",()=>{
          copyToClipboard(this.elements.userID.innerHTML)
       })
@@ -56,6 +57,7 @@ export class Social {
          await this.update()
       })
    }
+
    async quit() {  
       await this.server.stopExeOnChange("hosts")
    }

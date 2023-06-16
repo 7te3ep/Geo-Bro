@@ -17,17 +17,17 @@ export class DashBoard {
    }
 
    async init() {
-         await this.router.loadPage(this.link,this.path)
-         this.elements["userLevel"] = this.getEl('userLevel')
-         this.elements["expBar"] = this.getEl('expBar')
-         this.elements["newsGallery"] = this.getEl('newsGallery')
-         this.elements["userInfo"] = this.getEl('userInfo')
-         this.elements.userInfo.innerHTML = `<img alt="profile image of user" class="userImg" src="${this.authUser.photoURL}"> <p id="playerName">${this.authUser.displayName}</p>`
-         await this.server.exeOnChange("news",()=>{this.update()})
-      }
+      await this.router.loadPage(this.link,this.path)
+      this.elements["userLevel"] = this.getEl('userLevel')
+      this.elements["expBar"] = this.getEl('expBar')
+      this.elements["newsGallery"] = this.getEl('newsGallery')
+      this.elements["userInfo"] = this.getEl('userInfo')
+      this.elements.userInfo.innerHTML = `<img alt="profile image of user" class="userImg" src="${this.authUser.photoURL}"> <p id="playerName">${this.authUser.displayName}</p>`
+      
+      await this.server.exeOnChange("news",()=>{this.update()})
+   }
 
    async quit() {
-      
    }
 
    async updateNewsGallery(){

@@ -35,7 +35,6 @@ export class CountryGame {
       await this.hostTryConnectToLobby()
       if (!this.isHost) await this.findLobby()
       await this.server.exeOnChange(`lobbys/${this.lobbyID}`,()=>{return this.updateOnValue()})
-
       this.gameParam = await this.server.getData(`lobbys/${this.lobbyID}/param`)
       if (this.isHost){
          await this.generateGameData()

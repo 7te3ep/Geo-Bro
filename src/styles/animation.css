@@ -1,0 +1,40 @@
+@keyframes opa {
+   0% {
+      margin-bottom: 10vh;
+      opacity: 0%;
+   }
+   100% {
+      margin-bottom:initial;
+      opacity: 100%;
+   }
+}
+
+.opacityTrans {
+   animation-name: opa;
+   animation-duration: 0.75s;
+   animation-timing-function: ease;
+   animation-fill-mode: forwards;
+}
+
+
+@keyframes left {
+   0%{left: -100vw;}
+   100% {left: -5px}
+}
+
+@keyframes right {
+   0%{right: -100vw;}
+   100% {right: -5px}
+}
+
+.leftTrans {
+   animation-name: left;
+   animation-duration: 1s;
+   animation-fill-mode: forwards;
+}
+
+.rightTrans {
+   animation-name: right;
+   animation-duration: 1s;
+   animation-fill-mode: forwards;
+}

@@ -33,7 +33,6 @@ export class HostLobby {
 
    async init() {
       await this.router.loadPage(this.link,this.path)
-   
       await this.server.newLobbyOnDb(this.authUser)
       const hostDataPath = `hosts/${this.authUser.uid}`
       const hostData = await this.server.getData(hostDataPath)
@@ -47,6 +46,7 @@ export class HostLobby {
       this.elements["gameLenDisplay"] = this.getEl("gameLenDisplay")
       this.elements["timeRange"] = this.getEl("timeRange")
       this.elements["timeDisplay"] = this.getEl("timeDisplay")
+
       await this.server.playerConnectToLobby(this.authUser, this.lobbyID)
       await this.server.exeOnChange(`lobbys/${this.lobbyID}`,()=>{this.updateOnValue()})
 

@@ -19,7 +19,7 @@ export class Games {
       this.elements["lobbyIdInput"] = this.getEl("lobbyIdInput")
       this.elements["joinLobbyBtn"] = this.getEl("joinLobbyBtn")
       this.elements["createLobbyBtn"] = this.getEl("createLobbyBtn")
-
+      
       let canConnect = false
       this.elements.joinLobbyBtn.addEventListener('click',async ()=>{
          const lobbyId = this.elements.lobbyIdInput.value
@@ -33,6 +33,6 @@ export class Games {
    }
 
    async quit() {
-      
+
    }
 }

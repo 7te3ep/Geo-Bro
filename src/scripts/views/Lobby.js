@@ -37,7 +37,7 @@ export class Lobby {
       this.elements["playersList"] = this.getEl("playersList")
       this.elements["lobbyId"] = this.getEl("lobbyId")
       this.elements["gameLaunch"] = this.getEl("gameLaunch")
-      
+
       this.getEl("copyToClipboardBtn").addEventListener('click',()=>{
          copyToClipboard(this.lobbyID)
       })
