@@ -108,7 +108,7 @@ export class CountryGame {
    }
 
    async generateGameData() {
-      let countriesData = ( await ( await fetch('../assets/countriesFR.geo.json') ).json() )
+      let countriesData = ( await ( await fetch('../assets/countriesFR_optimized.geojson') ).json() )
       countriesData = countriesData.features.map( countrie => countrie.properties.name)
       let pickedCoutries = []
       for (let i = 0 ; i < this.gameParam.len; i++){
@@ -214,7 +214,7 @@ export class CountryGame {
 
       const g = svg.append('g');
       const classThis = this
-      d3.json('../assets/countriesFR.geo.json')
+      d3.json('../assets/countriesFR_optimized.geojson')
       .then(world => {
         g.selectAll('.country')
           .data(world.features)
@@ -232,10 +232,6 @@ export class CountryGame {
           })
       });
       d3.select("svg").on("dblclick.zoom", null); 
-      var myimage = svg.append('image')
-       .attr('xlink:href', '../assets/pointer.png')
-       .attr('x', 500)
       svg.call(zoom);         
-      myimage.call(zoom); 
    }
 }
