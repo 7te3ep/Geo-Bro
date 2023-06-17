@@ -35,15 +35,25 @@ export class CountryGame {
       this.initMap()
       await this.hostTryConnectToLobby()
       if (!this.isHost) await this.findLobby()
-      await this.server.exeOnChange(`lobbys/${this.lobbyID}`,()=>{return this.updateOnValue()})
       this.gameParam = await this.server.getData(`lobbys/${this.lobbyID}/param`)
+      await this.server.exeOnChange(`lobbys/${this.lobbyID}`,()=>{return this.updateOnValue()})
       if (this.isHost){
          await this.generateGameData()
       }
 
       this.elements.skipButton.addEventListener('click',()=>{
+         this.eventAppear("skipped")
          this.nextTurn(true)
       })
+   }
+
+   async eventAppear(id) {
+      document.getElementById(id).classList.remove("emojiGoOut")
+      document.getElementById(id).classList.add("emojiEnter")
+      setTimeout(()=>{
+         document.getElementById(id).classList.remove("emojiEnter")
+         document.getElementById(id).classList.add("emojiGoOut")
+      },500)
    }
 
    async updateOnValue () {
@@ -122,21 +132,11 @@ export class CountryGame {
 
    async pathClicked(e){
       if (this.countries[this.round] ==  e.properties.name){
-         document.getElementById("valid").classList.remove("emojiGoOut")
-         document.getElementById("valid").classList.add("emojiEnter")
-         setTimeout(()=>{
-            document.getElementById("valid").classList.remove("emojiEnter")
-            document.getElementById("valid").classList.add("emojiGoOut")
-         },500)
+         this.eventAppear("valid")
          return this.nextTurn(false)
       } 
 
-      document.getElementById("invalid").classList.remove("emojiGoOut")
-      document.getElementById("invalid").classList.add("emojiEnter")
-      setTimeout(()=>{
-         document.getElementById("invalid").classList.remove("emojiEnter")
-         document.getElementById("invalid").classList.add("emojiGoOut")
-      },500)
+      this.eventAppear("invalid")
       this.streak = 0
       this.elements.streak.innerHTML = "🔥".repeat(this.streak) + "⚫".repeat(3-this.streak)
   }
