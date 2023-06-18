@@ -17,6 +17,7 @@ export class CountryGame {
       this.streak = 0
       this.time = 100
       this.timer = ""
+      this.map = "monde.geojson"
    }
 
    async init() {
@@ -32,10 +33,13 @@ export class CountryGame {
       this.elements["third"] = this.getEl("third")
       this.elements["skipButton"] = this.getEl("skipButton")
       this.elements["timeDisplay"] = this.getEl("timeDisplay")
-      this.initMap()
       await this.hostTryConnectToLobby()
       if (!this.isHost) await this.findLobby()
+   
       this.gameParam = await this.server.getData(`lobbys/${this.lobbyID}/param`)
+      if (this.gameParam.map == "us") this.map = "us.geojson"
+      this.initMap()
+   
       await this.server.exeOnChange(`lobbys/${this.lobbyID}`,()=>{return this.updateOnValue()})
       if (this.isHost){
          await this.generateGameData()
@@ -118,7 +122,7 @@ export class CountryGame {
    }
 
    async generateGameData() {
-      let countriesData = ( await ( await fetch('../assets/countriesFR_optimized.geojson') ).json() )
+      let countriesData = ( await ( await fetch(`../assets/${this.map}`) ).json() )
       countriesData = countriesData.features.map( countrie => countrie.properties.name)
       let pickedCoutries = []
       for (let i = 0 ; i < this.gameParam.len; i++){
@@ -194,10 +198,18 @@ export class CountryGame {
    async initMap(){
       const width = window.innerWidth
       const height = window.innerHeight
+      var transX = 2
+      var transY = 2
+      var mapScale = 6
+      if (this.map == "us.geojson"){
+         transX = 0.7
+         transY = 1.5
+         mapScale = 2
+      }
 
       const projection = d3.geoMercator()
-        .translate([width / 2, height / 2])
-        .scale(width/6);
+        .translate([width / transX, height / transY])
+        .scale(width/mapScale);
 
       const path = d3.geoPath()
         .projection(projection);
@@ -209,12 +221,12 @@ export class CountryGame {
 
       const svg = d3.select('#content')
          .append('svg')
-         .attr('width', width)
-         .attr('height', height);
+         .attr('width', "100%")
+         .attr('height', "100%");
 
-      const g = svg.append('g');
+      const g = svg.append('g')
       const classThis = this
-      d3.json('../assets/countriesFR_optimized.geojson')
+      d3.json(`../assets/${this.map}`)
       .then(world => {
         g.selectAll('.country')
           .data(world.features)

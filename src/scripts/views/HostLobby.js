@@ -46,6 +46,7 @@ export class HostLobby {
       this.elements["gameLenDisplay"] = this.getEl("gameLenDisplay")
       this.elements["timeRange"] = this.getEl("timeRange")
       this.elements["timeDisplay"] = this.getEl("timeDisplay")
+      this.elements["mapSelect"] = this.getEl("mapSelect")
 
       await this.server.playerConnectToLobby(this.authUser, this.lobbyID)
       await this.server.exeOnChange(`lobbys/${this.lobbyID}`,()=>{this.updateOnValue()})
@@ -59,6 +60,10 @@ export class HostLobby {
       })
       this.elements.gameLenRange.addEventListener("input",async (event) => {
          await this.server.setData(`lobbys/${this.lobbyID}/param/len`,this.elements.gameLenRange.value)
+      })
+      this.elements.mapSelect.onchange = ("input",async (event) => {
+         console.log("feur")
+         await this.server.setData(`lobbys/${this.lobbyID}/param/map`,this.elements.mapSelect.value)
       })
 
       await this.server.onDisconnectRemove(`lobbys/${this.lobbyID}`)

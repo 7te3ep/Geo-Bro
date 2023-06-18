@@ -105,6 +105,7 @@ export class Server {
             param : {
                time:60,
                len:20,
+               map:"monde"
             }
       });
       await set(ref(this.db, `hosts/${host.uid}`), {
