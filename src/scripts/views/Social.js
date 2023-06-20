@@ -44,6 +44,9 @@ export class Social {
 
    async init() {
       await this.router.loadPage(this.link,this.path)
+      document.querySelectorAll(".navIcon").forEach(icon=>icon.classList.remove("iconFocus"))
+      this.getEl("socialIcon").classList.add("iconFocus")
+
       this.elements["addFriendInput"] = this.getEl("addFriendInput")
       this.elements["addFriendBtn"] = this.getEl("addFriendBtn")
       this.elements["userID"] = this.getEl("userID")

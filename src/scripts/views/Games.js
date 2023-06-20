@@ -15,6 +15,8 @@ export class Games {
 
    async init() {
       await this.router.loadPage(this.link,this.path)
+      document.querySelectorAll(".navIcon").forEach(icon=>icon.classList.remove("iconFocus"))
+      this.getEl("gamesIcon").classList.add("iconFocus")
 
       this.elements["lobbyIdInput"] = this.getEl("lobbyIdInput")
       this.elements["joinLobbyBtn"] = this.getEl("joinLobbyBtn")
@@ -48,7 +50,7 @@ export class Games {
       lobbys.forEach(lobby => {
          const lobbyId = lobby[0]
          const lobbyName = lobby[1].param.lobbyName
-         this.elements.lobbysGallery.innerHTML += `<div class="card rounded electricBlue row"><span id="lobbyName" class="title">${lobbyName}</span><a class="btn good joinPublicLobbyBtn" id="${lobbyId}">Rejoindre</a></div>`
+         this.elements.lobbysGallery.innerHTML += `<div class="card rounded electricBlue row"><span id="lobbyName" class="title">${lobbyName}</span><a class="btn good joinPublicLobbyBtn" id="${lobbyId}"><i class="fa-solid fa-right-to-bracket"></i></a></div>`
       });
 
       document.querySelectorAll(".joinPublicLobbyBtn").forEach((joinBtn)=>{

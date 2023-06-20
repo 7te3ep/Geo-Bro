@@ -1,22 +1,22 @@
-<div class="title">Select</div>
+<div class="title">Jouer</div>
 <div class="container  light rounded">
-   <div class="title">Join Lobby</div>
+   <div class="title">Rejoindre une partie</div>
    <div class="row">
-      <input class="rounded" id="lobbyIdInput" placeholder="Lobby ID" type="text">
-      <a aria-label="Join a lobby" id="joinLobbyBtn" class="btn good rounded">Check</a>
+      <input class="rounded" id="lobbyIdInput" maxlength="6" placeholder="ID de la partie" type="text">
+      <a aria-label="Join a lobby" id="joinLobbyBtn" class="btn good rounded"><i class="fa-solid fa-right-to-bracket"></i></a>
    </div>
 </div>
 
 
 <div class="container  light rounded">
    <div class="row">
-      <div class="title">Create Lobby</div>
-      <a aria-label="Create a lobby" class="btn good rounded" href="/hostLobby" id="createLobbyBtn">Create</a>
+      <div class="title">Créer une partie</div>
+      <a aria-label="Create a lobby" class="btn good rounded" href="/hostLobby" id="createLobbyBtn">Créer</a>
    </div>
 </div>
 
 <div class="container rounded light">
-   <div class="title">Lobby Publics</div>
+   <div class="title">Parties Publics</div>
    <div id="lobbysGallery" class="scrollable rounded">
    </div>
 </div>

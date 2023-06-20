@@ -18,6 +18,9 @@ export class DashBoard {
 
    async init() {
       await this.router.loadPage(this.link,this.path)
+      document.querySelectorAll(".navIcon").forEach(icon=>icon.classList.remove("iconFocus"))
+      this.getEl("dashboardIcon").classList.add("iconFocus")
+
       this.elements["userLevel"] = this.getEl('userLevel')
       this.elements["expBar"] = this.getEl('expBar')
       this.elements["newsGallery"] = this.getEl('newsGallery')
