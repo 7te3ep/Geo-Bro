@@ -11,24 +11,27 @@ export class HostLobby {
       this.router = router
       this.lobbyHostName
       this.lobbyID
+      this.gameParam
    }
 
    async update() {
       this.elements.lobbyId.innerHTML = this.lobbyID
       this.elements.lobbyHostName.innerHTML = this.lobbyHostName
+      this.elements.lobbyName.innerHTML = this.gameParam.lobbyName
    }
 
-   async updateParameters(len,time){
+   async updateParameters(len,time,visibility){
       this.elements.timeRange.value = time
       this.elements.timeDisplay.innerHTML = "Temps de la partie : " + time + "sec"
       this.elements.gameLenRange.value = len
       this.elements.gameLenDisplay.innerHTML = "Nombre de pays a trouver : " + len
+      this.elements.visibilityDisplay.innerHTML = `Visibilité : ${visibility}`
    }
 
    async updateOnValue() {
       await this.updatePlayerList()
-      const gameParam = await this.server.getData(`lobbys/${this.lobbyID}/param`)
-      await this.updateParameters(gameParam.len,gameParam.time)
+      this.gameParam = await this.server.getData(`lobbys/${this.lobbyID}/param`)
+      await this.updateParameters(this.gameParam.len,this.gameParam.time,this.gameParam.visibility)
    }
 
    async init() {
@@ -38,6 +41,7 @@ export class HostLobby {
       const hostData = await this.server.getData(hostDataPath)
       this.lobbyHostName = hostData.name
       this.lobbyID = hostData.id
+      this.gameParam = await this.server.getData(`lobbys/${this.lobbyID}/param`)
 
       this.elements["lobbyId"] = this.getEl("lobbyId")
       this.elements["lobbyHostName"] = this.getEl("lobbyHostName")
@@ -47,12 +51,22 @@ export class HostLobby {
       this.elements["timeRange"] = this.getEl("timeRange")
       this.elements["timeDisplay"] = this.getEl("timeDisplay")
       this.elements["mapSelect"] = this.getEl("mapSelect")
-   
+      this.elements["visibilityDisplay"] = this.getEl("visibilityDisplay")
+      this.elements["visibilityCheckBox"] = document.querySelector("input[name=checkbox]");
+      this.elements["lobbyName"] = this.getEl("lobbyName")
+
+      const viewReference = this
+
       await this.server.exeOnChange(`lobbys/${this.lobbyID}`,()=>{this.updateOnValue()})
 
       this.getEl("copyToClipboardBtn").addEventListener('click',()=>{
          copyToClipboard(this.lobbyID)
       })
+
+      this.elements.visibilityCheckBox.addEventListener('change',async function () {
+         if (this.checked) await viewReference.server.setData(`lobbys/${viewReference.lobbyID}/param/visibility`,"public")
+         else await viewReference.server.setData(`lobbys/${viewReference.lobbyID}/param/visibility`,"private")
+      });
 
       this.elements.timeRange.addEventListener("input",async (event) => {
          await this.server.setData(`lobbys/${this.lobbyID}/param/time`,this.elements.timeRange.value)

@@ -19,6 +19,7 @@ export class Games {
       this.elements["lobbyIdInput"] = this.getEl("lobbyIdInput")
       this.elements["joinLobbyBtn"] = this.getEl("joinLobbyBtn")
       this.elements["createLobbyBtn"] = this.getEl("createLobbyBtn")
+      this.elements["lobbysGallery"] = this.getEl("lobbysGallery")
       
       let canConnect = false
       this.elements.joinLobbyBtn.addEventListener('click',async ()=>{
@@ -29,6 +30,34 @@ export class Games {
          this.elements.joinLobbyBtn.href = "/lobby"
          if (!canConnect) this.elements.joinLobbyBtn.click()
          canConnect = true
+      })
+
+      this.server.exeOnChange("lobbys",async ()=>{
+         let publicLobbys = Object.entries(await this.server.getData("lobbys") || {})
+         publicLobbys = publicLobbys.filter((lobby)=>lobby[1].param.visibility == "public")
+         await this.updateLobbysGallery(publicLobbys)
+      })
+   }
+
+   async updateLobbysGallery(lobbys) {
+      this.elements.lobbysGallery.innerHTML = ""
+      if (lobbys.length == 0) {
+         this.elements.lobbysGallery.innerHTML = "<div class='title'>Aucun pour le moment !</div>"
+         return
+      }
+      lobbys.forEach(lobby => {
+         const lobbyId = lobby[0]
+         const lobbyName = lobby[1].param.lobbyName
+         this.elements.lobbysGallery.innerHTML += `<div class="card rounded electricBlue row"><span id="lobbyName" class="title">${lobbyName}</span><a class="btn good joinPublicLobbyBtn" id="${lobbyId}">Rejoindre</a></div>`
+      });
+
+      document.querySelectorAll(".joinPublicLobbyBtn").forEach((joinBtn)=>{
+         joinBtn.addEventListener("click",async ()=>{
+            await this.server.stopExeOnChange("lobbys")
+            await this.server.playerConnectToLobby(this.authUser , joinBtn.id )
+            this.elements.joinLobbyBtn.href = "/lobby"
+            this.elements.joinLobbyBtn.click()
+         })
       })
    }
 

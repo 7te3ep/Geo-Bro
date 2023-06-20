@@ -16,6 +16,7 @@ export class Lobby {
 
    async update() {
       this.elements.lobbyId.innerHTML = this.lobbyID
+      this.elements.lobbyName.innerHTML = await this.server.getData(`lobbys/${this.lobbyID}/param/lobbyName`)
    }
 
    async updateOnValue() {
@@ -36,6 +37,7 @@ export class Lobby {
       this.elements["playersList"] = this.getEl("playersList")
       this.elements["lobbyId"] = this.getEl("lobbyId")
       this.elements["gameLaunch"] = this.getEl("gameLaunch")
+      this.elements["lobbyName"] = this.getEl("lobbyName")
 
       this.getEl("copyToClipboardBtn").addEventListener('click',()=>{
          copyToClipboard(this.lobbyID)

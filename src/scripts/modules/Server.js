@@ -2,6 +2,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/9.15.0/firebas
 import {getDatabase,ref,push,onValue,remove,get,off,set,update , onDisconnect } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js";
 import {GoogleAuthProvider,getAuth,signInWithRedirect,getRedirectResult,onAuthStateChanged, signOut} from "https://www.gstatic.com/firebasejs/9.15.0/firebase-auth.js";
 import { firebaseConfig } from "./serverConfig.js";
+import { lobbyNames } from "./../../assets/lobbyNames.js"
 export class Server {
    constructor() {
       this.app = initializeApp(firebaseConfig);
@@ -97,6 +98,7 @@ export class Server {
 
    async newLobbyOnDb(host){
       const lobbyId = parseInt(Math.ceil(Math.random() * Date.now()).toPrecision(6).toString().replace(".", ""))
+      const lobbyName = lobbyNames[Math.round(Math.random()*lobbyNames.length)];
       await set(ref(this.db, `lobbys/${lobbyId}`), {
             players:{
                [host.uid] : {
@@ -108,9 +110,11 @@ export class Server {
                started:false,
             },
             param : {
+               lobbyName:lobbyName,
                time:60,
                len:20,
-               map:"monde"
+               map:"monde",
+               visibility:"private"
             }
       });
       await set(ref(this.db, `hosts/${host.uid}`), {

@@ -20,7 +20,11 @@ export class Social {
 
    async updateFriendsList () {
       const userData = (await this.server.getData(`users/${this.authUser.uid}`)).data
-      const userFriends = Object.entries(userData.friends || {} )  
+      const userFriends = Object.entries(userData.friends || [] ) 
+      if (userFriends.length == 0) {
+         this.elements.friendList.innerHTML = "<div class'title'>Aucun amis, pour l'instant !</div>"
+         return 
+      }
       this.elements.friendList.innerHTML = ""
       for (let friend of userFriends) {
          const friendUID = friend[0]
