@@ -98,7 +98,12 @@ export class Server {
    async newLobbyOnDb(host){
       const lobbyId = parseInt(Math.ceil(Math.random() * Date.now()).toPrecision(6).toString().replace(".", ""))
       await set(ref(this.db, `lobbys/${lobbyId}`), {
-            players:{},
+            players:{
+               [host.uid] : {
+                  name:host.displayName,
+                  img: host.photoURL,
+               }
+            },
             game:{
                started:false,
             },

@@ -18,6 +18,8 @@ export class CountryGame {
       this.time = 100
       this.timer = ""
       this.map = "monde.geojson"
+      this.gameEndTimer
+      this.replay = false
    }
 
    async init() {
@@ -33,6 +35,8 @@ export class CountryGame {
       this.elements["third"] = this.getEl("third")
       this.elements["skipButton"] = this.getEl("skipButton")
       this.elements["timeDisplay"] = this.getEl("timeDisplay")
+      this.elements["replay"] = this.getEl("replay")
+      this.elements["joinLobbyBtn"] = this.getEl("joinLobbyBtn")
       await this.hostTryConnectToLobby()
       if (!this.isHost) await this.findLobby()
    
@@ -48,6 +52,10 @@ export class CountryGame {
       this.elements.skipButton.addEventListener('click',()=>{
          this.eventAppear("skipped")
          this.nextTurn(true)
+      })
+
+      this.elements.replay.addEventListener("click",()=>{
+         this.replay = true
       })
    }
 
@@ -68,8 +76,9 @@ export class CountryGame {
       } 
 
       if (gameData.game.state != this.gameState) {
-         if (gameData.game.state == "playing") this.startGame()
-         if (gameData.game.state == "ended") this.endGame()
+         if (gameData.game.state == "playing") await this.startGame()
+         if (gameData.game.state == "ended") await this.endGame()
+         if (gameData.game.state == "replay") await this.joinNextLobby()
       }
       const players = Object.values(gameData.players).sort(function(a, b) {return b.score - a.score ;});
       this.elements.first.innerHTML = players[0]  ? "1." + players[0].name  :  "" 
@@ -79,7 +88,7 @@ export class CountryGame {
    }
 
    async startGame () {
-      if (this.isHost) setTimeout(async ()=> await this.server.setData(`lobbys/${this.lobbyID}/game/state`,"ended"),this.gameParam.time * 1000)
+      if (this.isHost) this.gameEndTimer = setTimeout(async ()=> await this.server.setData(`lobbys/${this.lobbyID}/game/state`,"ended"),this.gameParam.time * 1000)
       clearInterval(this.timer)
       this.timer  = setInterval(async ()=>{
          this.time -= 1
@@ -95,7 +104,11 @@ export class CountryGame {
    async endGame () {
       document.querySelector("svg").style.display = "none"
       document.querySelectorAll('.game').forEach((el)=>el.style.display = "none")
-      document.querySelectorAll('.scoreBoard').forEach((el)=>el.style.display = "flex")
+      document.querySelectorAll('.scoreBoard').forEach((el)=>{
+            el.style.display = "flex"
+         }
+      )
+      if (!this.isHost) this.elements.replay.style.display = "none"
       await this.upadteScoreBoard()
    }
 
@@ -166,7 +179,7 @@ export class CountryGame {
       }
    }
    
-   async deletePlayerOfLobby(playerUid){
+   async deletePlayerOfLobby(playerUid) {
       let playersOnLobby = await this.server.getData(`lobbys/${this.lobbyID}/players`)
       if (!playersOnLobby) return
       delete playersOnLobby[playerUid]
@@ -177,12 +190,33 @@ export class CountryGame {
 
    }
 
+   async joinNextLobby() {
+      const nextGameHost = await this.server.getData(`lobbys/${this.lobbyID}/game/host`)
+      if (!nextGameHost) return
+      await this.server.exeOnChange("hosts",async ()=>{
+         const hosts = await this.server.getData('hosts') || {}
+         const lobbyCreated = Object.keys(hosts).includes(nextGameHost);
+         if (!lobbyCreated) return
+         const nextLobbyId = Object.values(await this.server.getData(`hosts/${nextGameHost}`))[0]
+         if (nextLobbyId == this.lobbyID) return
+         console.log(nextLobbyId)
+         await this.server.stopExeOnChange("hosts")
+         await this.server.playerConnectToLobby(this.authUser , nextLobbyId )
+         this.elements.joinLobbyBtn.href = "/lobby"
+         this.elements.joinLobbyBtn.click()
+      })
+   }
+
    async quit() {
       clearInterval(this.timer)
+      clearInterval(this.gameEndTimer)
       this.getEl("content").style.paddingTop = "10vh"
       if (this.isHost) {
          this.isHost = false
          this.server.stopExeOnChange(`lobbys/${this.lobbyID}`)
+         if (this.replay) await this.server.setData(`lobbys/${this.lobbyID}/game/state`, "replay")
+         if (this.replay) await this.server.setData(`lobbys/${this.lobbyID}/game/host`, this.authUser.uid)
+         //await new Promise(resolve => setTimeout(resolve, 5000));
          const lobbys = await this.server.getData("lobbys")
          const hosts = await this.server.getData("hosts")
          delete lobbys[this.lobbyID]

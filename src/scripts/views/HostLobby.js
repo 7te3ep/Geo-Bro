@@ -47,8 +47,7 @@ export class HostLobby {
       this.elements["timeRange"] = this.getEl("timeRange")
       this.elements["timeDisplay"] = this.getEl("timeDisplay")
       this.elements["mapSelect"] = this.getEl("mapSelect")
-
-      await this.server.playerConnectToLobby(this.authUser, this.lobbyID)
+   
       await this.server.exeOnChange(`lobbys/${this.lobbyID}`,()=>{this.updateOnValue()})
 
       this.getEl("copyToClipboardBtn").addEventListener('click',()=>{
@@ -62,7 +61,6 @@ export class HostLobby {
          await this.server.setData(`lobbys/${this.lobbyID}/param/len`,this.elements.gameLenRange.value)
       })
       this.elements.mapSelect.onchange = ("input",async (event) => {
-         console.log("feur")
          await this.server.setData(`lobbys/${this.lobbyID}/param/map`,this.elements.mapSelect.value)
       })
 

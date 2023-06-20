@@ -33,8 +33,10 @@ export class Gbro {
             event.preventDefault();
             const path = link.getAttribute("href")
             if (path){
+               this.loader(true);
                if (path != "/country") await this.currentView.quit();
                this.loadView(this.route[path]);
+               this.loader(false);
             } 
          });
 
@@ -42,11 +44,9 @@ export class Gbro {
    }
 
    async loadView(view) {
-      this.loader(true);
       this.currentView = new view(this.server, this.authUser, this.router);
       await this.currentView.init();
       await this.initLinks();
       await this.currentView.update();
-      this.loader(false);
    }
 }

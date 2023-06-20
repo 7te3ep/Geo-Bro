@@ -73,6 +73,7 @@ export class Lobby {
    }
 
    async quit() {
+      console.log("QUITTING LOBBY",this.lobbyID);
       this.server.stopExeOnChange(`lobbys/${this.lobbyID}`)
       await this.deletePlayerOfLobby(this.authUser.uid)
    }
