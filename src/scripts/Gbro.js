@@ -13,6 +13,12 @@ export class Gbro {
          await this.currentView.quit()
          await this.loadView(this.route[location.pathname]);
       };
+
+      window.oncontextmenu = function(event) {
+         event.preventDefault();
+         event.stopPropagation();
+         return false;
+    };
    }
 
    async init() {
@@ -20,6 +26,7 @@ export class Gbro {
       this.authUser = await this.server.authenthicate();
       await this.loadView(this.route["/dashboard"]);
       await this.server.userPresenceHandler(this.authUser,()=>{this.currentView.quit()})
+      await this.initSwipe()
       this.loader(false);
    }
 
@@ -48,7 +55,6 @@ export class Gbro {
       await this.currentView.init();
       await this.initLinks();
       await this.currentView.update();
-      await this.initSwipe()
    }
 
    async initSwipe(){
