@@ -71,8 +71,9 @@ export class CountryGame {
 
    async updateOnValue () {
       const gameData =  await this.server.getData(`lobbys/${this.lobbyID}`)
+      console.log(gameData,"gamedata");
       if (!gameData){
-         this.getEl('navGames').click()
+         if (!this.replay) this.getEl('navGames').click()
          return
       } 
 
@@ -194,13 +195,13 @@ export class CountryGame {
    async joinNextLobby() {
       const nextGameHost = await this.server.getData(`lobbys/${this.lobbyID}/game/host`)
       if (!nextGameHost) return
+      this.replay = true
       await this.server.exeOnChange("hosts",async ()=>{
          const hosts = await this.server.getData('hosts') || {}
          const lobbyCreated = Object.keys(hosts).includes(nextGameHost);
          if (!lobbyCreated) return
          const nextLobbyId = Object.values(await this.server.getData(`hosts/${nextGameHost}`))[0]
          if (nextLobbyId == this.lobbyID) return
-         console.log(nextLobbyId)
          await this.server.stopExeOnChange("hosts")
          await this.server.playerConnectToLobby(this.authUser , nextLobbyId )
          this.elements.joinLobbyBtn.href = "/lobby"
@@ -229,7 +230,7 @@ export class CountryGame {
          await this.server.setData("lobbys", lobbys)
          await this.server.setData("hosts", hosts)
       } else {
-         this.server.stopExeOnChange(`lobbys/${this.lobbyID}`)
+         await this.server.stopExeOnChange(`lobbys/${this.lobbyID}`)
          await this.deletePlayerOfLobby(this.authUser.uid)
       }
    }

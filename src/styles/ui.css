@@ -59,14 +59,29 @@ input[type=number] {
    background: rgb(185, 229, 235);
    background: linear-gradient(
       125deg,
-      rgba(185, 229, 235, 1) 0%,
-      rgba(69, 197, 215, 1) 31%,
-      rgba(112, 151, 185, 1) 100%
-   );
+    rgba(185, 229, 235, 1) 0%,
+    rgba(69, 197, 215, 1) 31%,      
+    rgba(112, 151, 185, 1) 100%   
+    );
    background-repeat: no-repeat;
    background-size: cover;
    height:-webkit-fill-available;
    width: 100vw;
+   background-size: 400% 400%;
+   animation: gradient 2s ease infinite;
+   -webkit-animation: gradient 5s ease infinite;
+}
+
+@keyframes gradient {
+   0% {
+       background-position: 0% 50%;
+   }
+   50% {
+       background-position: 100% 50%;
+   }
+   100% {
+       background-position: 0% 50%;
+   }
 }
 
 body {

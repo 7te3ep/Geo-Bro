@@ -13,6 +13,7 @@ export class Lobby {
       this.quitted = false
       this.lobbyHostName
       this.lobbyID
+      this.gameParam
    }
 
    async update() {
@@ -28,7 +29,10 @@ export class Lobby {
          this.elements.gameLaunch.click()
          this.quitted = true
       } 
-      else await this.updatePlayerList()
+      else {
+         await this.updatePlayerList()
+         await this.updateGameParam()
+      }
    }
 
    async init() {
@@ -39,7 +43,11 @@ export class Lobby {
       this.elements["lobbyId"] = this.getEl("lobbyId")
       this.elements["gameLaunch"] = this.getEl("gameLaunch")
       this.elements["lobbyName"] = this.getEl("lobbyName")
-
+      this.elements["mapParam"] = this.getEl("mapParam")
+      this.elements["timeParam"] = this.getEl("timeParam")
+      this.elements["lenParam"] = this.getEl("lenParam")
+      this.gameParam = await this.server.getData(`lobbys/${this.lobbyID}/param`)
+      
       this.getEl("copyToClipboardBtn").addEventListener('click',()=>{
          copyToClipboard(this.lobbyID)
       })
@@ -68,6 +76,13 @@ export class Lobby {
       }
    }
 
+   async updateGameParam(){
+      this.gameParam = await this.server.getData(`lobbys/${this.lobbyID}/param`)
+      this.elements.mapParam.innerHTML = `Carte : ${this.gameParam.map}`
+      this.elements.timeParam.innerHTML = `Temps : ${this.gameParam.time}sec`
+      this.elements.lenParam.innerHTML = `Nombre de pays : ${this.gameParam.len}`
+   }
+
    async deletePlayerOfLobby(playerUid){
       let playersOnLobby = await this.server.getData(`lobbys/${this.lobbyID}/players`)
       if (!playersOnLobby) return
@@ -76,7 +91,6 @@ export class Lobby {
    }
 
    async quit() {
-      console.log("QUITTING LOBBY",this.lobbyID);
       this.server.stopExeOnChange(`lobbys/${this.lobbyID}`)
       await this.deletePlayerOfLobby(this.authUser.uid)
    }

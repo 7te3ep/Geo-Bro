@@ -37,7 +37,6 @@ export class Gbro {
 
          if (hasClickEvent) return
          link.addEventListener("click",async (event)=>{
-            console.log("click on link")
             event.preventDefault();
             const path = link.getAttribute("href")
             if (path){
@@ -59,7 +58,6 @@ export class Gbro {
    }
 
    async initSwipe(){
-      if (this.currentView.layer != 1) return
       const classRef = this
       var xDown = null, yDown = null, xUp = null, yUp = null;
       document.addEventListener('touchstart', touchstart, false);        
@@ -70,8 +68,10 @@ export class Gbro {
       function touchend(evt) { 
          var xDiff = xUp - xDown, yDiff = yUp - yDown;
          const distance = xUp && yUp ? Math.sqrt((xUp-xDown)**2 + (yUp-yDown)**2) : 0 
-         console.log(distance);
-         if ((Math.abs(xDiff) > Math.abs(yDiff)) && (Math.abs(xDiff) > 0.33 * document.body.clientWidth) && distance > 150) { 
+         const isPrimaryView = classRef.currentView.layer == 1
+         const isSwipe = distance > 150 
+         console.log(isPrimaryView,isSwipe);
+         if ((Math.abs(xDiff) > Math.abs(yDiff)) && isSwipe && isPrimaryView) { 
               if (xDiff < 0) 
                  classRef.currentView.swipeNav('left')
               else
