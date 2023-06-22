@@ -1,5 +1,6 @@
 export class Games {
    constructor(server, authUser, router){
+      this.layer = 1 
       this.getEl = id => document.getElementById(id) 
       this.elements = {}
       this.link = "/games"
@@ -20,7 +21,6 @@ export class Games {
 
       this.elements["lobbyIdInput"] = this.getEl("lobbyIdInput")
       this.elements["joinLobbyBtn"] = this.getEl("joinLobbyBtn")
-      this.elements["createLobbyBtn"] = this.getEl("createLobbyBtn")
       this.elements["lobbysGallery"] = this.getEl("lobbysGallery")
       
       let canConnect = false

@@ -1,6 +1,7 @@
 export class CountryGame {
    constructor(server, authUser, router){
       this.lobbyID
+      this.layer = 3
       this.getEl = id => document.getElementById(id)
       this.elements = {}
       this.link = "/country"

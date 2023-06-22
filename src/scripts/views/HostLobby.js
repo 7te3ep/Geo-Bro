@@ -2,6 +2,7 @@ import { copyToClipboard } from "../modules/copyToClipboard.js"
 
 export class HostLobby {
    constructor(server, authUser, router){
+      this.layer = 2
       this.getEl = id => document.getElementById(id) 
       this.elements = {}
       this.link = "/hostLobby"

@@ -3,6 +3,7 @@ import {copyToClipboard} from "../modules/copyToClipboard.js"
 
 export class Social {
    constructor(server , authUser, router){
+      this.layer = 1 
       this.getEl = id => document.getElementById(id) 
       this.elements = {}
       this.link = "/social"

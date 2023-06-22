@@ -221,9 +221,13 @@ input {
 input:focus {
    outline: none !important;
    border:2px solid #45c5d7;
- }
+}
 
- .row {
+.gameParam {
+   padding: 0px;
+}
+
+.row {
    display: flex;
    flex-direction: row;
    justify-content: space-between;
