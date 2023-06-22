@@ -48,5 +48,26 @@ export class Gbro {
       await this.currentView.init();
       await this.initLinks();
       await this.currentView.update();
+      await this.initSwipe()
+   }
+
+   async initSwipe(){
+      const classRef = this
+      var xDown = null, yDown = null, xUp = null, yUp = null;
+      document.addEventListener('touchstart', touchstart, false);        
+      document.addEventListener('touchmove', touchmove, false);
+      document.addEventListener('touchend', touchend, false);
+      function touchstart(evt) { const firstTouch = (evt.touches || evt.originalEvent.touches)[0]; xDown = firstTouch.clientX; yDown = firstTouch.clientY; }
+      function touchmove(evt) { if (!xDown || !yDown ) return; xUp = evt.touches[0].clientX; yUp = evt.touches[0].clientY; }
+      function touchend(evt) { 
+          var xDiff = xUp - xDown, yDiff = yUp - yDown;
+          if ((Math.abs(xDiff) > Math.abs(yDiff)) && (Math.abs(xDiff) > 0.33 * document.body.clientWidth)) { 
+               if (xDiff < 0) 
+                  classRef.currentView.swipeNav('left')
+               else
+                  classRef.currentView.swipeNav('right')
+          } 
+          xDown = null, yDown = null;
+      }
    }
 }

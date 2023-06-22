@@ -34,7 +34,7 @@ export class Games {
          canConnect = true
       })
 
-      this.server.exeOnChange("lobbys",async ()=>{
+      await this.server.exeOnChange("lobbys",async ()=>{
          let publicLobbys = Object.entries(await this.server.getData("lobbys") || {})
          publicLobbys = publicLobbys.filter((lobby)=>lobby[1].param.visibility == "public")
          await this.updateLobbysGallery(publicLobbys)
@@ -63,7 +63,13 @@ export class Games {
       })
    }
 
-   async quit() {
+   async swipeNav(diretion){
+      if (diretion == "left") this.getEl("navSocial").click()
+      else this.getEl("navDashboard").click()
+   }
 
+
+   async quit() {
+      this.server.stopExeOnChange('lobbys')
    }
 }

@@ -207,6 +207,10 @@ export class CountryGame {
       })
    }
 
+   async swipeNav(diretion){
+
+   }
+
    async quit() {
       clearInterval(this.timer)
       clearInterval(this.gameEndTimer)

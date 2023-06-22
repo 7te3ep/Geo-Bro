@@ -10,7 +10,7 @@ export class DashBoard {
    }
 
    async update() {
-      const userData = (await this.server.getData(`users/${this.authUser.uid}`)).data
+      const userData = (await this.server.getData(`users/${this.authUser.uid}`)).data || {}
       this.elements.userLevel.innerHTML = userData.level
       this.elements.expBar.style.width = `${userData.exp}%`
       await this.updateNewsGallery()
@@ -28,6 +28,10 @@ export class DashBoard {
       this.elements.userInfo.innerHTML = `<img alt="profile image of user" class="userImg" src="${this.authUser.photoURL}"> <p id="playerName">${this.authUser.displayName}</p>`
       
       await this.server.exeOnChange("news",()=>{this.update()})
+   }
+
+   async swipeNav(diretion){
+      if (diretion == "left") this.getEl("navGames").click()
    }
 
    async quit() {

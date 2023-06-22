@@ -13,7 +13,7 @@ export class Social {
    }
 
    async update() {
-      const userData = (await this.server.getData(`users/${this.authUser.uid}`)).data
+      const userData = (await this.server.getData(`users/${this.authUser.uid}`)).data || {}
       this.elements.userID.innerHTML = userData.id
       this.updateFriendsList()
    }
@@ -63,6 +63,11 @@ export class Social {
          this.elements.addFriendInput.value = ""
          await this.update()
       })
+   }
+
+
+   async swipeNav(diretion){
+      if (diretion == "right") this.getEl("navGames").click()
    }
 
    async quit() {  
