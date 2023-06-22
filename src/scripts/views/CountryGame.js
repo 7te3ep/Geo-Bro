@@ -43,6 +43,7 @@ export class CountryGame {
    
       this.gameParam = await this.server.getData(`lobbys/${this.lobbyID}/param`)
       if (this.gameParam.map == "us") this.map = "us.geojson"
+      if (this.gameParam.map == "fr") this.map = "frDepartement.geojson"
       this.initMap()
    
       await this.server.exeOnChange(`lobbys/${this.lobbyID}`,()=>{return this.updateOnValue()})
@@ -240,13 +241,23 @@ export class CountryGame {
       const height = window.innerHeight
       var transX = 2
       var transY = 2
-      var mapScale = 6
+      var mapScale = 7
+      if (this.map == "us.geojson"){
+         transX = 0.7
+         transY = 1.5
+         mapScale = 2
+      }
       if (this.map == "us.geojson"){
          transX = 0.7
          transY = 1.5
          mapScale = 2
       }
 
+      if (this.map = "frDepartement.geojson"){
+         transY = 0.40
+         transX = 3
+         mapScale = 0.26
+      }
       const projection = d3.geoMercator()
         .translate([width / transX, height / transY])
         .scale(width/mapScale);
