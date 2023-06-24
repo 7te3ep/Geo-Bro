@@ -46,9 +46,9 @@ export class CountryGame {
       this.gameParam = await this.server.getData(
          `lobbys/${this.lobbyID}/param`
       );
-      if (this.gameParam.map == "us") this.map = "us-states.geojson";
-      if (this.gameParam.map == "fr") this.map = "french-departments.geojson";
-      if (this.gameParam.map == "monde") this.map = "world-countries.geojson";
+      if (this.gameParam.map == "us") this.map = "us-states_optimized.geojson";
+      if (this.gameParam.map == "fr") this.map = "french-departments_optimized.geojson";
+      if (this.gameParam.map == "monde") this.map = "world-countries_optimized.geojson";
       this.initMap();
 
       await this.server.exeOnChange(`lobbys/${this.lobbyID}`, () => {
