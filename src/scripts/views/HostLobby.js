@@ -26,7 +26,7 @@ export class HostLobby {
       this.elements.timeDisplay.innerHTML = "Temps de la partie : " + time + "sec"
       this.elements.gameLenRange.value = len
       this.elements.gameLenDisplay.innerHTML = "Nombre de pays a trouver : " + len
-      this.elements.visibilityDisplay.innerHTML = `Visibilité : ${visibility}`
+      this.elements.visibilityDisplay.innerHTML = visibility == "private" ? `Lobby privé 🔒 : ` : `Lobby publique 🌐 :`
    }
 
    async updateOnValue() {
@@ -76,6 +76,10 @@ export class HostLobby {
          await this.server.setData(`lobbys/${this.lobbyID}/param/len`,this.elements.gameLenRange.value)
       })
       this.elements.mapSelect.onchange = ("input",async (event) => {
+         console.log(this.elements.mapSelect.value)
+         if (this.elements.mapSelect.value == "fr") this.elements.gameLenRange.setAttribute("max",96)
+         if (this.elements.mapSelect.value == "monde") this.elements.gameLenRange.setAttribute("max",177)
+         if (this.elements.mapSelect.value == "us") this.elements.gameLenRange.setAttribute("max",50)
          await this.server.setData(`lobbys/${this.lobbyID}/param/map`,this.elements.mapSelect.value)
       })
 
@@ -116,7 +120,7 @@ export class HostLobby {
       const lobbys = await this.server.getData("lobbys")
       const hosts = await this.server.getData("hosts")
       delete lobbys[this.lobbyID]
-      delete hosts[this.authUser.uid]
+      if (this.authUser.uid) delete hosts[this.authUser.uid]
       await this.server.setData("lobbys", lobbys)
       await this.server.setData("hosts", hosts)
    }

@@ -47,8 +47,10 @@ export class CountryGame {
          `lobbys/${this.lobbyID}/param`
       );
       if (this.gameParam.map == "us") this.map = "us-states_optimized.geojson";
-      if (this.gameParam.map == "fr") this.map = "french-departments_optimized.geojson";
-      if (this.gameParam.map == "monde") this.map = "world-countries_optimized.geojson";
+      if (this.gameParam.map == "fr")
+         this.map = "french-departments_optimized.geojson";
+      if (this.gameParam.map == "monde")
+         this.map = "world-countries_optimized.geojson";
       this.initMap();
 
       await this.server.exeOnChange(`lobbys/${this.lobbyID}`, () => {
@@ -185,12 +187,12 @@ export class CountryGame {
       await this.server.setData(`lobbys/${this.lobbyID}/game/state`, "playing");
    }
 
-   async pathClicked(e,element) {
+   async pathClicked(e, element) {
       if (this.countries[this.round] == e.properties.name) {
          d3.select(element).style("fill", "rgb(95, 173, 65)");
          this.eventAppear("valid");
          return this.nextTurn(false);
-      }else {
+      } else {
          d3.select(element).style("fill", "rgb(188, 59, 57)");
       }
 
@@ -291,7 +293,7 @@ export class CountryGame {
       const projection = d3
          .geoMercator()
          .translate([width / 2, height / 2])
-         .fitSize([width,height],await d3.json(`../assets/${this.map}`))
+         .fitSize([width, height], await d3.json(`../assets/${this.map}`));
 
       const path = d3.geoPath().projection(projection);
 
@@ -325,7 +327,7 @@ export class CountryGame {
             .style("fill", "rgb(255, 255, 209)")
             .on("click", function (e) {
                g.selectAll(".country").style("fill", "rgb(255, 255, 209)");
-               classThis.pathClicked(e,this);
+               classThis.pathClicked(e, this);
             });
       });
       d3.select("svg").on("dblclick.zoom", null);

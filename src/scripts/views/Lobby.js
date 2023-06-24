@@ -78,9 +78,13 @@ export class Lobby {
 
    async updateGameParam(){
       this.gameParam = await this.server.getData(`lobbys/${this.lobbyID}/param`)
-      this.elements.mapParam.innerHTML = `Carte : ${this.gameParam.map}`
-      this.elements.timeParam.innerHTML = `Temps : ${this.gameParam.time}sec`
-      this.elements.lenParam.innerHTML = `Nombre de pays : ${this.gameParam.len}`
+      let fullMapName 
+      if (this.gameParam.map == "world") fullMapName = "Pays du monde"
+      if (this.gameParam.map == "us") fullMapName = "Etats des Etats Unis"
+      if (this.gameParam.map == "fr") fullMapName = "Departements de France"
+      this.elements.mapParam.innerHTML = `Carte : ${fullMapName}`
+      this.elements.timeParam.innerHTML = `Temps : ${this.gameParam.time}s`
+      this.elements.lenParam.innerHTML = `Nombre d'elements : ${this.gameParam.len}`
    }
 
    async deletePlayerOfLobby(playerUid){

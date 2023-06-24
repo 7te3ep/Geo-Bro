@@ -11426,7 +11426,7 @@
       },
       {
          "type": "Feature",
-         "properties": { "name": "les états-unis d'Amérique" },
+         "properties": { "name": "Etats-unis d'Amérique" },
          "geometry": {
             "type": "MultiPolygon",
             "coordinates": [
