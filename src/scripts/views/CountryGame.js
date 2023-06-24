@@ -332,5 +332,6 @@ export class CountryGame {
       });
       d3.select("svg").on("dblclick.zoom", null);
       svg.call(zoom);
+      d3.select("svg").on("dblclick.zoom", null);
    }
 }
