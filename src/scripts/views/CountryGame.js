@@ -185,10 +185,13 @@ export class CountryGame {
       await this.server.setData(`lobbys/${this.lobbyID}/game/state`, "playing");
    }
 
-   async pathClicked(e) {
+   async pathClicked(e,element) {
       if (this.countries[this.round] == e.properties.name) {
+         d3.select(element).style("fill", "rgb(95, 173, 65)");
          this.eventAppear("valid");
          return this.nextTurn(false);
+      }else {
+         d3.select(element).style("fill", "rgb(188, 59, 57)");
       }
 
       this.eventAppear("invalid");
@@ -322,8 +325,7 @@ export class CountryGame {
             .style("fill", "rgb(255, 255, 209)")
             .on("click", function (e) {
                g.selectAll(".country").style("fill", "rgb(255, 255, 209)");
-               d3.select(this).style("fill", "rgb(107, 107, 87)");
-               classThis.pathClicked(e);
+               classThis.pathClicked(e,this);
             });
       });
       d3.select("svg").on("dblclick.zoom", null);
