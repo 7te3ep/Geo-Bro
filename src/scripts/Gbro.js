@@ -70,7 +70,6 @@ export class Gbro {
          const distance = xUp && yUp ? Math.sqrt((xUp-xDown)**2 + (yUp-yDown)**2) : 0 
          const isPrimaryView = classRef.currentView.layer == 1
          const isSwipe = distance > 150 
-         console.log(isPrimaryView,isSwipe);
          if ((Math.abs(xDiff) > Math.abs(yDiff)) && isSwipe && isPrimaryView) { 
               if (xDiff < 0) 
                  classRef.currentView.swipeNav('left')

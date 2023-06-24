@@ -48,6 +48,10 @@ input::-webkit-inner-spin-button {
 
 * {}
 
+a {
+   color: #2d2a32;
+}
+
 /* Firefox */
 input[type=number] {
   -moz-appearance: textfield;
