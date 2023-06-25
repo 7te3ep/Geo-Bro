@@ -77,7 +77,7 @@ export class HostLobby {
       })
       this.elements.mapSelect.onchange = ("input",async (event) => {
          if (this.elements.mapSelect.value == "fr") this.elements.gameLenRange.setAttribute("max",96)
-         if (this.elements.mapSelect.value == "monde") this.elements.gameLenRange.setAttribute("max",176)
+         if (this.elements.mapSelect.value == "monde") this.elements.gameLenRange.setAttribute("max",175)
          if (this.elements.mapSelect.value == "us") this.elements.gameLenRange.setAttribute("max",50)
          await this.server.setData(`lobbys/${this.lobbyID}/param/map`,this.elements.mapSelect.value)
       })
