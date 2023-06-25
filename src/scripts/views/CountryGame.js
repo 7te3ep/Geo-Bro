@@ -83,7 +83,10 @@ export class CountryGame {
    async updateOnValue() {
       const gameData = await this.server.getData(`lobbys/${this.lobbyID}`);
       if (!gameData) {
-         if (!this.replay) this.getEl("navGames").click();
+         if (!this.replay){
+            console.log('QUITTING');
+            this.getEl("navGames").click();
+         } 
          return;
       }
 
@@ -232,24 +235,28 @@ export class CountryGame {
    async update() {}
 
    async joinNextLobby() {
-      const nextGameHost = await this.server.getData(
-         `lobbys/${this.lobbyID}/game/host`
-      );
-      if (!nextGameHost) return;
-      this.replay = true;
-      await this.server.exeOnChange("hosts", async () => {
-         const hosts = (await this.server.getData("hosts")) || {};
-         const lobbyCreated = Object.keys(hosts).includes(nextGameHost);
-         if (!lobbyCreated) return;
-         const nextLobbyId = Object.values(
-            await this.server.getData(`hosts/${nextGameHost}`)
-         )[0];
-         if (nextLobbyId == this.lobbyID) return;
-         await this.server.stopExeOnChange("hosts");
-         await this.server.playerConnectToLobby(this.authUser, nextLobbyId);
-         this.elements.joinLobbyBtn.href = "/lobby";
-         this.elements.joinLobbyBtn.click();
-      });
+      await this.server.exeOnChange(`lobbys/${this.lobbyID}/game/host`, async () => {
+         console.log('wait')
+         const nextGameHost = await this.server.getData(`lobbys/${this.lobbyID}/game/host`);
+         if (!nextGameHost) return;
+         console.log('futur host will be ', nextGameHost)
+         await this.server.stopExeOnChange(`lobbys/${this.lobbyID}/game/host`);
+         this.replay = true;
+         await this.server.exeOnChange("hosts", async () => {
+            console.log('wait for game to be created')
+            const hosts = (await this.server.getData("hosts")) || {};
+            const lobbyCreated = Object.keys(hosts).includes(nextGameHost);
+            if (!lobbyCreated) return;
+            console.log("lobby created", lobbyCreated)
+            const nextLobbyId = Object.values(await this.server.getData(`hosts/${nextGameHost}`))[0];
+            if (nextLobbyId == this.lobbyID) return;
+            console.log("great next lobby ",nextLobbyId)
+            await this.server.stopExeOnChange("hosts");
+            await this.server.playerConnectToLobby(this.authUser, nextLobbyId);
+            this.elements.joinLobbyBtn.href = "/lobby";
+            this.elements.joinLobbyBtn.click();
+         });
+      })
    }
 
    async swipeNav(diretion) {}

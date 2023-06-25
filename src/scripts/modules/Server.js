@@ -127,13 +127,11 @@ export class Server {
    async playerConnectToLobby(authUser , lobbyId ){
       const lobbyExist = (await get(ref(this.db, `lobbys/${lobbyId}`))).exists()
       if (!lobbyExist) return false
-      const lobbyPlayersRef = ref(this.db, `lobbys/${lobbyId}/players/`)
-      let playersInLobby = (await get(lobbyPlayersRef)).val() || {}
-      playersInLobby[authUser.uid] = {
+      const lobbyPlayersRef = ref(this.db, `lobbys/${lobbyId}/players/${authUser.uid}`)
+      await set(lobbyPlayersRef,{
          name:authUser.displayName,
          img: authUser.photoURL,
-      }
-      await set(lobbyPlayersRef,playersInLobby);
+      });
       return true
    }
 

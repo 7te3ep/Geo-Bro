@@ -24,7 +24,9 @@ export class Lobby {
    async updateOnValue() {
       const hasBeenKicked = await this.server.getData(`lobbys/${this.lobbyID}/players/${this.authUser.uid}`)
       const gameStarted = await this.server.getData(`lobbys/${this.lobbyID}/game/started`)
-      if (!hasBeenKicked) return this.getEl('navGames').click()
+      if (!hasBeenKicked){
+         return this.getEl('navGames').click()
+      } 
       else if (gameStarted && !this.quitted) {
          this.elements.gameLaunch.click()
          this.quitted = true
@@ -38,6 +40,7 @@ export class Lobby {
    async init() {
       await this.router.loadPage(this.link,this.path)
       await this.findLobby()
+      console.log(this.lobbyID)
       await this.server.exeOnChange(`lobbys/${this.lobbyID}`,()=>{return this.updateOnValue()})
       this.elements["playersList"] = this.getEl("playersList")
       this.elements["lobbyId"] = this.getEl("lobbyId")
@@ -56,6 +59,7 @@ export class Lobby {
 
    async findLobby() {
       const lobbys = Object.entries(await this.server.getData('lobbys'))
+      console.log(lobbys)
       for (let lobby of lobbys) {
          const lobbyID = lobby[0]
          const lobbyPlayers = Object.entries(lobby[1].players || {})
@@ -70,6 +74,7 @@ export class Lobby {
       this.elements.playersList.innerHTML = ""
       const lobbyData = await this.server.getData(`lobbys/${this.lobbyID}`)
       const players = Object.values(lobbyData.players || {}) 
+      console.log(players);
       for (let player of players){
          const playerEl = `<div class="card electricBlue rounded "><div class="row"><img alt="profile image of user" class="userImg" src="${player.img}"><p>${player.name}</p></div></div>`
          this.elements.playersList.innerHTML += playerEl
