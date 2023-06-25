@@ -16,7 +16,7 @@ export class CountryGame {
       this.round = 0;
       this.score = 0;
       this.streak = 0;
-      this.time = 100;
+      this.time 
       this.timer = "";
       this.map = "monde.geojson";
       this.gameEndTimer;
@@ -46,16 +46,17 @@ export class CountryGame {
       this.gameParam = await this.server.getData(
          `lobbys/${this.lobbyID}/param`
       );
+      this.time = this.gameParam.time
+      this.elements.timeDisplay.innerHTML = this.time + " 🕒";
       if (this.gameParam.map == "us") this.map = "us-states_optimized.geojson";
-      if (this.gameParam.map == "fr")
-         this.map = "french-departments_optimized.geojson";
-      if (this.gameParam.map == "monde")
-         this.map = "world-countries_optimized.geojson";
+      if (this.gameParam.map == "fr")this.map = "french-departments_optimized.geojson";
+      if (this.gameParam.map == "monde")this.map = "world-countries_optimized.geojson";
       this.initMap();
 
       await this.server.exeOnChange(`lobbys/${this.lobbyID}`, () => {
          return this.updateOnValue();
       });
+
       if (this.isHost) {
          await this.generateGameData();
       }
@@ -91,31 +92,24 @@ export class CountryGame {
          if (gameData.game.state == "ended") await this.endGame();
          if (gameData.game.state == "replay") await this.joinNextLobby();
       }
-      const players = Object.values(gameData.players).sort(function (a, b) {
-         return b.score - a.score;
-      });
-      this.elements.first.innerHTML = players[0] ? "1." + players[0].name : "";
-      this.elements.second.innerHTML = players[1] ? "2." + players[1].name : "";
-      this.elements.third.innerHTML = players[2] ? "3." + players[2].name : "";
+     
       if (this.countries.length - 1 == this.round)
          await this.upadteScoreBoard();
    }
 
    async startGame() {
-      if (this.isHost)
-         this.gameEndTimer = setTimeout(
-            async () =>
-               await this.server.setData(
-                  `lobbys/${this.lobbyID}/game/state`,
-                  "ended"
-               ),
-            this.gameParam.time * 1000
-         );
+      if (this.isHost) this.gameEndTimer = setTimeout(async () => await this.server.setData(`lobbys/${this.lobbyID}/game/state`,"ended"),this.gameParam.time * 1000 +1000);
       clearInterval(this.timer);
       this.timer = setInterval(async () => {
          this.time -= 1;
-         this.elements.timeDisplay.style.width = this.time + "%";
-      }, (this.gameParam.time * 1000) / 100);
+         this.elements.timeDisplay.innerHTML = this.time + " 🕒";
+         if (this.time <= this.gameParam.time / 4) {
+            document.querySelectorAll(".game").forEach((el)=>el.classList.add("shake"))
+            document.querySelector('body').classList.add('redBorders')
+            setTimeout(() => {document.querySelector('body').classList.remove('redBorders')},500)
+         }
+      }, 1000);
+
       if (this.time <= 0) clearInterval(this.timer);
 
       const gameData = await this.server.getData(`lobbys/${this.lobbyID}/game`);
@@ -124,6 +118,9 @@ export class CountryGame {
    }
 
    async endGame() {
+      clearInterval(this.timer);
+      document.querySelectorAll(".game").forEach((el)=>el.classList.remove("shake"))
+      document.querySelector('body').classList.remove('redBorders')
       document.querySelector("svg").style.display = "none";
       document
          .querySelectorAll(".game")

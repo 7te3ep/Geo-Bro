@@ -36,7 +36,7 @@ export class Games {
 
       await this.server.exeOnChange("lobbys",async ()=>{
          const lobbys = Object.entries(await this.server.getData("lobbys") || {})
-         const realLobbys = lobbys.filter((lobby)=>"param" in lobby[1])
+         const realLobbys = lobbys.filter((lobby)=>"param" in lobby[1] && "players" in lobby[1] && "game" in lobby[1])
          const publicLobbys = realLobbys.filter((lobby)=>lobby[1].param.visibility == "public")
          await this.updateLobbysGallery(publicLobbys)
       })

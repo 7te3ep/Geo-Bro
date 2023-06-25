@@ -76,7 +76,6 @@ export class HostLobby {
          await this.server.setData(`lobbys/${this.lobbyID}/param/len`,this.elements.gameLenRange.value)
       })
       this.elements.mapSelect.onchange = ("input",async (event) => {
-         console.log(this.elements.mapSelect.value)
          if (this.elements.mapSelect.value == "fr") this.elements.gameLenRange.setAttribute("max",96)
          if (this.elements.mapSelect.value == "monde") this.elements.gameLenRange.setAttribute("max",176)
          if (this.elements.mapSelect.value == "us") this.elements.gameLenRange.setAttribute("max",50)
