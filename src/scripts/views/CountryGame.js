@@ -18,9 +18,8 @@ export class CountryGame {
       this.streak = 0;
       this.time 
       this.timer = "";
-      this.map = "monde.geojson";
+      this.map = "world.geojson";
       this.gameEndTimer;
-      this.replay = false;
    }
 
    async init() {
@@ -50,7 +49,7 @@ export class CountryGame {
       this.elements.timeDisplay.innerHTML = this.time + " 🕒";
       if (this.gameParam.map == "us") this.map = "us-states_optimized.geojson";
       if (this.gameParam.map == "fr")this.map = "french-departments_optimized.geojson";
-      if (this.gameParam.map == "monde")this.map = "world-countries_optimized.geojson";
+      if (this.gameParam.map == "world")this.map = "world-countries_optimized.geojson";
       this.initMap();
 
       await this.server.exeOnChange(`lobbys/${this.lobbyID}`, () => {
@@ -66,9 +65,6 @@ export class CountryGame {
          this.nextTurn(true);
       });
 
-      this.elements.replay.addEventListener("click", () => {
-         this.replay = true;
-      });
    }
 
    async eventAppear(id) {
@@ -83,17 +79,13 @@ export class CountryGame {
    async updateOnValue() {
       const gameData = await this.server.getData(`lobbys/${this.lobbyID}`);
       if (!gameData) {
-         if (!this.replay){
-            console.log('QUITTING');
-            this.getEl("navGames").click();
-         } 
+         this.getEl("navGames").click();
          return;
       }
 
       if (gameData.game.state != this.gameState) {
          if (gameData.game.state == "playing") await this.startGame();
          if (gameData.game.state == "ended") await this.endGame();
-         if (gameData.game.state == "replay") await this.joinNextLobby();
       }
      
       if (this.countries.length - 1 == this.round)
@@ -101,12 +93,16 @@ export class CountryGame {
    }
 
    async startGame() {
-      if (this.isHost) this.gameEndTimer = setTimeout(async () => await this.server.setData(`lobbys/${this.lobbyID}/game/state`,"ended"),this.gameParam.time * 1000 +1000);
+      if (this.isHost) this.gameEndTimer = setTimeout(async () =>{
+         const serverStillExist = await this.server.getData(`lobbys/${this.lobbyID}`) 
+         if (!serverStillExist) return
+         await this.server.setData(`lobbys/${this.lobbyID}/game/state`,"ended")
+      } ,this.gameParam.time * 1000 +1000);
       clearInterval(this.timer);
       this.timer = setInterval(async () => {
          this.time -= 1;
          this.elements.timeDisplay.innerHTML = this.time + " 🕒";
-         if (this.time <= this.gameParam.time / 4) {
+         if (this.time <= this.gameParam.time / 4 && this.time <= 15) {
             document.querySelectorAll(".game").forEach((el)=>el.classList.add("shake"))
             document.querySelector('body').classList.add('redBorders')
             setTimeout(() => {document.querySelector('body').classList.remove('redBorders')},500)
@@ -154,7 +150,7 @@ export class CountryGame {
    async nextTurn(skip) {
       if (this.countries.length == this.round + 1) return this.endGame();
       if (!skip) this.score += 1 + this.streak;
-      else this.streak = 0;
+      else if (this.streak != 0) this.streak -= 1;
       this.round += 1;
       if (this.streak < 3 && !skip) this.streak += 1;
       this.elements.streak.innerHTML =
@@ -234,30 +230,30 @@ export class CountryGame {
 
    async update() {}
 
-   async joinNextLobby() {
-      await this.server.exeOnChange(`lobbys/${this.lobbyID}/game/host`, async () => {
-         console.log('wait')
-         const nextGameHost = await this.server.getData(`lobbys/${this.lobbyID}/game/host`);
-         if (!nextGameHost) return;
-         console.log('futur host will be ', nextGameHost)
-         await this.server.stopExeOnChange(`lobbys/${this.lobbyID}/game/host`);
-         this.replay = true;
-         await this.server.exeOnChange("hosts", async () => {
-            console.log('wait for game to be created')
-            const hosts = (await this.server.getData("hosts")) || {};
-            const lobbyCreated = Object.keys(hosts).includes(nextGameHost);
-            if (!lobbyCreated) return;
-            console.log("lobby created", lobbyCreated)
-            const nextLobbyId = Object.values(await this.server.getData(`hosts/${nextGameHost}`))[0];
-            if (nextLobbyId == this.lobbyID) return;
-            console.log("great next lobby ",nextLobbyId)
-            await this.server.stopExeOnChange("hosts");
-            await this.server.playerConnectToLobby(this.authUser, nextLobbyId);
-            this.elements.joinLobbyBtn.href = "/lobby";
-            this.elements.joinLobbyBtn.click();
-         });
-      })
-   }
+   //async joinNextLobby() {
+   //   await this.server.exeOnChange(`lobbys/${this.lobbyID}/game/host`, async () => {
+   //      console.log('wait')
+   //      const nextGameHost = await this.server.getData(`lobbys/${this.lobbyID}/game/host`);
+   //      if (!nextGameHost) return;
+   //      console.log('futur host will be ', nextGameHost)
+   //      await this.server.stopExeOnChange(`lobbys/${this.lobbyID}/game/host`);
+   //      this.replay = true;
+   //      await this.server.exeOnChange("hosts", async () => {
+   //         console.log('wait for game to be created')
+   //         const hosts = (await this.server.getData("hosts")) || {};
+   //         const lobbyCreated = Object.keys(hosts).includes(nextGameHost);
+   //         if (!lobbyCreated) return;
+   //         console.log("lobby created", lobbyCreated)
+   //         const nextLobbyId = Object.values(await this.server.getData(`hosts/${nextGameHost}`))[0];
+   //         if (nextLobbyId == this.lobbyID) return;
+   //         console.log("great next lobby ",nextLobbyId)
+   //         await this.server.stopExeOnChange("hosts");
+   //         await this.server.playerConnectToLobby(this.authUser, nextLobbyId);
+   //         this.elements.joinLobbyBtn.href = "/lobby";
+   //         this.elements.joinLobbyBtn.click();
+   //      });
+   //   })
+   //}
 
    async swipeNav(diretion) {}
 
@@ -268,16 +264,6 @@ export class CountryGame {
       if (this.isHost) {
          this.isHost = false;
          this.server.stopExeOnChange(`lobbys/${this.lobbyID}`);
-         if (this.replay)
-            await this.server.setData(
-               `lobbys/${this.lobbyID}/game/state`,
-               "replay"
-            );
-         if (this.replay)
-            await this.server.setData(
-               `lobbys/${this.lobbyID}/game/host`,
-               this.authUser.uid
-            );
          //await new Promise(resolve => setTimeout(resolve, 5000));
          const lobbys = await this.server.getData("lobbys");
          const hosts = await this.server.getData("hosts");

@@ -1,11 +1,22 @@
-- landing page
-- new login
-- ui pc
-- exp lvl leaderboard
-- gamemodes
-- social system
-- fix replay
-- better game animation
-- swipe animation
-- ajouter parametres (logout)
+UPDATE
+- "Nouveaux arrivants" :  créer landing page + new login system
+- "Sur grand ecran" : version pc fix pc, ajouter parametres (logout)
+- "To the moon" : exp lvl, coins, cosmetiques basiques
+- "Bataille pour le podium" : gamemodes (random, speedrun) + leaderboards
+- "Relooking" : better game animation + swipe animation
+- "C'est pas versail ici" : optimisation global
+- "No p2w" : gamemode artiste + systeme de cosmetique complet et monetisé
+
+// secondaire
 - id with letters
+- quick play au dashboard
+- fix replay
+- ne pas rejoindre des game en cours
+- anti cheat
+C sahara occidental => mettre avec le maroc
+C guyanne francais => france
+- porto rico etats unis
+- birmanie => Myanmar
+- chypre => turquie
+- tchequie => Republique check
+- carré sur iles pour faciliter le click

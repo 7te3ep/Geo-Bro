@@ -97,9 +97,18 @@ export class Server {
    }
 
    async newLobbyOnDb(host){
-      const lobbyId = parseInt(Math.ceil(Math.random() * Date.now()).toPrecision(6).toString().replace(".", ""))
+      const normalize = (num, min, max) => {
+         const delta = max - min;
+         return (num - min) / delta
+      }
+      const Alphabet = ["a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z"]
+      const lobbyId = parseInt(Math.ceil(Math.random() * Date.now()).toPrecision(8).toString().replace(".", "")).toString()
+      var alphaLobbyId = ""
+      for (let i = 0; i < lobbyId.length; i += 2) {
+         alphaLobbyId +=  Alphabet[Math.ceil(normalize(`${lobbyId[i]}${lobbyId[i+1]}`, 0 , 99) * 26)]
+      }
       const lobbyName = lobbyNames[Math.round(Math.random()*lobbyNames.length)];
-      await set(ref(this.db, `lobbys/${lobbyId}`), {
+      await set(ref(this.db, `lobbys/${alphaLobbyId}`), {
             players:{
                [host.uid] : {
                   name:host.displayName,
@@ -113,15 +122,15 @@ export class Server {
                lobbyName:lobbyName,
                time:60,
                len:20,
-               map:"monde",
+               map:"world",
                visibility:"private"
             }
       });
       await set(ref(this.db, `hosts/${host.uid}`), {
-         id:lobbyId,
+         id: alphaLobbyId,
          name:host.displayName
       });
-      return lobbyId
+      return alphaLobbyId
    }
 
    async playerConnectToLobby(authUser , lobbyId ){

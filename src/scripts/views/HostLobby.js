@@ -13,6 +13,7 @@ export class HostLobby {
       this.lobbyHostName
       this.lobbyID
       this.gameParam
+      this.mapLen = {}
    }
 
    async update() {
@@ -55,7 +56,10 @@ export class HostLobby {
       this.elements["visibilityDisplay"] = this.getEl("visibilityDisplay")
       this.elements["visibilityCheckBox"] = document.querySelector("input[name=checkbox]");
       this.elements["lobbyName"] = this.getEl("lobbyName")
-
+      this.mapLen['us'] = ((await (await (fetch("../../assets/us-states_optimized.geojson"))).json()).features).length
+      this.mapLen['fr'] = ((await (await (fetch("../../assets/french-departments_optimized.geojson"))).json()).features).length
+      this.mapLen['world'] = ((await (await (fetch("../../assets/world-countries_optimized.geojson"))).json()).features).length
+      console.log(this.mapLen.us);
       const viewReference = this
 
       await this.server.exeOnChange(`lobbys/${this.lobbyID}`,()=>{this.updateOnValue()})
@@ -72,13 +76,20 @@ export class HostLobby {
       this.elements.timeRange.addEventListener("input",async (event) => {
          await this.server.setData(`lobbys/${this.lobbyID}/param/time`,this.elements.timeRange.value)
       })
+
       this.elements.gameLenRange.addEventListener("input",async (event) => {
          await this.server.setData(`lobbys/${this.lobbyID}/param/len`,this.elements.gameLenRange.value)
       })
+
       this.elements.mapSelect.onchange = ("input",async (event) => {
-         if (this.elements.mapSelect.value == "fr") this.elements.gameLenRange.setAttribute("max",96)
-         if (this.elements.mapSelect.value == "monde") this.elements.gameLenRange.setAttribute("max",175)
-         if (this.elements.mapSelect.value == "us") this.elements.gameLenRange.setAttribute("max",50)
+         const updateParam =async  (mapId)=>{
+            this.elements.gameLenRange.setAttribute("max",this.mapLen[mapId])
+            this.elements.gameLenRange.value = this.mapLen[mapId]
+            await this.server.setData(`lobbys/${this.lobbyID}/param/len`,this.elements.gameLenRange.value)
+         }
+         if (this.elements.mapSelect.value == "fr") await updateParam("fr")
+         if (this.elements.mapSelect.value == "world") await updateParam("world")
+         if (this.elements.mapSelect.value == "us") await updateParam("us")
          await this.server.setData(`lobbys/${this.lobbyID}/param/map`,this.elements.mapSelect.value)
       })
 
