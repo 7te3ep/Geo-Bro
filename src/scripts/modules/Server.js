@@ -104,8 +104,9 @@ export class Server {
       const Alphabet = ["a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z"]
       const lobbyId = parseInt(Math.ceil(Math.random() * Date.now()).toPrecision(8).toString().replace(".", "")).toString()
       var alphaLobbyId = ""
+      console.log(lobbyId);
       for (let i = 0; i < lobbyId.length; i += 2) {
-         alphaLobbyId +=  Alphabet[Math.ceil(normalize(`${lobbyId[i]}${lobbyId[i+1]}`, 0 , 99) * 26)]
+         alphaLobbyId +=  Alphabet[Math.ceil(normalize(`${lobbyId[i]}${lobbyId[i+1]}`, 0 , 99) * 25)]
       }
       const lobbyName = lobbyNames[Math.round(Math.random()*lobbyNames.length)];
       await set(ref(this.db, `lobbys/${alphaLobbyId}`), {
