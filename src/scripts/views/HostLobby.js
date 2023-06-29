@@ -56,9 +56,9 @@ export class HostLobby {
       this.elements["visibilityDisplay"] = this.getEl("visibilityDisplay")
       this.elements["visibilityCheckBox"] = document.querySelector("input[name=checkbox]");
       this.elements["lobbyName"] = this.getEl("lobbyName")
-      this.mapLen['us'] = ((await (await (fetch("../../assets/us-states_optimized.geojson"))).json()).features).length
-      this.mapLen['fr'] = ((await (await (fetch("../../assets/french-departments_optimized.geojson"))).json()).features).length
-      this.mapLen['world'] = ((await (await (fetch("../../assets/world-countries_optimized.geojson"))).json()).features).length
+      this.mapLen['us'] = ((await (await (fetch("../../assets/us-states_optimized.geojson"))).json()).features).length -1
+      this.mapLen['fr'] = ((await (await (fetch("../../assets/french-departments_optimized.geojson"))).json()).features).length -1
+      this.mapLen['world'] = ((await (await (fetch("../../assets/world-countries_optimized.geojson"))).json()).features).length -1
       console.log(this.mapLen.us);
       const viewReference = this
 
