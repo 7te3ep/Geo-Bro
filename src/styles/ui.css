@@ -23,7 +23,6 @@
    overflow-x: hidden;
    text-decoration: none;
    -ms-overflow-style: none; /* Internet Explorer 10+ */
-   scrollbar-width: none; /* Firefox */
    user-select: none;
 }
 
@@ -156,7 +155,6 @@ img {
    user-drag: none;  
    user-select: none;
    -moz-user-select: none;
-   -webkit-user-drag: none;
    -webkit-user-select: none;
    -ms-user-select: none;
 }

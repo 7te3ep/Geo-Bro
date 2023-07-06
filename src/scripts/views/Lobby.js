@@ -51,7 +51,7 @@ export class Lobby {
       this.elements["lenParam"] = this.getEl("lenParam")
       this.gameParam = await this.server.getData(`lobbys/${this.lobbyID}/param`)
       this.getEl("copyToClipboardBtn").addEventListener('click',()=>{
-         copyToClipboard(this.lobbyID)
+         copyToClipboard(copyToClipboard(`geobro.online/lobby:${this.lobbyID}`))
       })
       await this.server.onDisconnectRemove(`lobbys/${this.lobbyID}/players/${this.authUser.uid}`)
    }

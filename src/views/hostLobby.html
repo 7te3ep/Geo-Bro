@@ -2,7 +2,7 @@
    <div class=" row">
       ID : <span id="lobbyId"></span>
    </div>
-   <div class="btn good" id="copyToClipboardBtn">Copier</div>
+   <div class="btn good" id="copyToClipboardBtn">Partager</div>
 </div>
 
 <div class="container dark rounded">
@@ -10,42 +10,45 @@
    <div class="container electricBlue rounded">
       Host : <span id="lobbyHostName"></span>
    </div>
-   <div class="container electricBlue rounded">
-      <div class="title">Parametres</div>
+   <div class="container electricBlue rounded ">
+      <div class="gallery scrollable" style="max-height: 300px;" >
+         <div class="title">Parametres</div>
 
-      <div class="container light rounded">
-         <div class="row">
-            <div id="visibilityDisplay">Lobby Publique : </div>
-            <label class="switch">
-               <input  type="checkbox" name="checkbox">
-               <span class="slider round"></span>
-            </label>
+         <div class="container light rounded">
+            <div class="row">
+               <div id="visibilityDisplay">Lobby Publique : </div>
+               <label class="switch">
+                  <input  type="checkbox" name="checkbox">
+                  <span class="slider round"></span>
+               </label>
+            </div>
+         </div>
+   
+         <div class="container light rounded">
+            <div id="gameLenDisplay" class="row">Nombre de pays : </div>
+            <input class="gameParam" id="gameLenRange" type="range" min="1" max="174" value="20" step="1">
+         </div>
+   
+         <div class="container light rounded">
+            <div id="timeDisplay" class="row">Temps Maximal : </div>
+            <input class="gameParam" id="timeRange" type="range" min="10" max="600" value="60" step="10">
+         </div>
+   
+         <div class="container light rounded">
+            <div> Selection de la carte : </div>
+            <select id="mapSelect" class="select">
+               <option value="world">Pays Monde</option>
+               <option value="us">Etats des Etats Unis</option>
+               <option value="fr">Departements de France</option>
+           </select>
          </div>
       </div>
-
-      <div class="container light rounded">
-         <div id="gameLenDisplay" class="row">Nombre de pays : </div>
-         <input class="gameParam" id="gameLenRange" type="range" min="1" max="174" value="20" step="1">
-      </div>
-
-      <div class="container light rounded">
-         <div id="timeDisplay" class="row">Temps Maximal : </div>
-         <input class="gameParam" id="timeRange" type="range" min="10" max="600" value="60" step="10">
-      </div>
-
-      <div class="container light rounded">
-         <div> Selection de la carte : </div>
-         <select id="mapSelect" class="select">
-            <option value="world">Pays Monde</option>
-            <option value="us">Etats des Etats Unis</option>
-            <option value="fr">Departements de France</option>
-        </select>
-      </div>
+      
      
    </div>
    <div class="container light rounded">
       <div class="title">Joueurs :</div>
-      <div id="playersList" class="gallery">
+      <div id="playersList" class="gallery scrollable" style="max-height: 100px;">
          <div class="card electricBlue rounded row">
             <img alt="user profile image" class="userImg" src="">
             <p>player Name</p>

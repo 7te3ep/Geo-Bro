@@ -23,9 +23,16 @@ export class Gbro {
 
    async init() {
       this.loader(true);
-      console.log(window.location.href);
       this.authUser = await this.server.authenthicate();
-      await this.loadView(this.route["/dashboard"]);
+      const isShareLink = location.pathname.length == 11 && location.pathname.slice(0, 6) == "/lobby"
+      const pathExist = this.route[location.pathname]
+      if (pathExist && !isShareLink) await this.loadView(this.route[location.pathname]);
+      else if (isShareLink){
+         const lobbyId = location.pathname.slice(-4)
+         await this.server.playerConnectToLobby(this.authUser , lobbyId )
+         await this.loadView(this.route["/lobby"]);
+      } 
+      else await this.loadView(this.route["/dashboard"]);
       await this.server.userPresenceHandler(this.authUser,()=>{this.currentView.quit()})
       await this.initSwipe()
       this.loader(false);

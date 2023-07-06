@@ -63,7 +63,7 @@ export class HostLobby {
       await this.server.exeOnChange(`lobbys/${this.lobbyID}`,()=>{this.updateOnValue()})
 
       this.getEl("copyToClipboardBtn").addEventListener('click',()=>{
-         copyToClipboard(this.lobbyID)
+         copyToClipboard(`geobro.online/lobby:${this.lobbyID}`)
       })
 
       this.elements.visibilityCheckBox.addEventListener('change',async function () {
