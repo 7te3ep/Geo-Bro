@@ -29,6 +29,7 @@ export class Lobby {
       } 
       else if (gameStarted && !this.quitted) {
          this.elements.gameLaunch.click()
+         await this.server.stopExeOnChange(`lobbys/${this.lobbyID}`)
          this.quitted = true
       } 
       else {
@@ -49,7 +50,6 @@ export class Lobby {
       this.elements["timeParam"] = this.getEl("timeParam")
       this.elements["lenParam"] = this.getEl("lenParam")
       this.gameParam = await this.server.getData(`lobbys/${this.lobbyID}/param`)
-      
       this.getEl("copyToClipboardBtn").addEventListener('click',()=>{
          copyToClipboard(this.lobbyID)
       })
@@ -57,7 +57,7 @@ export class Lobby {
    }
 
    async findLobby() {
-      const lobbys = Object.entries(await this.server.getData('lobbys'))
+      const lobbys = Object.entries(await this.server.getData('lobbys') || {})
       for (let lobby of lobbys) {
          const lobbyID = lobby[0]
          const lobbyPlayers = Object.entries(lobby[1].players || {})
@@ -97,7 +97,7 @@ export class Lobby {
    }
 
    async quit() {
-      this.server.stopExeOnChange(`lobbys/${this.lobbyID}`)
+      await this.server.stopExeOnChange(`lobbys/${this.lobbyID}`)
       await this.deletePlayerOfLobby(this.authUser.uid)
    }
 }

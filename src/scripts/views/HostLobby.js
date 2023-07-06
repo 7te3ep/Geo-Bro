@@ -39,8 +39,7 @@ export class HostLobby {
    async init() {
       await this.router.loadPage(this.link,this.path)
       await this.server.newLobbyOnDb(this.authUser)
-      const hostDataPath = `hosts/${this.authUser.uid}`
-      const hostData = await this.server.getData(hostDataPath)
+      const hostData = await this.server.getData(`hosts/${this.authUser.uid}`)
       this.lobbyHostName = hostData.name
       this.lobbyID = hostData.id
       this.gameParam = await this.server.getData(`lobbys/${this.lobbyID}/param`)
@@ -59,7 +58,6 @@ export class HostLobby {
       this.mapLen['us'] = ((await (await (fetch("../../assets/us-states_optimized.geojson"))).json()).features).length -1
       this.mapLen['fr'] = ((await (await (fetch("../../assets/french-departments_optimized.geojson"))).json()).features).length -1
       this.mapLen['world'] = ((await (await (fetch("../../assets/world-countries_optimized.geojson"))).json()).features).length -1
-      console.log(this.mapLen.us);
       const viewReference = this
 
       await this.server.exeOnChange(`lobbys/${this.lobbyID}`,()=>{this.updateOnValue()})
@@ -95,6 +93,7 @@ export class HostLobby {
 
       await this.server.onDisconnectRemove(`lobbys/${this.lobbyID}`)
       await this.server.onDisconnectRemove(`hosts/${this.authUser.uid}`)
+      await this.server.onDisconnectRemove(`replayStack/${this.authUser.uid}`)
    }
 
    async updatePlayerList(){
@@ -126,6 +125,7 @@ export class HostLobby {
    }
 
    async quit() {
+      await this.server.removeData(`replayStack/${this.authUser.uid}`)
       this.server.stopExeOnChange(`lobbys/${this.lobbyID}`)
       const lobbys = await this.server.getData("lobbys")
       const hosts = await this.server.getData("hosts")

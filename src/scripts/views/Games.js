@@ -8,6 +8,7 @@ export class Games {
       this.server = server
       this.authUser = authUser
       this.router = router
+      this.canConnect = true
    }
 
    async update() {
@@ -23,15 +24,17 @@ export class Games {
       this.elements["joinLobbyBtn"] = this.getEl("joinLobbyBtn")
       this.elements["lobbysGallery"] = this.getEl("lobbysGallery")
       
-      let canConnect = false
       this.elements.joinLobbyBtn.addEventListener('click',async ()=>{
          const lobbyId = this.elements.lobbyIdInput.value
          let lobbyExist = await this.server.getData(`lobbys/${lobbyId}`)
          if (!lobbyExist || lobbyId == "") return
          await this.server.playerConnectToLobby(this.authUser , lobbyId )
          this.elements.joinLobbyBtn.href = "/lobby"
-         if (!canConnect) this.elements.joinLobbyBtn.click()
-         canConnect = true
+         if (this.canConnect){
+            this.canConnect = false
+            this.elements.joinLobbyBtn.click()
+         } 
+
       })
 
       await this.server.exeOnChange("lobbys",async ()=>{
@@ -40,7 +43,16 @@ export class Games {
          const publicLobbys = realLobbys.filter((lobby)=>lobby[1].param.visibility == "public")
          const waitingLobbyys = publicLobbys.filter((lobby)=>lobby[1].game.started == false)
          await this.updateLobbysGallery(waitingLobbyys)
+         await this.tryConnectToLobby(lobbys)
       })
+   }
+   async tryConnectToLobby(lobbys){
+      if (lobbys.find(element => element[1].players[this.authUser.uid]) && this.canConnect) {
+         await this.server.stopExeOnChange("lobbys")
+         this.elements.joinLobbyBtn.href = "/lobby"
+         this.canConnect = false
+         this.elements.joinLobbyBtn.click()
+      } 
    }
 
    async updateLobbysGallery(lobbys) {
@@ -72,6 +84,6 @@ export class Games {
 
 
    async quit() {
-      this.server.stopExeOnChange('lobbys')
+      await this.server.stopExeOnChange('lobbys')
    }
 }

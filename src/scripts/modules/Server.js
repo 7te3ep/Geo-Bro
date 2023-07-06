@@ -97,34 +97,45 @@ export class Server {
    }
 
    async newLobbyOnDb(host){
-      const normalize = (num, min, max) => {
-         const delta = max - min;
-         return (num - min) / delta
+      const generateId = async () => {
+         const Alphabet = ["a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z"]
+         const normalize = (num, min, max) => (num - min) / max - min;
+         const lobbyId = parseInt(Math.ceil(Math.random() * Date.now()).toPrecision(8).toString().replace(".", "")).toString()
+         let alphaLobbyId = ""
+         for (let i = 0; i < lobbyId.length; i += 2) {
+            alphaLobbyId +=  Alphabet[Math.ceil(normalize(`${lobbyId[i]}${lobbyId[i+1]}`, 0 , 99) * 25)]
+         }
+         return alphaLobbyId
       }
-      const Alphabet = ["a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z"]
-      const lobbyId = parseInt(Math.ceil(Math.random() * Date.now()).toPrecision(8).toString().replace(".", "")).toString()
-      var alphaLobbyId = ""
-      console.log(lobbyId);
-      for (let i = 0; i < lobbyId.length; i += 2) {
-         alphaLobbyId +=  Alphabet[Math.ceil(normalize(`${lobbyId[i]}${lobbyId[i+1]}`, 0 , 99) * 25)]
+      const getParam = async ()=>{
+         const previousParam = await this.getData(`replayStack/${host.uid}/param`)
+         if (!previousParam) return {time:60,len:20,map:"world",visibility:"private"}
+         else return {time: previousParam.time,len: previousParam.len,map: previousParam.map,visibility: previousParam.visibility}
       }
+      const getPlayers = async ()=>{
+         const previousPlayers = await this.getData(`replayStack/${host.uid}/players`) || {}
+         previousPlayers[host.uid] = {
+            name:host.displayName,
+            img: host.photoURL,
+         }
+         return previousPlayers
+      }
+      const param = await getParam()
+      const players = await getPlayers()
+      const alphaLobbyId = await generateId()
       const lobbyName = lobbyNames[Math.round(Math.random()*lobbyNames.length)];
+
       await set(ref(this.db, `lobbys/${alphaLobbyId}`), {
-            players:{
-               [host.uid] : {
-                  name:host.displayName,
-                  img: host.photoURL,
-               }
-            },
+            players:players,
             game:{
                started:false,
             },
             param : {
                lobbyName:lobbyName,
-               time:60,
-               len:20,
-               map:"world",
-               visibility:"private"
+               time:param.time,
+               len:param.len,
+               map:param.map,
+               visibility:param.visibility
             }
       });
       await set(ref(this.db, `hosts/${host.uid}`), {
@@ -143,6 +154,11 @@ export class Server {
          img: authUser.photoURL,
       });
       return true
+   }
+
+   async removeData(path) {
+      const removeRef = ref(this.db,path)
+      await remove(removeRef)
    }
 
    async onDisconnectRemove(path) {
@@ -164,4 +180,27 @@ export class Server {
    signOut(){
       signOut(this.auth)
    }
+
+   crypt(text, salt ){
+         const textToChars = (text) => text.split("").map((c) => c.charCodeAt(0));
+         const byteHex = (n) => ("0" + Number(n).toString(16)).substr(-2);
+         const applySaltToChar = (code) => textToChars(salt).reduce((a, b) => a ^ b, code);
+       
+         return text
+           .split("")
+           .map(textToChars)
+           .map(applySaltToChar)
+           .map(byteHex)
+           .join("");
+   }
+   decrypt (encoded, salt) {
+      const textToChars = (text) => text.split("").map((c) => c.charCodeAt(0));
+      const applySaltToChar = (code) => textToChars(salt).reduce((a, b) => a ^ b, code);
+      return encoded
+        .match(/.{1,2}/g)
+        .map((hex) => parseInt(hex, 16))
+        .map(applySaltToChar)
+        .map((charCode) => String.fromCharCode(charCode))
+        .join("");
+    };
 }
