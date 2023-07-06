@@ -23,6 +23,7 @@ export class Gbro {
 
    async init() {
       this.loader(true);
+      console.log(window.location.href);
       this.authUser = await this.server.authenthicate();
       await this.loadView(this.route["/dashboard"]);
       await this.server.userPresenceHandler(this.authUser,()=>{this.currentView.quit()})
