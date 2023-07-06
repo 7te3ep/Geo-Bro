@@ -20,13 +20,12 @@ export class CountryGame {
       this.timer = "";
       this.map = "world.geojson";
       this.gameEndTimer;
+      this.replay = false
    }
 
    async init() {
       await this.router.loadPage(this.link, this.path);
-      document
-         .querySelectorAll(".scoreBoard")
-         .forEach((el) => (el.style.display = "none"));
+      document.querySelectorAll(".scoreBoard").forEach((el) => (el.style.display = "none"));
       this.getEl("content").style.paddingTop = "2vh";
       this.elements["display"] = this.getEl("display");
       this.elements["playerList"] = this.getEl("playerList");
@@ -41,6 +40,7 @@ export class CountryGame {
       this.elements["joinLobbyBtn"] = this.getEl("joinLobbyBtn");
       await this.hostTryConnectToLobby();
       if (!this.isHost) await this.findLobby();
+      if (this.isHost) await this.server.removeData(`replayStack/${this.authUser.uid}`)
 
       this.gameParam = await this.server.getData(
          `lobbys/${this.lobbyID}/param`
@@ -59,12 +59,25 @@ export class CountryGame {
       if (this.isHost) {
          await this.generateGameData();
       }
+      var canConnect = true
+      this.elements.replay.addEventListener('click',async (event)=>{
+         await this.server.setData(`replayStack/${this.authUser.uid}`,{
+            param:this.gameParam,
+            players: await this.server.getData(`lobbys/${this.lobbyID}/players`),
+         })
+         this.replay = true
+         this.elements.replay.href = "/hostLobby"
+         if (canConnect) this.elements.replay.click()
+         canConnect = false
+      })
 
       this.elements.skipButton.addEventListener("click", () => {
          this.eventAppear("skipped");
          this.nextTurn(true);
       });
-
+      await this.server.onDisconnectRemove(`lobbys/${this.lobbyID}`)
+      await this.server.onDisconnectRemove(`hosts/${this.authUser.uid}`)
+      await this.server.onDisconnectRemove(`replayStack/${this.authUser.uid}`)
    }
 
    async eventAppear(id) {
@@ -78,7 +91,7 @@ export class CountryGame {
 
    async updateOnValue() {
       const gameData = await this.server.getData(`lobbys/${this.lobbyID}`);
-      if (!gameData) {
+      if (!gameData && !this.replay) {
          this.getEl("navGames").click();
          return;
       }
@@ -184,7 +197,7 @@ export class CountryGame {
    }
 
    async pathClicked(e, element) {
-      if (this.countries[this.round] == e.properties.name) {
+      if (this.countries[this.round] ==  this.server.decrypt(element.id,this.lobbyID)) {
          d3.select(element).style("fill", "rgb(95, 173, 65)");
          this.eventAppear("valid");
          return this.nextTurn(false);
@@ -230,31 +243,6 @@ export class CountryGame {
 
    async update() {}
 
-   //async joinNextLobby() {
-   //   await this.server.exeOnChange(`lobbys/${this.lobbyID}/game/host`, async () => {
-   //      console.log('wait')
-   //      const nextGameHost = await this.server.getData(`lobbys/${this.lobbyID}/game/host`);
-   //      if (!nextGameHost) return;
-   //      console.log('futur host will be ', nextGameHost)
-   //      await this.server.stopExeOnChange(`lobbys/${this.lobbyID}/game/host`);
-   //      this.replay = true;
-   //      await this.server.exeOnChange("hosts", async () => {
-   //         console.log('wait for game to be created')
-   //         const hosts = (await this.server.getData("hosts")) || {};
-   //         const lobbyCreated = Object.keys(hosts).includes(nextGameHost);
-   //         if (!lobbyCreated) return;
-   //         console.log("lobby created", lobbyCreated)
-   //         const nextLobbyId = Object.values(await this.server.getData(`hosts/${nextGameHost}`))[0];
-   //         if (nextLobbyId == this.lobbyID) return;
-   //         console.log("great next lobby ",nextLobbyId)
-   //         await this.server.stopExeOnChange("hosts");
-   //         await this.server.playerConnectToLobby(this.authUser, nextLobbyId);
-   //         this.elements.joinLobbyBtn.href = "/lobby";
-   //         this.elements.joinLobbyBtn.click();
-   //      });
-   //   })
-   //}
-
    async swipeNav(diretion) {}
 
    async quit() {
@@ -263,14 +251,10 @@ export class CountryGame {
       this.getEl("content").style.paddingTop = "10vh";
       if (this.isHost) {
          this.isHost = false;
+         await this.server.removeData(`replayStack/${this.authUser.uid}`)
          this.server.stopExeOnChange(`lobbys/${this.lobbyID}`);
-         //await new Promise(resolve => setTimeout(resolve, 5000));
-         const lobbys = await this.server.getData("lobbys");
-         const hosts = await this.server.getData("hosts");
-         delete lobbys[this.lobbyID];
-         delete hosts[this.authUser.uid];
-         await this.server.setData("lobbys", lobbys);
-         await this.server.setData("hosts", hosts);
+         await this.server.removeData(`lobbys/${this.lobbyID}`)
+         await this.server.removeData(`hosts/${this.authUser.uid}`)
       } else {
          await this.server.stopExeOnChange(`lobbys/${this.lobbyID}`);
          await this.deletePlayerOfLobby(this.authUser.uid);
@@ -309,7 +293,7 @@ export class CountryGame {
             .data(world.features)
             .enter()
             .append("path")
-            .attr("id", (d) => d.properties.name)
+            .attr("id", (d) => this.server.crypt(d.properties.name,this.lobbyID))
             .attr("class", "country")
             .attr("stroke", "black")
             .attr("stroke-width", "0.1px")

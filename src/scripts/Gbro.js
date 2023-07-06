@@ -42,7 +42,7 @@ export class Gbro {
             if (path){
                this.loader(true);
                if (path != "/country") await this.currentView.quit();
-               this.loadView(this.route[path]);
+               await this.loadView(this.route[path]);
                this.loader(false);
             } 
          });
