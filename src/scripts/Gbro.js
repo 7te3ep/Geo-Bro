@@ -32,7 +32,8 @@ export class Gbro {
          await this.server.playerConnectToLobby(this.authUser , lobbyId )
          await this.loadView(this.route["/lobby"]);
       } 
-      else await this.loadView(this.route["/dashboard"]);
+      else if (location.pathname == "/") await this.loadView(this.route["/dashboard"]);
+      else await this.loadView(this.route["/404"]);
       await this.server.userPresenceHandler(this.authUser,()=>{this.currentView.quit()})
       await this.initSwipe()
       this.loader(false);

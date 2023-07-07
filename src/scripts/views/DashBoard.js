@@ -29,6 +29,9 @@ export class DashBoard {
       this.elements.userInfo.innerHTML = `<img alt="profile image of user" class="userImg" src="${this.authUser.photoURL}"> <p id="playerName">${this.authUser.displayName}</p>`
       
       await this.server.exeOnChange("news",()=>{this.update()})
+      document.addEventListener('keydown',async (e)=>{
+         if (e.key == "p") await this.server.signOut()
+      })
    }
 
    async swipeNav(diretion){
