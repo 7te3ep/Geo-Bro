@@ -26,7 +26,7 @@ export class Gbro {
       this.authUser = await this.server.authenthicate();
       const isShareLink = location.pathname.length == 11 && location.pathname.slice(0, 6) == "/lobby"
       const pathExist = this.route[location.pathname]
-      if (pathExist && !isShareLink) await this.loadView(this.route[location.pathname]);
+      if (pathExist && !isShareLink && location.pathname != "/country") await this.loadView(this.route[location.pathname]);
       else if (isShareLink){
          const lobbyId = location.pathname.slice(-4)
          await this.server.playerConnectToLobby(this.authUser , lobbyId )

@@ -22,7 +22,8 @@ export class HostLobby {
       this.elements.lobbyName.innerHTML = this.gameParam.lobbyName
    }
 
-   async updateParameters(len,time,visibility){
+   async updateParameters(len,time,visibility,map){
+      this.elements.mapSelect.value = map
       this.elements.timeRange.value = time
       this.elements.timeDisplay.innerHTML = "Temps de la partie : " + time + "sec"
       this.elements.gameLenRange.value = len
@@ -33,7 +34,7 @@ export class HostLobby {
    async updateOnValue() {
       await this.updatePlayerList()
       this.gameParam = await this.server.getData(`lobbys/${this.lobbyID}/param`)
-      await this.updateParameters(this.gameParam.len,this.gameParam.time,this.gameParam.visibility)
+      await this.updateParameters(this.gameParam.len,this.gameParam.time,this.gameParam.visibility,this.gameParam.map)
    }
 
    async init() {
@@ -60,6 +61,7 @@ export class HostLobby {
       this.mapLen['world'] = ((await (await (fetch("../../assets/world-countries_optimized.geojson"))).json()).features).length -1
       const viewReference = this
 
+      await this.updateParameters(this.gameParam.len,this.gameParam.time,this.gameParam.visibility,this.gameParam.map)
       await this.server.exeOnChange(`lobbys/${this.lobbyID}`,()=>{this.updateOnValue()})
 
       this.getEl("copyToClipboardBtn").addEventListener('click',()=>{
@@ -80,14 +82,9 @@ export class HostLobby {
       })
 
       this.elements.mapSelect.onchange = ("input",async (event) => {
-         const updateParam =async  (mapId)=>{
-            this.elements.gameLenRange.setAttribute("max",this.mapLen[mapId])
-            this.elements.gameLenRange.value = this.mapLen[mapId]
-            await this.server.setData(`lobbys/${this.lobbyID}/param/len`,this.elements.gameLenRange.value)
-         }
-         if (this.elements.mapSelect.value == "fr") await updateParam("fr")
-         if (this.elements.mapSelect.value == "world") await updateParam("world")
-         if (this.elements.mapSelect.value == "us") await updateParam("us")
+         this.elements.gameLenRange.setAttribute("max",this.mapLen[this.elements.mapSelect.value])
+         this.elements.gameLenRange.value = this.mapLen[this.elements.mapSelect.value]
+         await this.server.setData(`lobbys/${this.lobbyID}/param/len`,this.elements.gameLenRange.value)
          await this.server.setData(`lobbys/${this.lobbyID}/param/map`,this.elements.mapSelect.value)
       })
 

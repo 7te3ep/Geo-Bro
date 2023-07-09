@@ -5,5 +5,6 @@ import { Social } from "./views/Social.js";
 import { Lobby } from "./views/Lobby.js";
 import { HostLobby } from "./views/HostLobby.js";
 import { NotFound } from "./views/NotFound.js";
+import { Entry } from "./views/Entry.js";
 
-export { DashBoard , Games , Social , Lobby , HostLobby, CountryGame, NotFound }
+export { DashBoard , Games , Social , Lobby , HostLobby, CountryGame, NotFound, Entry }

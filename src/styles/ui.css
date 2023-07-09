@@ -158,3 +158,84 @@ img {
    -webkit-user-select: none;
    -ms-user-select: none;
 }
+
+#geography {
+   padding-left: 50px;
+   text-shadow: rgba(247, 252, 255, 0.495) 0px 0px 10px; 
+   background: -webkit-linear-gradient(40deg, rgba(217,217,217,1) 55%, rgba(69,197,215,1) 100%);
+   -webkit-background-clip: text;
+   -webkit-text-fill-color: transparent;
+}
+
+#modern {
+   font-weight: lighter;
+}
+
+#games {
+   font-family: "Kalam", serif;
+}
+
+.socialBtn {
+   transition: transform 0.2s ease;
+   -webkit-transition: transform 0.2s ease;
+   -moz-transition: transform 0.2s ease;
+   -ms-transition: transform 0.2s ease;
+   -o-transition: transform 0.2s ease;
+}
+
+.socialImg {
+   width: 40px;
+}
+
+.socialBtn:hover {
+   transform: scale(1.1);
+   -webkit-transform: scale(1.1);
+   -moz-transform: scale(1.1);
+   -ms-transform: scale(1.1);
+   -o-transform: scale(1.1);
+}
+
+#playBtn {
+   background: rgb(217,217,217);
+   background: linear-gradient(40deg, rgba(217,217,217,1) 31%, rgba(69,197,215,1) 100%);   color: #2d2a32;
+   font-size: 8vw;
+   background-color: #d9d9d9;
+   width: fit-content;
+   padding: 10px 55px;
+   margin: 10px;
+   box-shadow: 4px 4px 10px #000000;
+   border-radius:  35px;
+   -webkit-border-radius:  35px;
+   -moz-border-radius:  35px;
+   -ms-border-radius:  35px;
+   -o-border-radius:  35px;
+}
+
+#socialGallery {
+   max-width: 400px;
+   width:80vw;
+   display: flex;
+   flex-wrap: wrap;
+}
+
+#entryIllustration {
+   display: flex;
+   flex-direction: column;
+   justify-content: space-between;
+   align-items: center;
+}
+
+#mainIllu {
+   display: none;
+}
+
+#mainTitle {
+   margin-top: 20vh;
+   height: 50vw;
+   font-size: 13vw;
+}
+
+#geography {
+   font-size: 12vw;
+}
+

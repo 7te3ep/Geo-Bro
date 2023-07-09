@@ -1,6 +1,10 @@
 @media only screen and (min-width: 800px) {
    body {
+      position: relative;
       flex-direction:row-reverse;
+      align-items: normal;
+      overflow: hidden;
+      max-height: 100dvh;
    }
 
    nav {
@@ -60,5 +64,46 @@
    .blob {
       max-width: 500px;
 
+   }
+
+   #valid {
+      font-size: 10vw;
+   }
+   #invalid {
+      font-size: 10vw;
+   }
+   #skipped {
+      font-size: 8vw;
+   }
+
+   #entryIllustration {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+   }
+
+   #mainIllu {
+      display: block;
+      position:relative;
+      padding-right:80px; 
+      width:50vw;
+      height:500px; 
+      margin-bottom:150px;
+   }
+   
+   #mainTitle {
+      max-width: 60vw;  
+      font-size: 7vw; 
+      padding-left: 5vw; 
+      margin-bottom:150px;
+   }
+
+   #geography {
+      font-size: 8vw;
+   }
+
+   #playBtn {
+      font-size: 3vw;
    }
 }
