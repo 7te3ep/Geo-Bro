@@ -47,7 +47,9 @@ export class Games {
       })
    }
    async tryConnectToLobby(lobbys){
-      if (lobbys.find(element => element[1].players[this.authUser.uid]) && this.canConnect) {
+      if (lobbys.find(
+            element => { if (element[1].players) element[1].players[this.authUser.uid] }
+         ) && this.canConnect) {
          await this.server.stopExeOnChange("lobbys")
          this.elements.joinLobbyBtn.href = "/lobby"
          this.canConnect = false

@@ -1,6 +1,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js";
-import {getDatabase,ref,push,onValue,remove,get,off,set,update , onDisconnect } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js";
-import {GoogleAuthProvider,getAuth,signInWithRedirect,getRedirectResult,onAuthStateChanged, signOut} from "https://www.gstatic.com/firebasejs/9.15.0/firebase-auth.js";
+import {getDatabase,ref,onValue,remove,get,off,set,update , onDisconnect } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js";
+import {GoogleAuthProvider, OAuthProvider ,FacebookAuthProvider,TwitterAuthProvider,getAuth, signInWithPopup,onAuthStateChanged, signOut} from "https://www.gstatic.com/firebasejs/9.15.0/firebase-auth.js";
 import { firebaseConfig } from "./serverConfig.js";
 import { lobbyNames } from "./../../assets/lobbyNames.js"
 export class Server {
@@ -8,25 +8,30 @@ export class Server {
       this.app = initializeApp(firebaseConfig);
       this.db = getDatabase(this.app);
       this.auth = getAuth();
-      this.provider = new GoogleAuthProvider();
+      this.provider
    }
 
-   async authenthicate(){
+   async authenticate( test , provider ) {
+      if (provider == 'google') this.provider = new GoogleAuthProvider()
+      if (provider == 'twitter') this.provider = new TwitterAuthProvider()
+      if (provider == 'facebook') this.provider = new FacebookAuthProvider()
+      if (provider == 'microsoft') this.provider = new OAuthProvider('microsoft.com')
       return new Promise(async (resolve) => {
          const onAuth = async (user) => {
-            if (!user) {
-               const userIsLoggingIn = await getRedirectResult(this.auth)
-               if (!userIsLoggingIn) await signInWithRedirect(this.auth, this.provider);
+            if (!user && !test) {
+               await signInWithPopup(this.auth, this.provider)
             }
-            var snapshot = await get(ref(this.db, `users/${user.uid}`))
-            const userExistInDb = snapshot.exists()
-            if (!userExistInDb) await this.createUser(user);
+            if (!test && user) {
+               var snapshot = await get(ref(this.db, `users/${user.uid}`))
+               const userExistInDb = snapshot.exists()
+               if (!userExistInDb) await this.createUser(user);
+            }
             resolve(user);
          }
          await onAuthStateChanged(this.auth, onAuth);
       })
    }
-   
+
    async getData(path) {
       var snapshot =  await get(ref(this.db,path))
       if (snapshot.exists()) return snapshot.val()

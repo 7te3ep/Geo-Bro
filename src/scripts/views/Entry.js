@@ -20,7 +20,11 @@ export class Entry {
       this.getEl("botNav").style.display = "none" 
       this.elements['playBtn'] = this.getEl('playBtn')
       this.elements['socialGallery'] = this.getEl('socialGallery')
-
+      this.elements['google'] = this.getEl('google')
+      this.elements['twitter'] = this.getEl('twitter')
+      this.elements['facebook'] = this.getEl('facebook')
+      this.elements['microsoft'] = this.getEl('microsoft')
+      this.elements['entrance'] = this.getEl('entrance')
       this.elements.playBtn.addEventListener('click',(event)=>{
          this.elements.playBtn.classList.add('disapear')
          this.elements.playBtn.style.display = 'none'
@@ -28,6 +32,25 @@ export class Entry {
          this.elements.socialGallery.classList.add('appear')
       })
 
+      this.elements.google.addEventListener('click',async ()=>{
+         await this.server.authenticate(false, 'google')
+         this.elements.entrance.click()
+      })
+      this.elements.twitter.addEventListener('click',async ()=>{
+         await this.server.authenticate(false, 'twitter')
+         this.elements.entrance.click()
+      })
+
+      this.elements.facebook.addEventListener('click',async ()=>{
+         await this.server.authenticate(false, 'facebook')
+         this.elements.entrance.click()
+      })
+
+      this.elements.microsoft.addEventListener('click',async ()=>{
+         await this.server.authenticate(false, 'microsoft')
+         this.elements.entrance.click()
+      })
+      //await this.server.authenthicate();
    }
 
 

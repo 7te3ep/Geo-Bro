@@ -23,19 +23,22 @@ export class Gbro {
 
    async init() {
       this.loader(true);
-      await this.server.authenthicate();
-      this.authUser = this.server.auth.currentUser
+      const userIsAuth = await this.server.authenticate(true, "none")
       const isShareLink = location.pathname.length == 11 && location.pathname.slice(0, 6) == "/lobby"
       const pathExist = this.route[location.pathname]
-      if (pathExist && !isShareLink && location.pathname != "/country") await this.loadView(this.route[location.pathname]);
-      else if (isShareLink){
+      const isNavigation = pathExist && !isShareLink && location.pathname != "/country"
+      console.log(location.pathname);
+      if (isShareLink){
          const lobbyId = location.pathname.slice(-4)
-         await this.server.playerConnectToLobby(this.authUser , lobbyId )
+         await this.server.playerConnectToLobby(this.server.auth.currentUser , lobbyId )
          await this.loadView(this.route["/lobby"]);
       } 
-      else if (location.pathname == "/") await this.loadView(this.route["/dashboard"]);
-      else await this.loadView(this.route["/404"]);
-      await this.server.userPresenceHandler(this.authUser,()=>{this.currentView.quit()})
+      else if (!userIsAuth) await this.loadView(this.route["/entry"]);
+      else if (userIsAuth && location.pathname == "/" || location.pathname == "/entry")  await this.loadView(this.route["/dashboard"]) 
+      else if (isNavigation) await this.loadView(this.route[location.pathname]);
+      else if (!pathExist) this.loadView(this.route["/404"]);
+      
+      if (userIsAuth) await this.server.userPresenceHandler(this.server.auth.currentUser,()=>{this.currentView.quit()})
       await this.initSwipe()
       this.loader(false);
    }
@@ -61,7 +64,7 @@ export class Gbro {
    }
 
    async loadView(view) {
-      this.currentView = new view(this.server, this.authUser, this.router);
+      this.currentView = new view(this.server, this.server.auth.currentUser, this.router);
       await this.currentView.init();
       await this.initLinks();
       await this.currentView.update();
