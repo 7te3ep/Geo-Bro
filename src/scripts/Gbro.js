@@ -23,7 +23,8 @@ export class Gbro {
 
    async init() {
       this.loader(true);
-      this.authUser = await this.server.authenthicate();
+      await this.server.authenthicate();
+      this.authUser = this.server.auth.currentUser
       const isShareLink = location.pathname.length == 11 && location.pathname.slice(0, 6) == "/lobby"
       const pathExist = this.route[location.pathname]
       if (pathExist && !isShareLink && location.pathname != "/country") await this.loadView(this.route[location.pathname]);

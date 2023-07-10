@@ -93,10 +93,14 @@
    }
    
    #mainTitle {
-      max-width: 60vw;  
-      font-size: 7vw; 
-      padding-left: 5vw; 
-      margin-bottom:150px;
+      width: 100vw;
+      font-size: 7vw;
+      padding-left: 3vw;
+      max-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content:start;
+      margin-top: 0px;
    }
 
    #geography {

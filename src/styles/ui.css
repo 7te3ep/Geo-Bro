@@ -161,14 +161,13 @@ img {
 
 #geography {
    padding-left: 50px;
-   text-shadow: rgba(247, 252, 255, 0.495) 0px 0px 10px; 
-   background: -webkit-linear-gradient(40deg, rgba(217,217,217,1) 55%, rgba(69,197,215,1) 100%);
-   -webkit-background-clip: text;
-   -webkit-text-fill-color: transparent;
+    text-shadow: rgba(247, 252, 255, 0.495) 0px 0px 10px; 
+   font-family: "Kalam", serif;
 }
 
 #modern {
-   font-weight: lighter;
+   /*font-weight: lighter;
+   */font-family: "Kalam", serif;
 }
 
 #games {
@@ -226,12 +225,13 @@ img {
 }
 
 #mainIllu {
-   display: none;
+   position: relative;
+   max-width: 40vw;
+   bottom: 0px;
 }
 
 #mainTitle {
    margin-top: 8vh;
-   height: 50vw;
    font-size: 13vw;
 }
 
