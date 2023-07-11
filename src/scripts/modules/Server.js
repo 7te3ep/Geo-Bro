@@ -21,7 +21,15 @@ export class Server {
             'display': 'popup'
           });
       } 
-      if (provider == 'microsoft') this.provider = new OAuthProvider('microsoft.com')
+      if (provider == 'microsoft'){
+         this.provider = new OAuthProvider('microsoft.com')
+         this.provider.setCustomParameters({
+            // Force re-consent.
+            prompt: 'consent',
+            // Target specific email with login hint.
+            login_hint: 'user@firstadd.onmicrosoft.com'
+          });
+      } 
       return new Promise(async (resolve) => {
          const onAuth = async (user) => {
             if (!user && !test) {
