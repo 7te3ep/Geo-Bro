@@ -14,7 +14,13 @@ export class Server {
    async authenticate( test , provider ) {
       if (provider == 'google') this.provider = new GoogleAuthProvider()
       if (provider == 'twitter') this.provider = new TwitterAuthProvider()
-      if (provider == 'facebook') this.provider = new FacebookAuthProvider()
+      if (provider == 'facebook'){
+         this.provider = new FacebookAuthProvider()
+         this.provider.addScope('public_profile,email');
+         this.provider.setCustomParameters({
+            'display': 'popup'
+          });
+      } 
       if (provider == 'microsoft') this.provider = new OAuthProvider('microsoft.com')
       return new Promise(async (resolve) => {
          const onAuth = async (user) => {
