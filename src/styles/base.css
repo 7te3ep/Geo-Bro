@@ -54,7 +54,6 @@ svg {
    margin: 15px 0px;
    width: 100%;
    gap: 10px;
-   
 }
 
 .card {
@@ -312,3 +311,29 @@ input:focus {
    border-radius: 50%;
  }
 
+ #valid {
+      font-size: 20vw;
+      transform: translate(-100vw,0)   ;
+      -webkit-transform: translate(-100vw,0)   ;
+      -moz-transform: translate(-100vw,0)   ;
+      -ms-transform: translate(-100vw,0)   ;
+      -o-transform: translate(-100vw,0)   ;
+}
+#invalid {
+   font-size: 20vw;
+
+      transform: translate(-100vw,0)   ;
+      -webkit-transform: translate(-100vw,0);
+      -moz-transform: translate(-100vw,0);
+      -ms-transform: translate(-100vw,0);
+      -o-transform: translate(-100vw,0);
+}
+#skipped {
+   font-size: 10vw;
+
+      transform: translate(-100vw,0)   ;
+      -webkit-transform: translate(-100vw,0);
+      -moz-transform: translate(-100vw,0);
+      -ms-transform: translate(-100vw,0);
+      -o-transform: translate(-100vw,0);
+}

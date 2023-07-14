@@ -4,7 +4,6 @@
       flex-direction:row-reverse;
       align-items: normal;
       overflow: hidden;
-      max-height: 100dvh;
    }
 
    nav {
@@ -23,7 +22,13 @@
       display: flex;
       flex-direction: column;
       align-items: center;
+      overflow-y: scroll;
       width: 100%;
+   }
+
+   #scroll {
+      width: 100%;
+      overflow-y: scroll;
    }
 
    .title {
@@ -32,6 +37,8 @@
    }
 
    .container {
+      flex-direction: column;
+      flex-wrap: nowrap;
       max-width:900px;
    }
 
@@ -68,13 +75,14 @@
 
    #valid {
       font-size: 10vw;
-   }
+}
    #invalid {
       font-size: 10vw;
-   }
+
+}
    #skipped {
       font-size: 8vw;
-   }
+}
 
    #entryIllustration {
       display: flex;

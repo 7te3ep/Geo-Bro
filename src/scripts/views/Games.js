@@ -23,7 +23,6 @@ export class Games {
       this.elements["lobbyIdInput"] = this.getEl("lobbyIdInput")
       this.elements["joinLobbyBtn"] = this.getEl("joinLobbyBtn")
       this.elements["lobbysGallery"] = this.getEl("lobbysGallery")
-      
       this.elements.joinLobbyBtn.addEventListener('click',async ()=>{
          const lobbyId = this.elements.lobbyIdInput.value
          let lobbyExist = await this.server.getData(`lobbys/${lobbyId}`)
@@ -60,7 +59,7 @@ export class Games {
    async updateLobbysGallery(lobbys) {
       this.elements.lobbysGallery.innerHTML = ""
       if (lobbys.length == 0) {
-         this.elements.lobbysGallery.innerHTML = "<div class='title'>Aucun pour le moment !</div>"
+         this.elements.lobbysGallery.innerHTML = "<div class='title'>Aucune pour le moment !</div>"
          return
       }
       lobbys.forEach(lobby => {

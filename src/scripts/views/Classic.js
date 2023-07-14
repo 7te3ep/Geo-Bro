@@ -1,11 +1,11 @@
-export class CountryGame {
+export class Classic {
    constructor(server, authUser, router) {
       this.lobbyID;
       this.layer = 3;
       this.getEl = (id) => document.getElementById(id);
       this.elements = {};
-      this.link = "/country";
-      this.path = "views/countryGames.html";
+      this.link = "/classic";
+      this.path = "views/classic.html";
       this.server = server;
       this.authUser = authUser;
       this.isHost = false;
@@ -21,6 +21,7 @@ export class CountryGame {
       this.map = "world.geojson";
       this.gameEndTimer;
       this.replay = false
+      this.startTime
    }
 
    async init() {
@@ -66,7 +67,7 @@ export class CountryGame {
             players: await this.server.getData(`lobbys/${this.lobbyID}/players`),
          })
          this.replay = true
-         this.elements.replay.href = "/hostLobby"
+         this.elements.replay.href = "/chooseGameMode"
          if (canConnect) this.elements.replay.click()
          canConnect = false
       })
@@ -161,6 +162,7 @@ export class CountryGame {
    }
 
    async nextTurn(skip) {
+      this.startTime = new Date()
       if (this.countries.length == this.round + 1) return this.endGame();
       if (!skip) this.score += 1 + this.streak;
       else if (this.streak != 0) this.streak -= 1;
@@ -200,6 +202,7 @@ export class CountryGame {
       if (this.countries[this.round] ==  this.server.decrypt(element.id,this.lobbyID)) {
          d3.select(element).style("fill", "rgb(95, 173, 65)");
          this.eventAppear("valid");
+         await this.server.setData(`jefaisdesstat/${new Date()}`, this.startTime - new Date())
          return this.nextTurn(false);
       } else {
          d3.select(element).style("fill", "rgb(188, 59, 57)");

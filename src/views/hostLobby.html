@@ -6,7 +6,11 @@
 </div>
 
 <div class="container dark rounded">
-   <div class="title" id="lobbyName"></div>
+   <div class="row card" >
+      <img id="lobbyImg" src="../assets/speedrun.png" style="width: 50px;" alt="">
+      <div class="title dark" style="background-color:unset;" id="lobbyName"></div>   
+   </div>
+
    <div class="container electricBlue rounded">
       Host : <span id="lobbyHostName"></span>
    </div>
@@ -58,7 +62,7 @@
    </div>
 </div>
 
-<a aria-label="Start the game" href="/country" class="btn good rounded">Commencer</a>
+<a aria-label="Start the game" id="play" href="/classic" class="btn good rounded">Commencer</a>
 
 <img alt="background blob image" src="../assets//lobbyBlob1.png" class="blob left-bottom">
 <img alt="background blob image" src="../assets//lobbyBlob2.png" class="blob right-top">

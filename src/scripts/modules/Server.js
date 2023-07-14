@@ -128,8 +128,8 @@ export class Server {
       }
       const getParam = async ()=>{
          const previousParam = await this.getData(`replayStack/${host.uid}/param`)
-         if (!previousParam) return {time:60,len:20,map:"world",visibility:"private"}
-         else return {time: previousParam.time,len: previousParam.len,map: previousParam.map,visibility: previousParam.visibility}
+         if (!previousParam) return {time:60,len:20,map:"world",visibility:"private",gamemode:''}
+         else return {time: previousParam.gamemode,time: previousParam.time,len: previousParam.len,map: previousParam.map,visibility: previousParam.visibility}
       }
       const getPlayers = async ()=>{
          const previousPlayers = await this.getData(`replayStack/${host.uid}/players`) || {}
@@ -150,6 +150,7 @@ export class Server {
                started:false,
             },
             param : {
+               gamemode:param.gamemode ?param.gamemode : "",
                lobbyName:lobbyName,
                time:param.time,
                len:param.len,

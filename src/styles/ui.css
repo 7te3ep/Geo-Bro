@@ -222,17 +222,18 @@ img {
    flex-direction: column;
    justify-content: space-between;
    align-items: center;
+   max-height: 70vh;
 }
 
 #mainIllu {
    position: relative;
    max-width: 40vw;
-   bottom: 0px;
 }
 
 #mainTitle {
    margin-top: 8vh;
-   font-size: 13vw;
+   font-size: clamp(13vw, 50px, 5px);
+   max-width: 80vw;
 }
 
 #geography {

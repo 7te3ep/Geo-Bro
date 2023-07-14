@@ -26,15 +26,15 @@ export class Gbro {
       const userIsAuth = await this.server.authenticate(true, "none")
       const isShareLink = location.pathname.length == 11 && location.pathname.slice(0, 6) == "/lobby"
       const pathExist = this.route[location.pathname]
-      const isNavigation = pathExist && !isShareLink && location.pathname != "/country"
-      console.log(location.pathname);
+      const isNavigation = pathExist && !isShareLink
+      const isNotAccessible = ["/entry","/hostLobby","/speedrun","/classic","/lobby"].includes(location.pathname)
       if (isShareLink){
          const lobbyId = location.pathname.slice(-4)
          await this.server.playerConnectToLobby(this.server.auth.currentUser , lobbyId )
          await this.loadView(this.route["/lobby"]);
       } 
       else if (!userIsAuth) await this.loadView(this.route["/entry"]);
-      else if (userIsAuth && location.pathname == "/" || location.pathname == "/entry")  await this.loadView(this.route["/dashboard"]) 
+      else if (userIsAuth && location.pathname == "/" || isNotAccessible )  await this.loadView(this.route["/dashboard"]) 
       else if (isNavigation) await this.loadView(this.route[location.pathname]);
       else if (!pathExist) this.loadView(this.route["/404"]);
       
@@ -54,7 +54,8 @@ export class Gbro {
             const path = link.getAttribute("href")
             if (path){
                this.loader(true);
-               if (path != "/country") await this.currentView.quit();
+               const isGameNav = path == "/classic" || path == "/speedrun" || path == "/hostLobby"
+               if (!isGameNav) await this.currentView.quit();
                await this.loadView(this.route[path]);
                this.loader(false);
             } 

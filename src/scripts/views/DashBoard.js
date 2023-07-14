@@ -11,7 +11,8 @@ export class DashBoard {
    }
 
    async update() {
-      const userData = (await this.server.getData(`users/${this.authUser.uid}`)).data || {}
+      if (!await this.server.getData(`users/${this.authUser.uid}`)) return
+      const userData = (await this.server.getData(`users/${this.authUser.uid}`)).data
       this.elements.userLevel.innerHTML = userData.level
       this.elements.expBar.style.width = `${userData.exp}%`
       await this.updateNewsGallery()
@@ -29,6 +30,7 @@ export class DashBoard {
       this.elements.userInfo.innerHTML = `<img alt="profile image of user" class="userImg" src="${this.authUser.photoURL}"> <p id="playerName">${this.authUser.displayName}</p>`
       
       await this.server.exeOnChange("news",()=>{this.update()})
+      await this.server.exeOnChange(`users/${this.authUser.uid}`,()=>{this.update()})
       document.addEventListener('keydown',async (e)=>{
          if (e.key == "p") await this.server.signOut()
       })
@@ -39,6 +41,8 @@ export class DashBoard {
    }
 
    async quit() {
+      await this.server.stopExeOnChange("news")
+      await this.server.stopExeOnChange(`users/${this.authUser.uid}`)
    }
 
    async updateNewsGallery(){
