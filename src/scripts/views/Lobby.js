@@ -48,8 +48,11 @@ export class Lobby {
       this.elements["lobbyName"] = this.getEl("lobbyName")
       this.elements["mapParam"] = this.getEl("mapParam")
       this.elements["timeParam"] = this.getEl("timeParam")
+      this.elements["lobbyImg"] = this.getEl("lobbyImg")
       this.elements["lenParam"] = this.getEl("lenParam")
       this.gameParam = await this.server.getData(`lobbys/${this.lobbyID}/param`)
+
+      if (this.gameParam.gamemode == "speedrun") this.elements.timeParam.style.display = "none"
       this.getEl("copyToClipboardBtn").addEventListener('click',()=>{
          copyToClipboard(copyToClipboard(`geobro.online/lobby:${this.lobbyID}`))
       })
@@ -87,6 +90,8 @@ export class Lobby {
       this.elements.mapParam.innerHTML = `Carte : ${fullMapName}`
       this.elements.timeParam.innerHTML = `Temps : ${this.gameParam.time}s`
       this.elements.lenParam.innerHTML = `Nombre d'elements : ${this.gameParam.len}`
+
+      this.elements.lobbyImg.src = `../assets/${this.gameParam.gamemode}.png`
    }
 
    async deletePlayerOfLobby(playerUid){

@@ -63,7 +63,9 @@ export class Games {
       lobbys.forEach(lobby => {
          const lobbyId = lobby[0]
          const lobbyName = lobby[1].param.lobbyName
-         this.elements.lobbysGallery.innerHTML += `<div class="card rounded electricBlue row"><span id="lobbyName" class="title">${lobbyName}</span><a class="btn good joinPublicLobbyBtn" id="${lobbyId}"><i class="fa-solid fa-right-to-bracket"></i></a></div>`
+         const gamemode = lobby[1].param.gamemode
+         this.elements.lobbysGallery.innerHTML += 
+         `<div class="card rounded electricBlue row"><img style="width: 5vw; min-width: 50px;" src="../assets/${gamemode}.png" alt=""><span id="lobbyName" class="title">${lobbyName}</span><a class="btn good joinPublicLobbyBtn" id="${lobbyId}"><i class="fa-solid fa-right-to-bracket"></i></a></div>`
       });
 
       document.querySelectorAll(".joinPublicLobbyBtn").forEach((joinBtn)=>{

@@ -63,7 +63,10 @@ export class HostLobby {
       this.mapLen['world'] = ((await (await (fetch("../../assets/world-countries_optimized.geojson"))).json()).features).length -1
       const viewReference = this
 
-      if (this.gameParam.gamemode == "speedrun") this.elements.play.href = "/speedrun"
+      if (this.gameParam.gamemode == "speedrun"){
+         this.elements.play.href = "/speedrun"
+         this.getEl('time').style.display = "none"
+      } 
       await this.updateParameters(this.gameParam.len,this.gameParam.time,this.gameParam.visibility,this.gameParam.map, this.gameParam.gamemode)
       await this.server.exeOnChange(`lobbys/${this.lobbyID}`,()=>{this.updateOnValue()})
 

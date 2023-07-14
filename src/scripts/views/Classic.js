@@ -107,6 +107,7 @@ export class Classic {
    }
 
    async startGame() {
+      this.gameState = "playing"
       if (this.isHost) this.gameEndTimer = setTimeout(async () =>{
          const serverStillExist = await this.server.getData(`lobbys/${this.lobbyID}`) 
          if (!serverStillExist) return
@@ -132,6 +133,7 @@ export class Classic {
    }
 
    async endGame() {
+      this.gameState = "ended"
       clearInterval(this.timer);
       document.querySelectorAll(".game").forEach((el)=>el.classList.remove("shake"))
       document.querySelector('body').classList.remove('redBorders')

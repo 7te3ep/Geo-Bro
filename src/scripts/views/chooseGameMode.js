@@ -41,9 +41,9 @@ export class chooseGameMode {
       })
    }
 
-
-
-   async quit() {  
+   async quit() {
+      console.log(this.lobbyID);  
+      console.log(this.authUser);  
       await this.server.removeData(`lobbys/${this.lobbyID}`)
       await this.server.removeData(`hosts/${this.authUser.uid}`)
    }

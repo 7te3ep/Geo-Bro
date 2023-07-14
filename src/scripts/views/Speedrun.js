@@ -16,8 +16,11 @@ export class Speedrun {
       this.round = 0;
       this.score = 0;
       this.map = "world.geojson";
-      this.gameEndTimer;
       this.replay = false
+      this.speed = 100
+      this.speedTimer
+      this.gameTimer
+      this.speedSubPerSec = 1
    }
 
    async init() {
@@ -30,6 +33,7 @@ export class Speedrun {
       this.elements["skipButton"] = this.getEl("skipButton");
       this.elements["replay"] = this.getEl("replay");
       this.elements["joinLobbyBtn"] = this.getEl("joinLobbyBtn");
+      this.elements["rocket"] = this.getEl("rocket");
       await this.hostTryConnectToLobby();
       if (!this.isHost) await this.findLobby();
       if (this.isHost) await this.server.removeData(`replayStack/${this.authUser.uid}`)
@@ -62,6 +66,8 @@ export class Speedrun {
       })
 
       this.elements.skipButton.addEventListener("click", () => {
+         this.speed -= 5
+         this.updateRocket()
          this.eventAppear("skipped");
          this.nextTurn(true);
       });
@@ -85,7 +91,7 @@ export class Speedrun {
          this.getEl("navGames").click();
          return;
       }
-
+      console.log(gameData.game.state, this.gameState);
       if (gameData.game.state != this.gameState) {
          if (gameData.game.state == "playing") await this.startGame();
          if (gameData.game.state == "ended") await this.endGame();
@@ -96,6 +102,7 @@ export class Speedrun {
    }
 
    async startGame() {
+      this.gameState = "playing"
       // end Game : await this.server.setData(`lobbys/${this.lobbyID}/game/state`,"ended")
       // end effect document.querySelectorAll(".game").forEach((el)=>el.classList.add("shake"))
       // end effect document.querySelector('body').classList.add('redBorders')
@@ -104,9 +111,36 @@ export class Speedrun {
       const gameData = await this.server.getData(`lobbys/${this.lobbyID}/game`);
       this.countries = gameData.countries;
       this.elements.display.innerHTML = this.countries[this.round];
+
+      this.gameTimer = setInterval(()=>{
+         this.speedSubPerSec = this.speedSubPerSec * 2
+      },10000)
+
+      this.speedTimer = setInterval(async ()=>{
+         this.speed -= this.speedSubPerSec
+         this.updateRocket()
+         this.score ++
+         if (this.speed <= 0){
+            clearInterval(this.speedTimer)
+            clearInterval(this.gameTimer)
+            if (!this.isHost) return
+            const serverStillExist = await this.server.getData(`lobbys/${this.lobbyID}`) 
+            if (!serverStillExist) return
+            await this.server.setData(`lobbys/${this.lobbyID}/game/state`,"ended")
+         } 
+
+      },1000)
+   }
+
+   async updateRocket() {
+      if (this.speed >= 100) this.speed = 100
+      if (this.speed <= 0) this.speed = 0
+      this.elements.rocket.style.top = `${13+((100-this.speed)*72/100)}%`
    }
 
    async endGame() {
+      await this.server.setData(`lobbys/${this.lobbyID}/players/${this.authUser.uid}/score`,this.score);
+      this.gameState = "ended"
       clearInterval(this.timer);
       document.querySelectorAll(".game").forEach((el)=>el.classList.remove("shake"))
       document.querySelector('body').classList.remove('redBorders')
@@ -139,14 +173,8 @@ export class Speedrun {
 
    async nextTurn(skip) {
       if (this.countries.length == this.round + 1) return this.endGame();
-      if (!skip) this.score += 1
       this.round += 1;
       this.elements.display.innerHTML = this.countries[this.round];
-      this.elements.score.innerHTML = this.score + "pt";
-      await this.server.setData(
-         `lobbys/${this.lobbyID}/players/${this.authUser.uid}/score`,
-         this.score
-      );
    }
 
    async generateGameData() {
@@ -171,10 +199,14 @@ export class Speedrun {
 
    async pathClicked(e, element) {
       if (this.countries[this.round] ==  this.server.decrypt(element.id,this.lobbyID)) {
+         this.speed += 20
+         this.updateRocket()
          d3.select(element).style("fill", "rgb(95, 173, 65)");
          this.eventAppear("valid");
          return this.nextTurn(false);
       } else {
+         this.speed -= 10
+         this.updateRocket()
          d3.select(element).style("fill", "rgb(188, 59, 57)");
       }
 
@@ -216,13 +248,11 @@ export class Speedrun {
    async swipeNav(diretion) {}
 
    async quit() {
-      clearInterval(this.timer);
-      clearInterval(this.gameEndTimer);
       this.getEl("content").style.paddingTop = "10vh";
       if (this.isHost) {
          this.isHost = false;
+         await this.server.stopExeOnChange(`lobbys/${this.lobbyID}`);
          await this.server.removeData(`replayStack/${this.authUser.uid}`)
-         this.server.stopExeOnChange(`lobbys/${this.lobbyID}`);
          await this.server.removeData(`lobbys/${this.lobbyID}`)
          await this.server.removeData(`hosts/${this.authUser.uid}`)
       } else {
