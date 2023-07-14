@@ -44,8 +44,6 @@ export class chooseGameMode {
 
 
    async quit() {  
-      console.log("mdr");
-      console.log(this.lobbyID);
       await this.server.removeData(`lobbys/${this.lobbyID}`)
       await this.server.removeData(`hosts/${this.authUser.uid}`)
    }

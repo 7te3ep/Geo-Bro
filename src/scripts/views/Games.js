@@ -42,13 +42,11 @@ export class Games {
          const publicLobbys = realLobbys.filter((lobby)=>lobby[1].param.visibility == "public")
          const waitingLobbyys = publicLobbys.filter((lobby)=>lobby[1].game.started == false)
          await this.updateLobbysGallery(waitingLobbyys)
-         await this.tryConnectToLobby(lobbys)
+         await this.tryConnectToLobby(realLobbys)
       })
    }
    async tryConnectToLobby(lobbys){
-      if (lobbys.find(
-            element => { if (element[1].players) element[1].players[this.authUser.uid] }
-         ) && this.canConnect) {
+      if (lobbys.find(element => this.authUser.uid in element[1].players ) && this.canConnect) {
          await this.server.stopExeOnChange("lobbys")
          this.elements.joinLobbyBtn.href = "/lobby"
          this.canConnect = false

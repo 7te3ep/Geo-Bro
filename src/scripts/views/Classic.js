@@ -128,6 +128,7 @@ export class Classic {
       const gameData = await this.server.getData(`lobbys/${this.lobbyID}/game`);
       this.countries = gameData.countries;
       this.elements.display.innerHTML = this.countries[this.round];
+      this.startTime = new Date()
    }
 
    async endGame() {
