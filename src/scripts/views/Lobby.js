@@ -14,6 +14,42 @@ export class Lobby {
       this.lobbyHostName
       this.lobbyID
       this.gameParam
+      this.waiting = true
+   }
+
+
+
+   async init() {
+      await this.router.loadPage(this.link,this.path)
+      await this.findLobby()
+      this.elements["playersList"] = this.getEl("playersList")
+      this.elements["lobbyId"] = this.getEl("lobbyId")
+      this.elements["gameLaunch"] = this.getEl("gameLaunch")
+      this.elements["lobbyName"] = this.getEl("lobbyName")
+      this.elements["mapParam"] = this.getEl("mapParam")
+      this.elements["timeParam"] = this.getEl("timeParam")
+      this.elements["lobbyImg"] = this.getEl("lobbyImg")
+      this.elements["lenParam"] = this.getEl("lenParam")
+      this.elements["waiting"] = this.getEl("waiting")
+      this.gameParam = await this.server.getData(`lobbys/${this.lobbyID}/param`)
+      await this.server.exeOnChange(`lobbys/${this.lobbyID}`,()=>{return this.updateOnValue()})
+
+      this.getEl("copyToClipboardBtn").addEventListener('click',()=>{
+         copyToClipboard(copyToClipboard(`geobro.online/lobby:${this.lobbyID}`))
+      })
+      await this.server.onDisconnectRemove(`lobbys/${this.lobbyID}/players/${this.authUser.uid}`)
+   }
+
+   async findLobby() {
+      const lobbys = Object.entries(await this.server.getData('lobbys') || {})
+      for (let lobby of lobbys) {
+         const lobbyID = lobby[0]
+         const lobbyPlayers = Object.entries(lobby[1].players || {})
+         for (let player of lobbyPlayers) {
+            const isUserLobby = player[0] == this.authUser.uid
+            if (isUserLobby) this.lobbyID = lobbyID
+         }
+      }
    }
 
    async update() {
@@ -36,43 +72,20 @@ export class Lobby {
       else {
          await this.updatePlayerList()
          await this.updateGameParam()
+         const lobbyWaitingForParam = this.gameParam.gamemode == ""
+         if (!lobbyWaitingForParam && this.waiting ) {
+            this.waiting = false
+            this.elements.waiting.style.display = "none"
+            this.initParam()
+         }
       }
    }
 
-   async init() {
-      await this.router.loadPage(this.link,this.path)
-      await this.findLobby()
-      await this.server.exeOnChange(`lobbys/${this.lobbyID}`,()=>{return this.updateOnValue()})
-      this.elements["playersList"] = this.getEl("playersList")
-      this.elements["lobbyId"] = this.getEl("lobbyId")
-      this.elements["gameLaunch"] = this.getEl("gameLaunch")
-      this.elements["lobbyName"] = this.getEl("lobbyName")
-      this.elements["mapParam"] = this.getEl("mapParam")
-      this.elements["timeParam"] = this.getEl("timeParam")
-      this.elements["lobbyImg"] = this.getEl("lobbyImg")
-      this.elements["lenParam"] = this.getEl("lenParam")
-      this.gameParam = await this.server.getData(`lobbys/${this.lobbyID}/param`)
-
+   async initParam() {
       if (this.gameParam.gamemode == "speedrun"){
          this.elements.timeParam.style.display = "none"
          this.elements.lenParam.style.display = "none"
       } 
-      this.getEl("copyToClipboardBtn").addEventListener('click',()=>{
-         copyToClipboard(copyToClipboard(`geobro.online/lobby:${this.lobbyID}`))
-      })
-      await this.server.onDisconnectRemove(`lobbys/${this.lobbyID}/players/${this.authUser.uid}`)
-   }
-
-   async findLobby() {
-      const lobbys = Object.entries(await this.server.getData('lobbys') || {})
-      for (let lobby of lobbys) {
-         const lobbyID = lobby[0]
-         const lobbyPlayers = Object.entries(lobby[1].players || {})
-         for (let player of lobbyPlayers) {
-            const isUserLobby = player[0] == this.authUser.uid
-            if (isUserLobby) this.lobbyID = lobbyID
-         }
-      }
    }
 
    async updatePlayerList(){

@@ -38,10 +38,9 @@ export class Speedrun {
       await this.hostTryConnectToLobby();
       if (!this.isHost) await this.findLobby();
       if (this.isHost) await this.server.removeData(`replayStack/${this.authUser.uid}`)
+      await this.server.setData(`lobbys/${this.lobbyID}/players/${this.authUser.uid}/status`,"alive");
 
-      this.gameParam = await this.server.getData(
-         `lobbys/${this.lobbyID}/param`
-      );
+      this.gameParam = await this.server.getData(`lobbys/${this.lobbyID}/param`);
       if (this.gameParam.map == "us") this.map = "us-states_optimized.geojson";
       if (this.gameParam.map == "fr")this.map = "french-departments_optimized.geojson";
       if (this.gameParam.map == "world")this.map = "world-countries_optimized.geojson";
@@ -95,7 +94,6 @@ export class Speedrun {
       }
       if (gameData.game.state != this.gameState) {
          if (gameData.game.state == "playing") await this.startGame();
-         if (gameData.game.state == "ended") await this.endGame();
       }
      
       if (this.countries.length - 1 == this.round){
@@ -105,9 +103,11 @@ export class Speedrun {
       if (this.isHost) {
          const players = Object.values(await this.server.getData(`lobbys/${this.lobbyID}/players`))
          const diedPlayers = players.filter((player)=> player.status == "died")
+         console.log(diedPlayers.length , players.length);
          if (diedPlayers.length != players.length) return
          const serverStillExist = await this.server.getData(`lobbys/${this.lobbyID}`) 
          if (!serverStillExist) return
+         console.log("AAAAAAAAAAAAAAAAAAAAAAA", this.elements.replay)
          await this.server.setData(`lobbys/${this.lobbyID}/game/state`,"ended")
          this.elements.replay.style.display = "flex";
       }
@@ -142,21 +142,28 @@ export class Speedrun {
    }
 
    async endGame() {
+      console.trace()
       await this.server.setData(`lobbys/${this.lobbyID}/players/${this.authUser.uid}/score`,this.score);
       await this.server.setData(`lobbys/${this.lobbyID}/players/${this.authUser.uid}/status`,"died");
       this.gameState = "ended"
       clearInterval(this.speedTimer)
       clearInterval(this.gameTimer)
+
+      let leaderBoard = Object.entries(await this.server.getData("leaderboard") || {})
+      let data = {}
+      data[this.authUser.displayName] = this.score
+      leaderBoard.push(["test",data])
+      leaderBoard = leaderBoard.map((player)=>Object.values(player))
+      leaderBoard = leaderBoard.sort((a,b)=>Object.entries(b[1])[0][1]-Object.entries(a[1])[0][1])
+      if (leaderBoard.length > 10) leaderBoard.splice(leaderBoard.length-1,1)
+      leaderBoard = leaderBoard.map((player)=>player[1])
+      await this.server.setData('leaderboard',leaderBoard)
+
       document.querySelectorAll(".game").forEach((el)=>el.classList.remove("shake"))
       document.querySelector('body').classList.remove('redBorders')
       document.querySelector("svg").style.display = "none";
-      document
-         .querySelectorAll(".game")
-         .forEach((el) => (el.style.display = "none"));
-      document.querySelectorAll(".scoreBoard").forEach((el) => {
-         el.style.display = "flex";
-      });
-      this.elements.replay.style.display = "none";
+      document.querySelectorAll(".game").forEach((el) => (el.style.display = "none"));
+      document.querySelectorAll(".scoreBoard").forEach((el) => {el.style.display = "flex"});
       await this.upadteScoreBoard();
    }
 
