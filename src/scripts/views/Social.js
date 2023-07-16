@@ -1,6 +1,5 @@
 import {copyToClipboard} from "../modules/copyToClipboard.js"
 
-
 export class Social {
    constructor(server , authUser, router){
       this.layer = 1 
@@ -72,6 +71,5 @@ export class Social {
    }
 
    async quit() {  
-      await this.server.stopExeOnChange("hosts")
    }
 }

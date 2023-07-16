@@ -28,6 +28,7 @@ export class Lobby {
          return this.getEl('navGames').click()
       } 
       else if (gameStarted && !this.quitted) {
+         if (this.gameParam.gamemode == "speedrun") this.elements.gameLaunch.href = "/speedrun"
          this.elements.gameLaunch.click()
          await this.server.stopExeOnChange(`lobbys/${this.lobbyID}`)
          this.quitted = true
@@ -52,7 +53,10 @@ export class Lobby {
       this.elements["lenParam"] = this.getEl("lenParam")
       this.gameParam = await this.server.getData(`lobbys/${this.lobbyID}/param`)
 
-      if (this.gameParam.gamemode == "speedrun") this.elements.timeParam.style.display = "none"
+      if (this.gameParam.gamemode == "speedrun"){
+         this.elements.timeParam.style.display = "none"
+         this.elements.lenParam.style.display = "none"
+      } 
       this.getEl("copyToClipboardBtn").addEventListener('click',()=>{
          copyToClipboard(copyToClipboard(`geobro.online/lobby:${this.lobbyID}`))
       })

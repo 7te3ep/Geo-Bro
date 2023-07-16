@@ -14,31 +14,11 @@ export class HostLobby {
       this.lobbyID
       this.gameParam
       this.mapLen = {}
-   }
-
-   async update() {
-      this.elements.lobbyId.innerHTML = this.lobbyID
-      this.elements.lobbyHostName.innerHTML = this.lobbyHostName
-      this.elements.lobbyName.innerHTML = this.gameParam.lobbyName
-   }
-
-   async updateParameters(len,time,visibility,map, gamemode){
-      this.elements.mapSelect.value = map
-      this.elements.timeRange.value = time
-      this.elements.timeDisplay.innerHTML = "Temps de la partie : " + time + "sec"
-      this.elements.gameLenRange.value = len
-      this.elements.gameLenDisplay.innerHTML = "Nombre de pays a trouver : " + len
-      this.elements.visibilityDisplay.innerHTML = visibility == "private" ? `Lobby privé 🔒 : ` : `Lobby publique 🌐 :`
-      this.elements.lobbyImg.src = `../assets/${gamemode}.png`
-   }
-
-   async updateOnValue() {
-      await this.updatePlayerList()
-      this.gameParam = await this.server.getData(`lobbys/${this.lobbyID}/param`)
-      await this.updateParameters(this.gameParam.len,this.gameParam.time,this.gameParam.visibility,this.gameParam.map, this.gameParam.gamemode)
+      this.canConnect = true
    }
 
    async init() {
+
       await this.router.loadPage(this.link,this.path)
       const hostData = await this.server.getData(`hosts/${this.authUser.uid}`)
       this.lobbyHostName = hostData.name
@@ -64,11 +44,20 @@ export class HostLobby {
       const viewReference = this
 
       if (this.gameParam.gamemode == "speedrun"){
-         this.elements.play.href = "/speedrun"
          this.getEl('time').style.display = "none"
+         this.getEl('len').style.display = "none"
       } 
-      await this.updateParameters(this.gameParam.len,this.gameParam.time,this.gameParam.visibility,this.gameParam.map, this.gameParam.gamemode)
-      await this.server.exeOnChange(`lobbys/${this.lobbyID}`,()=>{this.updateOnValue()})
+
+      this.elements.play.addEventListener('click',async ()=>{
+         if (!this.canConnect) return
+         this.canConnect = false
+         await this.server.stopExeOnChange(`lobbys/${this.lobbyID}/players`)
+         await this.server.stopExeOnChange(`lobbys/${this.lobbyID}/param`)
+         this.elements.play.href = `/${this.gameParam.gamemode}`
+      })
+
+      await this.server.exeOnChange(`lobbys/${this.lobbyID}/param`,()=>{this.updateParameters()})
+      await this.server.exeOnChange(`lobbys/${this.lobbyID}/players`,()=>{this.updatePlayerList()})
 
       this.getEl("copyToClipboardBtn").addEventListener('click',()=>{
          copyToClipboard(`https://geobro.online/lobby:${this.lobbyID}`)
@@ -93,17 +82,34 @@ export class HostLobby {
          await this.server.setData(`lobbys/${this.lobbyID}/param/len`,this.elements.gameLenRange.value)
          await this.server.setData(`lobbys/${this.lobbyID}/param/map`,this.elements.mapSelect.value)
       })
-
       await this.server.onDisconnectRemove(`lobbys/${this.lobbyID}`)
       await this.server.onDisconnectRemove(`hosts/${this.authUser.uid}`)
       await this.server.onDisconnectRemove(`replayStack/${this.authUser.uid}`)
    }
 
+
+   async update() {
+      this.elements.lobbyId.innerHTML = this.lobbyID
+      this.elements.lobbyHostName.innerHTML = this.lobbyHostName
+      this.elements.lobbyName.innerHTML = this.gameParam.lobbyName
+   }
+
+   async updateParameters(){
+      this.gameParam = await this.server.getData(`lobbys/${this.lobbyID}/param`)
+      const param = this.gameParam
+      const gamemodeHasBeenSet = param["gamemode"]
+      if (gamemodeHasBeenSet &&param.gamemode == "speedrun") param.len = this.mapLen[param.map]
+      this.elements.timeRange.value = param.time
+      this.elements.timeDisplay.innerHTML = "Temps de la partie : " + param.time + "sec"
+      this.elements.gameLenRange.value = param.len
+      this.elements.gameLenDisplay.innerHTML = "Nombre de pays a trouver : " + param.len
+      this.elements.visibilityDisplay.innerHTML = param.visibility == "private" ? `Lobby privé 🔒 : ` : `Lobby publique 🌐 :`
+      this.elements.lobbyImg.src = `../assets/${param.gamemode}.png`
+   }
+
    async updatePlayerList(){
       this.elements.playersList.innerHTML = " "
-      const lobbyData = await this.server.getData(`lobbys/${this.lobbyID}`)
-      if (!lobbyData) return
-      const players = Object.entries(lobbyData.players || {}) 
+      const players = Object.entries(await this.server.getData(`lobbys/${this.lobbyID}/players`) || {}) 
       for (let player of players){
          const playerData = player[1]
          let isHost = false
@@ -129,7 +135,8 @@ export class HostLobby {
 
    async quit() {
       await this.server.removeData(`replayStack/${this.authUser.uid}`)
-      this.server.stopExeOnChange(`lobbys/${this.lobbyID}`)
+      await this.server.stopExeOnChange(`lobbys/${this.lobbyID}/players`)
+      await this.server.stopExeOnChange(`lobbys/${this.lobbyID}/param`)
       const lobbys = await this.server.getData("lobbys")
       const hosts = await this.server.getData("hosts")
       delete lobbys[this.lobbyID]

@@ -34,6 +34,7 @@ export class Speedrun {
       this.elements["replay"] = this.getEl("replay");
       this.elements["joinLobbyBtn"] = this.getEl("joinLobbyBtn");
       this.elements["rocket"] = this.getEl("rocket");
+      this.elements["speedJauge"] = this.getEl("speedJauge");
       await this.hostTryConnectToLobby();
       if (!this.isHost) await this.findLobby();
       if (this.isHost) await this.server.removeData(`replayStack/${this.authUser.uid}`)
@@ -52,6 +53,9 @@ export class Speedrun {
 
       if (this.isHost) {
          await this.generateGameData();
+         await this.server.onDisconnectRemove(`lobbys/${this.lobbyID}`)
+         await this.server.onDisconnectRemove(`hosts/${this.authUser.uid}`)
+         await this.server.onDisconnectRemove(`replayStack/${this.authUser.uid}`)
       }
       var canConnect = true
       this.elements.replay.addEventListener('click',async (event)=>{
@@ -71,9 +75,7 @@ export class Speedrun {
          this.eventAppear("skipped");
          this.nextTurn(true);
       });
-      await this.server.onDisconnectRemove(`lobbys/${this.lobbyID}`)
-      await this.server.onDisconnectRemove(`hosts/${this.authUser.uid}`)
-      await this.server.onDisconnectRemove(`replayStack/${this.authUser.uid}`)
+
    }
 
    async eventAppear(id) {
@@ -91,22 +93,29 @@ export class Speedrun {
          this.getEl("navGames").click();
          return;
       }
-      console.log(gameData.game.state, this.gameState);
       if (gameData.game.state != this.gameState) {
          if (gameData.game.state == "playing") await this.startGame();
          if (gameData.game.state == "ended") await this.endGame();
       }
      
-      if (this.countries.length - 1 == this.round)
+      if (this.countries.length - 1 == this.round){
          await this.upadteScoreBoard();
+      }
+
+      if (this.isHost) {
+         const players = Object.values(await this.server.getData(`lobbys/${this.lobbyID}/players`))
+         const diedPlayers = players.filter((player)=> player.status == "died")
+         if (diedPlayers.length != players.length) return
+         const serverStillExist = await this.server.getData(`lobbys/${this.lobbyID}`) 
+         if (!serverStillExist) return
+         await this.server.setData(`lobbys/${this.lobbyID}/game/state`,"ended")
+         this.elements.replay.style.display = "flex";
+      }
+
    }
 
    async startGame() {
       this.gameState = "playing"
-      // end Game : await this.server.setData(`lobbys/${this.lobbyID}/game/state`,"ended")
-      // end effect document.querySelectorAll(".game").forEach((el)=>el.classList.add("shake"))
-      // end effect document.querySelector('body').classList.add('redBorders')
-      // end effect setTimeout(() => {document.querySelector('body').classList.remove('redBorders')},500)
 
       const gameData = await this.server.getData(`lobbys/${this.lobbyID}/game`);
       this.countries = gameData.countries;
@@ -120,28 +129,24 @@ export class Speedrun {
          this.speed -= this.speedSubPerSec
          this.updateRocket()
          this.score ++
-         if (this.speed <= 0){
-            clearInterval(this.speedTimer)
-            clearInterval(this.gameTimer)
-            if (!this.isHost) return
-            const serverStillExist = await this.server.getData(`lobbys/${this.lobbyID}`) 
-            if (!serverStillExist) return
-            await this.server.setData(`lobbys/${this.lobbyID}/game/state`,"ended")
-         } 
-
+         if (this.speed <= 0) await this.endGame()
       },1000)
    }
 
    async updateRocket() {
       if (this.speed >= 100) this.speed = 100
       if (this.speed <= 0) this.speed = 0
-      this.elements.rocket.style.top = `${13+((100-this.speed)*72/100)}%`
+
+      this.elements.rocket.style.top = `${93-this.speed}%`
+      this.elements.speedJauge.style.height = `${this.speed}%`
    }
 
    async endGame() {
       await this.server.setData(`lobbys/${this.lobbyID}/players/${this.authUser.uid}/score`,this.score);
+      await this.server.setData(`lobbys/${this.lobbyID}/players/${this.authUser.uid}/status`,"died");
       this.gameState = "ended"
-      clearInterval(this.timer);
+      clearInterval(this.speedTimer)
+      clearInterval(this.gameTimer)
       document.querySelectorAll(".game").forEach((el)=>el.classList.remove("shake"))
       document.querySelector('body').classList.remove('redBorders')
       document.querySelector("svg").style.display = "none";
@@ -151,7 +156,7 @@ export class Speedrun {
       document.querySelectorAll(".scoreBoard").forEach((el) => {
          el.style.display = "flex";
       });
-      if (!this.isHost) this.elements.replay.style.display = "none";
+      this.elements.replay.style.display = "none";
       await this.upadteScoreBoard();
    }
 
@@ -179,21 +184,14 @@ export class Speedrun {
 
    async generateGameData() {
       let countriesData = await (await fetch(`../assets/${this.map}`)).json();
-      countriesData = countriesData.features.map(
-         (countrie) => countrie.properties.name
-      );
+      countriesData = countriesData.features.map((countrie) => countrie.properties.name);
       let pickedCoutries = [];
       for (let i = 0; i < this.gameParam.len; i++) {
-         const randomIndexInArray = Math.round(
-            Math.random() * (countriesData.length - 1)
-         );
+         const randomIndexInArray = Math.round(Math.random() * (countriesData.length - 1));
          pickedCoutries.push(countriesData[randomIndexInArray]);
          countriesData.splice(randomIndexInArray, 1);
       }
-      await this.server.setData(
-         `lobbys/${this.lobbyID}/game/countries`,
-         pickedCoutries
-      );
+      await this.server.setData(`lobbys/${this.lobbyID}/game/countries`,pickedCoutries);
       await this.server.setData(`lobbys/${this.lobbyID}/game/state`, "playing");
    }
 

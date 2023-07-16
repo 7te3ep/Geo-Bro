@@ -1,1 +1,5 @@
-// TODO ADD Choosing game mode to the app.
+// TODO - Si on clique deux fois sur le même pays, ça ne fait pas d'erreur,
+// TODO - Choisir un niveau de difficulté,
+// TODO - un piment à la place de la fusée,
+// TODO - il faudrait que ce soit noir au-dessus du curseur (comme une jauge qui se vide),
+// TODO - je ne mettrait pas le mot "vitesse"

@@ -12,44 +12,42 @@ export class Games {
    }
 
    async update() {
-      const userData = (await this.server.getData(`users/${this.authUser.uid}`)).data
    }
 
    async init() {
       await this.router.loadPage(this.link,this.path)
       document.querySelectorAll(".navIcon").forEach(icon=>icon.classList.remove("iconFocus"))
       this.getEl("gamesIcon").classList.add("iconFocus")
-
+   
       this.elements["lobbyIdInput"] = this.getEl("lobbyIdInput")
       this.elements["joinLobbyBtn"] = this.getEl("joinLobbyBtn")
       this.elements["lobbysGallery"] = this.getEl("lobbysGallery")
       this.elements.joinLobbyBtn.addEventListener('click',async ()=>{
          const lobbyId = this.elements.lobbyIdInput.value
-         let lobbyExist = await this.server.getData(`lobbys/${lobbyId}`)
-         if (!lobbyExist || lobbyId == "") return
+         const lobbyExist = await this.server.getData(`lobbys/${lobbyId}`)
+         if (!lobbyExist || !this.canConnect) return
+         this.canConnect = false
          await this.server.playerConnectToLobby(this.authUser , lobbyId )
          this.elements.joinLobbyBtn.href = "/lobby"
-         if (this.canConnect){
-            this.canConnect = false
-            this.elements.joinLobbyBtn.click()
-         } 
-
+         this.elements.joinLobbyBtn.click()
       })
 
       await this.server.exeOnChange("lobbys",async ()=>{
          const lobbys = Object.entries(await this.server.getData("lobbys") || {})
          const realLobbys = lobbys.filter((lobby)=>"param" in lobby[1] && "players" in lobby[1] && "game" in lobby[1])
-         const publicLobbys = realLobbys.filter((lobby)=>lobby[1].param.visibility == "public")
-         const waitingLobbyys = publicLobbys.filter((lobby)=>lobby[1].game.started == false)
-         await this.updateLobbysGallery(waitingLobbyys)
-         await this.tryConnectToLobby(realLobbys)
+         const waitingLobbyys = realLobbys.filter((lobby)=>lobby[1].game.started == false)
+         const publicLobbys = waitingLobbyys.filter((lobby)=>lobby[1].param.visibility == "public")
+         if (waitingLobbyys.length == 0) return 
+         await this.tryConnectToLobby(waitingLobbyys)
+         await this.updateLobbysGallery(publicLobbys)
       })
    }
    async tryConnectToLobby(lobbys){
+      if (!this.canConnect) return
       if (lobbys.find(element => this.authUser.uid in element[1].players ) && this.canConnect) {
+         this.canConnect = false
          await this.server.stopExeOnChange("lobbys")
          this.elements.joinLobbyBtn.href = "/lobby"
-         this.canConnect = false
          this.elements.joinLobbyBtn.click()
       } 
    }
@@ -70,6 +68,8 @@ export class Games {
 
       document.querySelectorAll(".joinPublicLobbyBtn").forEach((joinBtn)=>{
          joinBtn.addEventListener("click",async ()=>{
+            if (!this.canConnect) return
+            this.canConnect = false
             await this.server.stopExeOnChange("lobbys")
             await this.server.playerConnectToLobby(this.authUser , joinBtn.id )
             this.elements.joinLobbyBtn.href = "/lobby"

@@ -80,17 +80,20 @@ svg {
 }
 
 .light {
-   background-color: rgba(217, 217, 217, 0.95);
+   background: rgb(217,217,217);
+   background: linear-gradient(40deg, rgba(217,217,217,1) 0%, rgba(224,224,224,1) 100%);
    color: #2d2a32;
 }
 
 .dark {
-   background-color: rgba(45, 42, 50, 0.95);
+   background: rgb(45,42,50);
+   background: linear-gradient(40deg, rgba(45,42,50,1) 0%, rgba(99,94,108,1) 100%);
    color: #d9d9d9;
 }
 
 .electricBlue {
-   background-color: rgba(69, 197, 215, 0.95);
+   background: rgb(69,197,215);
+   background: linear-gradient(40deg, rgba(69,197,215,1) 0%, rgba(96,204,219,1) 100%);
    color: #2d2a32;
 }
 

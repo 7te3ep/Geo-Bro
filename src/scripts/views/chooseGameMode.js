@@ -39,11 +39,13 @@ export class chooseGameMode {
          this.elements.playSpeedrun.href = "/hostLobby"
          this.elements.playSpeedrun.click()
       })
+
+      await this.server.onDisconnectRemove(`lobbys/${this.lobbyID}`)
+      await this.server.onDisconnectRemove(`hosts/${this.authUser.uid}`)
+      await this.server.onDisconnectRemove(`replayStack/${this.authUser.uid}`)
    }
 
    async quit() {
-      console.log(this.lobbyID);  
-      console.log(this.authUser);  
       await this.server.removeData(`lobbys/${this.lobbyID}`)
       await this.server.removeData(`hosts/${this.authUser.uid}`)
    }
