@@ -9,5 +9,21 @@ import { Entry } from "./views/Entry.js";
 import { chooseGameMode } from "./views/chooseGameMode.js";
 import { Speedrun } from "./views/Speedrun.js";
 import { Parameters } from "./views/Parameters.js";
+import { ChooseMap } from "./views/chooseMap.js";
 
-export { DashBoard , Games , Social , Lobby , HostLobby, Classic, NotFound, Entry, chooseGameMode, Speedrun, Parameters }
+let route = {
+   "/dashboard": DashBoard,
+   "/games": Games,
+   "/social": Social,
+   "/classic": Classic,
+   "/hostLobby": HostLobby,
+   "/lobby": Lobby,
+   "/404":NotFound,
+   "/entry":Entry,
+   "/chooseGameMode":chooseGameMode,
+   "/speedrun":Speedrun,
+   "/parameters":Parameters,
+   "/chooseMap":ChooseMap
+};
+
+export { route }

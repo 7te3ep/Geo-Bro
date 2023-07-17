@@ -32,7 +32,6 @@ export class HostLobby {
       this.elements["gameLenDisplay"] = this.getEl("gameLenDisplay")
       this.elements["timeRange"] = this.getEl("timeRange")
       this.elements["timeDisplay"] = this.getEl("timeDisplay")
-      this.elements["mapSelect"] = this.getEl("mapSelect")
       this.elements["visibilityDisplay"] = this.getEl("visibilityDisplay")
       this.elements["lobbyImg"] = this.getEl("lobbyImg")
       this.elements["visibilityCheckBox"] = document.querySelector("input[name=checkbox]");
@@ -76,12 +75,6 @@ export class HostLobby {
          await this.server.setData(`lobbys/${this.lobbyID}/param/len`,this.elements.gameLenRange.value)
       })
 
-      this.elements.mapSelect.onchange = ("input",async (event) => {
-         this.elements.gameLenRange.setAttribute("max",this.mapLen[this.elements.mapSelect.value])
-         this.elements.gameLenRange.value = this.mapLen[this.elements.mapSelect.value]
-         await this.server.setData(`lobbys/${this.lobbyID}/param/len`,this.elements.gameLenRange.value)
-         await this.server.setData(`lobbys/${this.lobbyID}/param/map`,this.elements.mapSelect.value)
-      })
       await this.server.onDisconnectRemove(`lobbys/${this.lobbyID}`)
       await this.server.onDisconnectRemove(`hosts/${this.authUser.uid}`)
       await this.server.onDisconnectRemove(`replayStack/${this.authUser.uid}`)

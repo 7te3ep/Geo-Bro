@@ -122,6 +122,7 @@ export class Speedrun {
          this.speedSubPerSec = Math.ceil(this.speedSubPerSec * 1.1)
       },10000)
 
+      console.log(this.speed);
       this.speedTimer = setInterval(async ()=>{
          this.speed -= this.speedSubPerSec
          this.updateRocket()
@@ -162,6 +163,7 @@ export class Speedrun {
       document.querySelector("svg").style.display = "none";
       document.querySelectorAll(".game").forEach((el) => (el.style.display = "none"));
       document.querySelectorAll(".scoreBoard").forEach((el) => {el.style.display = "flex"});
+      this.elements.replay.style.display = "none"
       await this.upadteScoreBoard();
    }
 
@@ -251,6 +253,8 @@ export class Speedrun {
    async swipeNav(diretion) {}
 
    async quit() {
+      clearInterval(this.speedTimer)
+      clearInterval(this.gameTimer)
       this.getEl("content").style.paddingTop = "10vh";
       if (this.isHost) {
          this.isHost = false;

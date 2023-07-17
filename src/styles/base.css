@@ -16,7 +16,7 @@ svg {
    justify-content: center;
    height: fit-content;
    padding: 15px;
-   margin: 15px 0px;
+   margin: 15px 5px;
    width: 100%;
    max-width: 700px;
    box-shadow: 1px 1px 5px rgba(45, 42, 50, 0.5);
@@ -92,7 +92,7 @@ svg {
 }
 
 .electricBlue {
-   background: rgb(69,197,215);
+   background: #45c5d7;
    background: linear-gradient(40deg, rgba(69,197,215,1) 0%, rgba(96,204,219,1) 100%);
    color: #2d2a32;
 }
@@ -161,6 +161,7 @@ svg {
    align-items: center;
    font-size: clamp(18px, 4vw, 25px);
    padding: 5px 12px;
+   margin: 5px;
    width: fit-content;
    color:#2d2a32;
    transition: transform 0.15s ease, color 0.15s ease,      background-color 0.15s ease;

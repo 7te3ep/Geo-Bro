@@ -28,7 +28,7 @@ export class chooseGameMode {
          if (!this.canNav) return
          this.canNav = false
          await this.server.setData(`lobbys/${this.lobbyID}/param/gamemode`,'classic')
-         this.elements.playClassic.href = "/hostLobby"
+         this.elements.playClassic.href = "/chooseMap"
          this.elements.playClassic.click()
       })
    
@@ -36,7 +36,7 @@ export class chooseGameMode {
          if (!this.canNav) return
          this.canNav = false
          await this.server.setData(`lobbys/${this.lobbyID}/param/gamemode`,'speedrun')
-         this.elements.playSpeedrun.href = "/hostLobby"
+         this.elements.playSpeedrun.href = "/chooseMap"
          this.elements.playSpeedrun.click()
       })
 
