@@ -127,7 +127,7 @@ export class Speedrun {
          this.speed -= this.speedSubPerSec
          this.updateRocket()
          this.score ++
-         if (this.speed <= 0) await this.endGame()
+         if (this.speed <= 0 && this.gameState == "playing" ) await this.endGame()
       },1000)
    }
 
@@ -142,7 +142,6 @@ export class Speedrun {
    async endGame() {
       console.trace()
       await this.server.setData(`lobbys/${this.lobbyID}/players/${this.authUser.uid}/score`,this.score);
-      await this.server.setData(`lobbys/${this.lobbyID}/players/${this.authUser.uid}/status`,"died");
       this.gameState = "ended"
       clearInterval(this.speedTimer)
       clearInterval(this.gameTimer)
@@ -163,7 +162,10 @@ export class Speedrun {
       document.querySelector("svg").style.display = "none";
       document.querySelectorAll(".game").forEach((el) => (el.style.display = "none"));
       document.querySelectorAll(".scoreBoard").forEach((el) => {el.style.display = "flex"});
+      console.log("none")
       this.elements.replay.style.display = "none"
+
+      await this.server.setData(`lobbys/${this.lobbyID}/players/${this.authUser.uid}/status`,"died");
       await this.upadteScoreBoard();
    }
 
@@ -184,7 +186,6 @@ export class Speedrun {
    }
 
    async nextTurn(skip) {
-      if (this.countries.length == this.round + 1) return this.endGame();
       this.round += 1;
       this.elements.display.innerHTML = this.countries[this.round];
    }
