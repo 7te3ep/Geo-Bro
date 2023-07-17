@@ -8,5 +8,6 @@ import { NotFound } from "./views/NotFound.js";
 import { Entry } from "./views/Entry.js";
 import { chooseGameMode } from "./views/chooseGameMode.js";
 import { Speedrun } from "./views/Speedrun.js";
+import { Parameters } from "./views/Parameters.js";
 
-export { DashBoard , Games , Social , Lobby , HostLobby, Classic, NotFound, Entry, chooseGameMode, Speedrun }
+export { DashBoard , Games , Social , Lobby , HostLobby, Classic, NotFound, Entry, chooseGameMode, Speedrun, Parameters }

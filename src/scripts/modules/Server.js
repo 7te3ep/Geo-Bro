@@ -116,6 +116,8 @@ export class Server {
    }
 
    async newLobbyOnDb(host){
+      const name = await this.getData(`users/${host.uid}/data/name`)
+
       const generateId = async () => {
          const Alphabet = ["a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z"]
          const normalize = (num, min, max) => (num - min) / max - min;
@@ -134,7 +136,7 @@ export class Server {
       const getPlayers = async ()=>{
          const previousPlayers = await this.getData(`replayStack/${host.uid}/players`) || {}
          previousPlayers[host.uid] = {
-            name:host.displayName,
+            name:name,
             img: host.photoURL,
          }
          return previousPlayers
@@ -160,17 +162,19 @@ export class Server {
       });
       await set(ref(this.db, `hosts/${host.uid}`), {
          id: alphaLobbyId,
-         name:host.displayName
+         name:name
       });
       return alphaLobbyId
    }
 
    async playerConnectToLobby(authUser , lobbyId ){
+      const name = await this.getData(`users/${authUser.uid}/data/name`)
+
       const lobbyExist = (await get(ref(this.db, `lobbys/${lobbyId}`))).exists()
       if (!lobbyExist) return false
       const lobbyPlayersRef = ref(this.db, `lobbys/${lobbyId}/players/${authUser.uid}`)
       await set(lobbyPlayersRef,{
-         name:authUser.displayName,
+         name:name,
          img: authUser.photoURL,
       });
       return true

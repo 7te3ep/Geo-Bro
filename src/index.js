@@ -1,7 +1,7 @@
 import { Gbro } from "./scripts/Gbro.js";
 import { Router } from "./scripts/modules/Router.js";
 import { Server } from "./scripts/modules/Server.js";
-import { DashBoard , Games , Social , Lobby , HostLobby, Classic, NotFound, Entry, chooseGameMode, Speedrun } from "./scripts/View.js"
+import { DashBoard , Games , Social , Lobby , HostLobby, Classic, NotFound, Entry, chooseGameMode, Speedrun, Parameters } from "./scripts/View.js"
 
 let route = {
    "/dashboard": DashBoard,
@@ -13,7 +13,8 @@ let route = {
    "/404":NotFound,
    "/entry":Entry,
    "/chooseGameMode":chooseGameMode,
-   "/speedrun":Speedrun
+   "/speedrun":Speedrun,
+   "/parameters":Parameters
 };
 const ui = {
    userName: document.getElementById("userName"),

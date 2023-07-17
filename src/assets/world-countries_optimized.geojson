@@ -913,7 +913,7 @@
       },
       {
          "type": "Feature",
-         "properties": { "name": "Bengladesh" },
+         "properties": { "name": "Bangladesh" },
          "geometry": {
             "type": "Polygon",
             "coordinates": [

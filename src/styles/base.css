@@ -97,6 +97,14 @@ svg {
    color: #2d2a32;
 }
 
+.fLight {
+   color: #d9d9d9;
+}
+
+.fDark {
+   color: #2d2a32;
+}
+
 .rounded {
    border-radius: 20px;
    -webkit-border-radius: 20px;

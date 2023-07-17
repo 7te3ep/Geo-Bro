@@ -27,13 +27,13 @@ export class DashBoard {
       this.elements["newsGallery"] = this.getEl('newsGallery')
       this.elements["performanceGallery"] = this.getEl('performanceGallery')
       this.elements["userInfo"] = this.getEl('userInfo')
-      this.elements.userInfo.innerHTML = `<img alt="profile image of user" class="userImg" src="${this.authUser.photoURL}"> <p id="playerName">${this.authUser.displayName}</p>`
+      
+      const name = await this.server.getData(`users/${this.authUser.uid}/data/name`)
+      this.elements.userInfo.innerHTML = `<img alt="profile image of user" class="userImg" src="${this.authUser.photoURL}"> <p id="playerName">${name}</p>`
       
       await this.server.exeOnChange("news",async ()=>{await this.updateNewsGallery()})
       await this.server.exeOnChange("leaderboard",async ()=>{await this.updateLeaderBoard()})
-      document.addEventListener('keydown',async (e)=>{
-         if (e.key == "p") await this.server.signOut()
-      })
+
    }
 
    async swipeNav(diretion){
@@ -48,7 +48,7 @@ export class DashBoard {
    async updateLeaderBoard() {
       this.elements.performanceGallery.innerHTML = ""
       const leaderBoard = Object.entries(await this.server.getData("leaderboard") || {})
-      let place = 0
+      let place = 1
       leaderBoard.forEach((performance)=>{
          const userName = Object.entries(performance[1])[0][0]
          const score = Object.entries(performance[1])[0][1]

@@ -20,7 +20,7 @@ export class Speedrun {
       this.speed = 100
       this.speedTimer
       this.gameTimer
-      this.speedSubPerSec = 1
+      this.speedSubPerSec = 3
    }
 
    async init() {
@@ -96,10 +96,7 @@ export class Speedrun {
          if (gameData.game.state == "playing") await this.startGame();
       }
      
-      if (this.countries.length - 1 == this.round){
-         await this.upadteScoreBoard();
-      }
-
+      if (this.gameState == "ended") await this.upadteScoreBoard();
       if (this.isHost) {
          const players = Object.values(await this.server.getData(`lobbys/${this.lobbyID}/players`))
          const diedPlayers = players.filter((player)=> player.status == "died")
@@ -122,7 +119,7 @@ export class Speedrun {
       this.elements.display.innerHTML = this.countries[this.round];
 
       this.gameTimer = setInterval(()=>{
-         this.speedSubPerSec = this.speedSubPerSec * 2
+         this.speedSubPerSec = Math.ceil(this.speedSubPerSec * 1.1)
       },10000)
 
       this.speedTimer = setInterval(async ()=>{
@@ -149,9 +146,10 @@ export class Speedrun {
       clearInterval(this.speedTimer)
       clearInterval(this.gameTimer)
 
+      const name = await this.server.getData(`users/${this.authUser.uid}/data/name`)
       let leaderBoard = Object.entries(await this.server.getData("leaderboard") || {})
       let data = {}
-      data[this.authUser.displayName] = this.score
+      data[name] = this.score
       leaderBoard.push(["test",data])
       leaderBoard = leaderBoard.map((player)=>Object.values(player))
       leaderBoard = leaderBoard.sort((a,b)=>Object.entries(b[1])[0][1]-Object.entries(a[1])[0][1])
@@ -191,18 +189,18 @@ export class Speedrun {
 
    async generateGameData() {
       let countriesData = await (await fetch(`../assets/${this.map}`)).json();
-      countriesData = countriesData.features.map((countrie) => countrie.properties.name);
-      let pickedCoutries = [];
-      for (let i = 0; i < this.gameParam.len; i++) {
-         const randomIndexInArray = Math.round(Math.random() * (countriesData.length - 1));
-         pickedCoutries.push(countriesData[randomIndexInArray]);
-         countriesData.splice(randomIndexInArray, 1);
-      }
-      await this.server.setData(`lobbys/${this.lobbyID}/game/countries`,pickedCoutries);
+      countriesData = countriesData.features
+      .map((countrie) => countrie.properties.name)
+      .map(value => ({ value, sort: Math.random() }))
+      .sort((a, b) => a.sort - b.sort)
+      .map(({ value }) => value)
+      await this.server.setData(`lobbys/${this.lobbyID}/game/countries`,countriesData);
       await this.server.setData(`lobbys/${this.lobbyID}/game/state`, "playing");
    }
 
    async pathClicked(e, element) {
+      if (this.round == this.countries.length -1) this.round = 0
+
       if (this.countries[this.round] ==  this.server.decrypt(element.id,this.lobbyID)) {
          this.speed += 20
          this.updateRocket()
