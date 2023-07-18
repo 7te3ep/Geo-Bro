@@ -100,18 +100,17 @@ export class Speedrun {
       if (this.isHost) {
          const players = Object.values(await this.server.getData(`lobbys/${this.lobbyID}/players`))
          const diedPlayers = players.filter((player)=> player.status == "died")
-         console.log(diedPlayers.length , players.length);
          if (diedPlayers.length != players.length) return
          const serverStillExist = await this.server.getData(`lobbys/${this.lobbyID}`) 
          if (!serverStillExist) return
-         console.log("AAAAAAAAAAAAAAAAAAAAAAA", this.elements.replay)
-         await this.server.setData(`lobbys/${this.lobbyID}/game/state`,"ended")
+         console.log('everyone finished')
          this.elements.replay.style.display = "flex";
       }
 
    }
 
    async startGame() {
+      console.log('start game');
       this.gameState = "playing"
 
       const gameData = await this.server.getData(`lobbys/${this.lobbyID}/game`);
@@ -122,11 +121,11 @@ export class Speedrun {
          this.speedSubPerSec = Math.ceil(this.speedSubPerSec * 1.1)
       },10000)
 
-      console.log(this.speed);
       this.speedTimer = setInterval(async ()=>{
          this.speed -= this.speedSubPerSec
          this.updateRocket()
          this.score ++
+         console.log('timer',this.speed)
          if (this.speed <= 0 && this.gameState == "playing" ) await this.endGame()
       },1000)
    }
@@ -140,8 +139,9 @@ export class Speedrun {
    }
 
    async endGame() {
-      console.trace()
+      console.log("end game")
       await this.server.setData(`lobbys/${this.lobbyID}/players/${this.authUser.uid}/score`,this.score);
+      await this.server.setData(`lobbys/${this.lobbyID}/game/state`,"ended")
       this.gameState = "ended"
       clearInterval(this.speedTimer)
       clearInterval(this.gameTimer)
@@ -162,7 +162,6 @@ export class Speedrun {
       document.querySelector("svg").style.display = "none";
       document.querySelectorAll(".game").forEach((el) => (el.style.display = "none"));
       document.querySelectorAll(".scoreBoard").forEach((el) => {el.style.display = "flex"});
-      console.log("none")
       this.elements.replay.style.display = "none"
 
       await this.server.setData(`lobbys/${this.lobbyID}/players/${this.authUser.uid}/status`,"died");
