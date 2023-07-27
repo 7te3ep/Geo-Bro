@@ -103,14 +103,12 @@ export class Speedrun {
          if (diedPlayers.length != players.length) return
          const serverStillExist = await this.server.getData(`lobbys/${this.lobbyID}`) 
          if (!serverStillExist) return
-         console.log('everyone finished')
          this.elements.replay.style.display = "flex";
       }
 
    }
 
    async startGame() {
-      console.log('start game');
       this.gameState = "playing"
 
       const gameData = await this.server.getData(`lobbys/${this.lobbyID}/game`);
@@ -125,7 +123,6 @@ export class Speedrun {
          this.speed -= this.speedSubPerSec
          this.updateRocket()
          this.score ++
-         console.log('timer',this.speed)
          if (this.speed <= 0 && this.gameState == "playing" ) await this.endGame()
       },1000)
    }
@@ -139,24 +136,12 @@ export class Speedrun {
    }
 
    async endGame() {
-      console.log("end game")
       await this.server.setData(`lobbys/${this.lobbyID}/players/${this.authUser.uid}/score`,this.score);
       await this.server.setData(`lobbys/${this.lobbyID}/game/state`,"ended")
       this.gameState = "ended"
       clearInterval(this.speedTimer)
       clearInterval(this.gameTimer)
-
-      const name = await this.server.getData(`users/${this.authUser.uid}/data/name`)
-      let leaderBoard = Object.entries(await this.server.getData("leaderboard") || {})
-      let data = {}
-      data[name] = this.score
-      leaderBoard.push(["test",data])
-      leaderBoard = leaderBoard.map((player)=>Object.values(player))
-      leaderBoard = leaderBoard.sort((a,b)=>Object.entries(b[1])[0][1]-Object.entries(a[1])[0][1])
-      if (leaderBoard.length > 10) leaderBoard.splice(leaderBoard.length-1,1)
-      leaderBoard = leaderBoard.map((player)=>player[1])
-      await this.server.setData('leaderboard',leaderBoard)
-
+      await this.updateLeaderboard()
       document.querySelectorAll(".game").forEach((el)=>el.classList.remove("shake"))
       document.querySelector('body').classList.remove('redBorders')
       document.querySelector("svg").style.display = "none";
@@ -166,6 +151,24 @@ export class Speedrun {
 
       await this.server.setData(`lobbys/${this.lobbyID}/players/${this.authUser.uid}/status`,"died");
       await this.upadteScoreBoard();
+   }
+
+   async updateLeaderboard() {
+      const name = await this.server.getData(`users/${this.authUser.uid}/data/name`)
+      const score = this.score
+      const leaderBoardObj = await this.server.getData("leaderboard")
+      let leaderBoardArr = Object.entries(leaderBoardObj || {})
+
+      if (leaderBoardArr[leaderBoardArr.length - 1][1] > score && leaderBoardArr.length - 1 > 10) return
+      if (leaderBoardObj[name] != undefined){
+         if (leaderBoardObj[name] < score) leaderBoardObj[name] = score
+         leaderBoardArr = Object.entries(leaderBoardObj)
+      }else {
+         if (leaderBoardArr.length - 1 > 10) leaderBoardArr.splice(leaderBoardArr.length - 1, 1)
+         leaderBoardArr.push([name,score])
+      }
+      leaderBoardArr.sort((a,b)=>b[1]-a[1])
+      await this.server.setData("leaderboard",Object.fromEntries(leaderBoardArr))
    }
 
    async upadteScoreBoard() {

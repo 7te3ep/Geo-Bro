@@ -49,9 +49,9 @@ export class DashBoard {
       this.elements.performanceGallery.innerHTML = ""
       const leaderBoard = Object.entries(await this.server.getData("leaderboard") || {})
       let place = 1
-      leaderBoard.forEach((performance)=>{
-         const userName = Object.entries(performance[1])[0][0]
-         const score = Object.entries(performance[1])[0][1]
+      leaderBoard.sort((a,b)=>b[1]-a[1]).forEach((performance)=>{
+         const userName = performance[0]
+         const score = performance[1]
          this.elements.performanceGallery.innerHTML += `<div class="card dark rounded row"><div>${place}.</div> <div class="title dark" style="background: none;">${userName} : ${score}s</div></div>`
          place ++
       })
