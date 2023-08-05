@@ -27,7 +27,17 @@ export class DashBoard {
       this.elements["newsGallery"] = this.getEl('newsGallery')
       this.elements["performanceGallery"] = this.getEl('performanceGallery')
       this.elements["userInfo"] = this.getEl('userInfo')
-      
+      this.elements["startTuto"] = this.getEl('startTuto')
+   
+      if (await this.server.getData(`users/${this.authUser.uid}/tuto`) == true){
+         this.getEl('gamesIcon').classList.add('focus')
+      }
+
+      this.elements.startTuto.addEventListener('click',()=>{
+         this.server.setData(`users/${this.authUser.uid}/tuto`,true)
+         this.getEl('gamesIcon').classList.add('focus')
+      })
+
       const name = await this.server.getData(`users/${this.authUser.uid}/data/name`)
       this.elements.userInfo.innerHTML = `<img alt="profile image of user" class="userImg" src="${this.authUser.photoURL}"> <p id="playerName">${name}</p>`
       

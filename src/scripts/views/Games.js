@@ -22,6 +22,12 @@ export class Games {
       this.elements["lobbyIdInput"] = this.getEl("lobbyIdInput")
       this.elements["joinLobbyBtn"] = this.getEl("joinLobbyBtn")
       this.elements["lobbysGallery"] = this.getEl("lobbysGallery")
+      
+      if (await this.server.getData(`users/${this.authUser.uid}/tuto`) == true){
+         this.getEl('gamesIcon').classList.remove('focus')
+         this.getEl('createLobbyBtn').classList.add('focus')
+      }
+
       this.elements.joinLobbyBtn.addEventListener('click',async ()=>{
          const lobbyId = this.elements.lobbyIdInput.value
          const lobbyExist = await this.server.getData(`lobbys/${lobbyId}`)

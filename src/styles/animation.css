@@ -135,3 +135,45 @@
    animation-timing-function: ease;
    animation-fill-mode: forwards;
 }
+
+@keyframes focus {
+   0% {
+      border-radius: 20px;
+      border: 5px rgba(255, 255, 0, 0.5) solid;
+      padding: 5px;
+      -webkit-border-radius: 20px;
+      -moz-border-radius: 20px;
+      -ms-border-radius: 20px;
+      -o-border-radius: 20px;
+}  
+
+
+   50% {
+      border-radius: 20px;
+      border: 7px rgba(255, 255, 0, 1) solid;
+      padding: 10px;
+      -webkit-border-radius: 20px;
+      -moz-border-radius: 20px;
+      -ms-border-radius: 20px;
+      -o-border-radius: 20px;
+}  
+
+   100% {
+      border-radius:20px;
+      border: 5px rgba(255, 255, 0, 0.5) solid;
+      padding: 5px;
+      -webkit-border-radius:20px;
+      -moz-border-radius:20px;
+      -ms-border-radius:20px;
+      -o-border-radius:20px;
+}  
+}
+
+.focus {
+   animation: focus 1s infinite;
+   -webkit-animation: focus 1s infinite; 
+}
+
+#gamesIcon, #createLobbyBtn, #playClassic, #playWorld, #play {
+
+}

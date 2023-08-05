@@ -43,6 +43,8 @@ export class Classic {
       if (!this.isHost) await this.findLobby();
       if (this.isHost) await this.server.removeData(`replayStack/${this.authUser.uid}`)
 
+      await this.server.setData(`users/${this.authUser.uid}/tuto`,false)
+
       this.gameParam = await this.server.getData(
          `lobbys/${this.lobbyID}/param`
       );
