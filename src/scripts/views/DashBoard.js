@@ -28,14 +28,9 @@ export class DashBoard {
       this.elements["performanceGallery"] = this.getEl('performanceGallery')
       this.elements["userInfo"] = this.getEl('userInfo')
       this.elements["startTuto"] = this.getEl('startTuto')
-   
-      if (await this.server.getData(`users/${this.authUser.uid}/tuto`) == true){
-         this.getEl('gamesIcon').classList.add('focus')
-      }
 
       this.elements.startTuto.addEventListener('click',()=>{
          this.server.setData(`users/${this.authUser.uid}/tuto`,true)
-         this.getEl('gamesIcon').classList.add('focus')
       })
 
       const name = await this.server.getData(`users/${this.authUser.uid}/data/name`)

@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=REM&display=swap');
+
 /* Firefox */
 @media (prefers-color-scheme: dark) {
    :root {
@@ -197,8 +199,8 @@ img {
 }
 
 #socialGallery {
-   max-width: 400px;
-   width:80vw;
+   overflow: visible;
+   width:fit-content;
    display: flex;
    flex-wrap: wrap;
 }
@@ -211,7 +213,7 @@ img {
 
 #entryContent {
    width: 100vw; 
-   height: 100vh; 
+   height: 100dvh; 
    top: 0px; 
    position: absolute; 
    left: 0px;
@@ -234,7 +236,7 @@ img {
 }
 
 #textSection > div {
-   width: 70%;
+   width: 80%;
 }
 
 #textSection > div > p {
@@ -246,4 +248,9 @@ img {
    display: none;
    width: 40%; 
    padding: 30px;
+   padding-right: 50px;
+}
+
+#entryBlob1 {
+   height: 100px;
 }

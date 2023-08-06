@@ -41,10 +41,6 @@ export class HostLobby {
       this.mapLen['fr'] = ((await (await (fetch("../../assets/french-departments_optimized.geojson"))).json()).features).length -1
       this.mapLen['world'] = ((await (await (fetch("../../assets/world-countries_optimized.geojson"))).json()).features).length -1
       const viewReference = this
-
-      if (await this.server.getData(`users/${this.authUser.uid}/tuto`) == true){
-         this.getEl('play').classList.add('focus')
-      }
       
       if (this.gameParam.gamemode == "speedrun"){
          this.getEl('time').style.display = "none"

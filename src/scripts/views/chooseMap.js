@@ -24,10 +24,6 @@ export class ChooseMap {
       this.elements['playUs'] = this.getEl('playUs')
       this.elements['playFr'] = this.getEl('playFr')
       this.lobbyID = hostData.id
-      
-      if (await this.server.getData(`users/${this.authUser.uid}/tuto`) == true){
-         this.getEl('playWorld').classList.add('focus')
-      }
 
       const playBtnClicked = async (el,map)=> {
          if (!this.canNav) return

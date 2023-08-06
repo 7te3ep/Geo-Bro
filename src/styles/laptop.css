@@ -108,7 +108,12 @@
    }
 
    #textSection > div > p {
+      width: 70%;
       text-align: start;
       padding: 5px;
+   }
+
+   #entryBlob1 {
+      height: 200px;
    }
 }

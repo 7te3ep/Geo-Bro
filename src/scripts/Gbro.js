@@ -85,10 +85,11 @@ export class Gbro {
          const isPrimaryView = classRef.currentView.layer == 1
          const isSwipe = distance > 150 
          if ((Math.abs(xDiff) > Math.abs(yDiff)) && isSwipe && isPrimaryView) { 
-              if (xDiff < 0) 
-                 classRef.currentView.swipeNav('left')
-              else
-                 classRef.currentView.swipeNav('right')
+            if (classRef.currentView.swipeNav == undefined) return
+            if (xDiff < 0) 
+               classRef.currentView.swipeNav('left')
+            else
+               classRef.currentView.swipeNav('right')
          } 
          xDown = null, yDown = null, xUp = null, yUp = null;
       }

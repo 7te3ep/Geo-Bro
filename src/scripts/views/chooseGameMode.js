@@ -24,10 +24,6 @@ export class chooseGameMode {
       this.elements['playClassic'] = this.getEl('playClassic')
       this.elements['playSpeedrun'] = this.getEl('playSpeedrun')
 
-      if (await this.server.getData(`users/${this.authUser.uid}/tuto`) == true){
-         this.getEl('playClassic').classList.add('focus')
-      }
-
       this.elements.playClassic.addEventListener('click',async ()=>{
          if (!this.canNav) return
          this.canNav = false
