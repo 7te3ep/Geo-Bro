@@ -83,22 +83,6 @@
    #skipped {
       font-size: 8vw;
 }
-
-   #entryIllustration {
-      display: flex;
-      flex-direction: row;
-      justify-content: space-between;
-      align-items: center;
-   }
-
-   #mainIllu {
-      display: block;
-      position:relative;
-      padding-right:80px; 
-      width:50vw;
-      height:500px; 
-      margin-bottom:150px;
-   }
    
    #mainTitle {
       width: 100vw;
@@ -111,11 +95,20 @@
       margin-top: 0px;
    }
 
-   #geography {
-      font-size: 8vw;
+   #entryIllu {
+      display: block;
    }
 
-   #playBtn {
-      font-size: 3vw;
+   #play {
+      display: block;
+   }
+
+   #textSection {
+      width: 65%;
+   }
+
+   #textSection > div > p {
+      text-align: start;
+      padding: 5px;
    }
 }

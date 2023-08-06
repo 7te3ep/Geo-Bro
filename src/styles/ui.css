@@ -159,21 +159,6 @@ img {
    -ms-user-select: none;
 }
 
-#geography {
-   padding-left: 50px;
-    text-shadow: rgba(247, 252, 255, 0.495) 0px 0px 10px; 
-   font-family: "Kalam", serif;
-}
-
-#modern {
-   /*font-weight: lighter;
-   */font-family: "Kalam", serif;
-}
-
-#games {
-   font-family: "Kalam", serif;
-}
-
 .socialBtn {
    transition: transform 0.2s ease;
    -webkit-transition: transform 0.2s ease;
@@ -197,12 +182,13 @@ img {
 #playBtn {
    background: rgb(217,217,217);
    background: linear-gradient(40deg, rgba(217,217,217,1) 31%, rgba(69,197,215,1) 100%);   color: #2d2a32;
-   font-size: 8vw;
+   font-size: clamp(30px,3vw,50px);
    background-color: #d9d9d9;
    width: fit-content;
-   padding: 10px 55px;
+   justify-self: start;
+   padding: 8px 30px;
    margin: 10px;
-   box-shadow: 4px 4px 10px #000000;
+   box-shadow: 4px 4px 8px #000000;
    border-radius:  35px;
    -webkit-border-radius:  35px;
    -moz-border-radius:  35px;
@@ -217,26 +203,47 @@ img {
    flex-wrap: wrap;
 }
 
-#entryIllustration {
-   display: flex;
-   flex-direction: column;
-   justify-content: space-between;
-   align-items: center;
-   max-height: 70vh;
-}
-
-#mainIllu {
-   position: relative;
-   max-width: 40vw;
-}
-
 #mainTitle {
    margin-top: 8vh;
    font-size: clamp(13vw, 50px, 5px);
    max-width: 80vw;
 }
 
-#geography {
-   font-size: 12vw;
+#entryContent {
+   width: 100vw; 
+   height: 100vh; 
+   top: 0px; 
+   position: absolute; 
+   left: 0px;
+   display: flex;
+   flex-direction: row;
+   justify-content: space-evenly;
+   align-items: center;
 }
 
+#textSection {
+   width: 100%;
+   display: flex;
+   flex-direction: column;
+   align-items: center;
+}
+
+#play {
+   display: flex;
+   justify-content: center;
+}
+
+#textSection > div {
+   width: 70%;
+}
+
+#textSection > div > p {
+   text-align: center;
+   padding: 10px 0px;
+}
+
+#entryIllu {
+   display: none;
+   width: 40%; 
+   padding: 30px;
+}
