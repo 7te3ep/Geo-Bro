@@ -212,11 +212,7 @@ img {
 }
 
 #entryContent {
-   width: 100vw; 
-   height: 100dvh; 
-   top: 0px; 
-   position: absolute; 
-   left: 0px;
+   position: relative; 
    display: flex;
    flex-direction: row;
    justify-content: space-evenly;
