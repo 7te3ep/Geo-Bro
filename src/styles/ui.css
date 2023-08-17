@@ -61,16 +61,17 @@ input[type=number] {
    z-index: -100000;
    background: rgb(185, 229, 235);
    background: linear-gradient(
-      125deg,
+   125deg,
     rgba(185, 229, 235, 1) 0%,
     rgba(69, 197, 215, 1) 31%,      
     rgba(112, 151, 185, 1) 100%   
-    );
+   ); 
    background-repeat: no-repeat;
    background-size: cover;
    height:-webkit-fill-available;
    width: 100vw;
-   background-size: 400% 400%;
+   height: 100dvh;
+   background-size:400% 400%;
    animation: gradient 2s ease infinite;
    -webkit-animation: gradient 5s ease infinite;
 }

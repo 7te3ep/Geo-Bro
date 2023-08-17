@@ -10,6 +10,7 @@ import { chooseGameMode } from "./views/chooseGameMode.js";
 import { Speedrun } from "./views/Speedrun.js";
 import { Parameters } from "./views/Parameters.js";
 import { ChooseMap } from "./views/chooseMap.js";
+import { Championnat } from "./views/Championnat.js";
 
 let route = {
    "/dashboard": DashBoard,
@@ -23,7 +24,8 @@ let route = {
    "/chooseGameMode":chooseGameMode,
    "/speedrun":Speedrun,
    "/parameters":Parameters,
-   "/chooseMap":ChooseMap
+   "/chooseMap":ChooseMap,
+   "/championnat":Championnat
 };
 
 export { route }

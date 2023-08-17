@@ -23,6 +23,15 @@ export class chooseGameMode {
       this.lobbyID = Object.entries(await this.server.getData(`hosts/${this.authUser.uid}`))[0][1]
       this.elements['playClassic'] = this.getEl('playClassic')
       this.elements['playSpeedrun'] = this.getEl('playSpeedrun')
+      this.elements['playChampionnat'] = this.getEl('playChampionnat')
+
+      this.elements.playChampionnat.addEventListener('click',async ()=>{
+         if (!this.canNav) return
+         this.canNav = false
+         await this.server.setData(`lobbys/${this.lobbyID}/param/gamemode`,'championnat')
+         this.elements.playClassic.href = "/chooseMap"
+         this.elements.playClassic.click()
+      })
 
       this.elements.playClassic.addEventListener('click',async ()=>{
          if (!this.canNav) return

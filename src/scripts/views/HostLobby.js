@@ -24,6 +24,7 @@ export class HostLobby {
       this.lobbyHostName = hostData.name
       this.lobbyID = hostData.id
       this.gameParam = await this.server.getData(`lobbys/${this.lobbyID}/param`)
+      await this.server.setData(`lobbys/${this.lobbyID}/param/host`,this.authUser.uid)
 
       this.elements["lobbyId"] = this.getEl("lobbyId")
       this.elements["lobbyHostName"] = this.getEl("lobbyHostName")
@@ -43,6 +44,10 @@ export class HostLobby {
       const viewReference = this
       
       if (this.gameParam.gamemode == "speedrun"){
+         this.getEl('time').style.display = "none"
+         this.getEl('len').style.display = "none"
+      } 
+      if (this.gameParam.gamemode == "championnat"){
          this.getEl('time').style.display = "none"
          this.getEl('len').style.display = "none"
       } 
@@ -103,15 +108,34 @@ export class HostLobby {
    async updatePlayerList(){
       this.elements.playersList.innerHTML = " "
       const players = Object.entries(await this.server.getData(`lobbys/${this.lobbyID}/players`) || {}) 
-      for (let player of players){
-         const playerData = player[1]
-         let isHost = false
-         if (player[0] == this.authUser.uid) isHost = true
-         const deleteBtn = isHost ? "" : `<div class="btn rounded bad kickBtn" id="${player[0]}" >Kick</div>`
-         const playerEl = `<div class="card electricBlue rounded row"><div class="row"><img alt="profile image of user" class="userImg" src="${playerData.img}"><p>${playerData.name}</p></div>`+deleteBtn+`</div>`
-         this.elements.playersList.innerHTML += playerEl
-      }
+      const voeu = players.filter((player)=>player[1].team == "voeu")
+      const serment = players.filter((player)=>player[1].team == "serment")
+      const noTeam = players.filter((player)=>player[1].team == undefined)
+      const pacte = players.filter((player)=>player[1].team == "pacte")
 
+      if (this.gameParam.gamemode == "championnat") {
+         const addTeam = (players,name)=>{
+            this.elements.playersList.innerHTML += `<p class="title" >${name}</p>`
+            for (let player of players){
+               const deleteBtn = player[0] == this.authUser.uid ? "" : `<div class="btn rounded bad kickBtn" id="${player[0]}" >Kick</div>`
+               const playerEl = `<div class="card electricBlue rounded row"><div class="row"><img alt="profile image of user" class="userImg" src="${player[1].img}"><p>${player[1].name}</p></div>${player[0] != this.gameParam.host ? name : "Admin"}`+deleteBtn+`</div>`
+               this.elements.playersList.innerHTML += playerEl
+            }
+         }
+         addTeam(voeu,"voeu")
+         addTeam(serment,"serment")
+         addTeam(pacte,"pacte")
+         addTeam(noTeam,"pas d'equipe")
+      }else {
+         for (let player of players){
+            const playerData = player[1]
+            let isHost = false
+            if (player[0] == this.authUser.uid) isHost = true
+            const deleteBtn = isHost ? "" : `<div class="btn rounded bad kickBtn" id="${player[0]}" >Kick</div>`
+            const playerEl = `<div class="card electricBlue rounded row"><div class="row"><img alt="profile image of user" class="userImg" src="${playerData.img}"><p>${playerData.name}</p>  </div>`+deleteBtn+`</div> `
+            this.elements.playersList.innerHTML += playerEl
+         }
+      }
       document.querySelectorAll(".kickBtn").forEach((kickBtn)=>{
          kickBtn.addEventListener("click",async ()=>{
             const playerUid = kickBtn.id
