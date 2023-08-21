@@ -31,27 +31,8 @@ export class Lobby {
       this.elements["lobbyImg"] = this.getEl("lobbyImg")
       this.elements["lenParam"] = this.getEl("lenParam")
       this.elements["waiting"] = this.getEl("waiting")
-      this.elements["voeu"] = this.getEl("voeu")
-      this.elements["serment"] = this.getEl("serment")
-      this.elements["pacte"] = this.getEl("pacte")
       this.gameParam = await this.server.getData(`lobbys/${this.lobbyID}/param`)
       await this.server.exeOnChange(`lobbys/${this.lobbyID}`,()=>{return this.updateOnValue()})
-
-      this.elements.voeu.addEventListener('click',async ()=>{
-         await this.server.setData(`lobbys/${this.lobbyID}/players/${this.authUser.uid}/team`,"voeu")
-         this.elements.serment.checked = false
-         this.elements.pacte.checked = false
-      })
-      this.elements.serment.addEventListener('click',async ()=>{
-         await this.server.setData(`lobbys/${this.lobbyID}/players/${this.authUser.uid}/team`,"serment")
-         this.elements.voeu.checked = false
-         this.elements.pacte.checked = false
-      })
-      this.elements.pacte.addEventListener('click',async ()=>{
-         await this.server.setData(`lobbys/${this.lobbyID}/players/${this.authUser.uid}/team`,"pacte")
-         this.elements.serment.checked = false
-         this.elements.voeu.checked = false
-      })
 
       this.getEl("copyToClipboardBtn").addEventListener('click',()=>{
          copyToClipboard(copyToClipboard(`geobro.online/lobby:${this.lobbyID}`))
@@ -117,28 +98,9 @@ export class Lobby {
       this.elements.playersList.innerHTML = ""
       const lobbyData = await this.server.getData(`lobbys/${this.lobbyID}`)
       const players = Object.entries(lobbyData.players || {}) 
-      const voeu = players.filter((player)=>player[1].team == "voeu")
-      const serment = players.filter((player)=>player[1].team == "serment")
-      const noTeam = players.filter((player)=>player[1].team == undefined)
-      const pacte = players.filter((player)=>player[1].team == "pacte")
-
-      if (this.gameParam.gamemode == "championnat") {
-         const addTeam = (players,name)=>{
-            this.elements.playersList.innerHTML += `<p class="title" >${name}</p>`
-            for (let player of players){
-               const playerEl = `<div class="card electricBlue rounded row"><div class="row"><img alt="profile image of user" class="userImg" src="${player[1].img}"><p>${player[1].name}</p></div>${player[0] != this.gameParam.host ? name : "Admin"}</div>`
-               this.elements.playersList.innerHTML += playerEl
-            }
-         }
-         addTeam(voeu,"voeu")
-         addTeam(serment,"serment")
-         addTeam(pacte,"pacte")
-         addTeam(noTeam,"pas d'equipe")
-      }else {
-         for (let player of players){
-            const playerEl = `<div class="card electricBlue rounded row"><div class="row"><img alt="profile image of user" class="userImg" src="${player[1].img}"><p>${player[1].name}</p></div></div>`
-            this.elements.playersList.innerHTML += playerEl
-         }
+      for (let player of players){
+         const playerEl = `<div class="card electricBlue rounded row"><div class="row"><img alt="profile image of user" class="userImg" src="${player[1].img}"><p>${player[1].name}</p></div></div>`
+         this.elements.playersList.innerHTML += playerEl
       }
    }
 

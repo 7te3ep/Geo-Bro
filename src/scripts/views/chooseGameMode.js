@@ -29,7 +29,8 @@ export class chooseGameMode {
          if (!this.canNav) return
          this.canNav = false
          await this.server.setData(`lobbys/${this.lobbyID}/param/gamemode`,'championnat')
-         this.elements.playClassic.href = "/chooseMap"
+         await this.server.setData(`lobbys/${this.lobbyID}/param/map`,"world")
+         this.elements.playClassic.href = "/hostLobby"
          this.elements.playClassic.click()
       })
 

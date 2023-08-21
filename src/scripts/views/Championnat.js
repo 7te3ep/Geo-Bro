@@ -13,9 +13,11 @@ export class Championnat {
       this.countries = [];
       this.gameParam;
       this.gameState = "idling";
+      this.round = 0;
+      this.score = 0;
       this.map = "world.geojson";
       this.replay = false
-      this.round = 0
+      this.startTime
    }
 
    async init() {
@@ -25,36 +27,30 @@ export class Championnat {
       this.elements["display"] = this.getEl("display");
       this.elements["playerList"] = this.getEl("playerList");
       this.elements["score"] = this.getEl("score");
+      this.elements["first"] = this.getEl("first");
+      this.elements["second"] = this.getEl("second");
+      this.elements["third"] = this.getEl("third");
       this.elements["skipButton"] = this.getEl("skipButton");
       this.elements["replay"] = this.getEl("replay");
       this.elements["joinLobbyBtn"] = this.getEl("joinLobbyBtn");
-      this.elements["startRound"] = this.getEl("startRound");
-      this.elements["nextRound"] = this.getEl("nextRound");
       await this.hostTryConnectToLobby();
       if (!this.isHost) await this.findLobby();
-
       if (this.isHost) await this.server.removeData(`replayStack/${this.authUser.uid}`)
-      await this.server.setData(`lobbys/${this.lobbyID}/players/${this.authUser.uid}/status`,"alive");
 
-      this.gameParam = await this.server.getData(`lobbys/${this.lobbyID}/param`);
+      this.gameParam = await this.server.getData(
+         `lobbys/${this.lobbyID}/param`
+      );
       if (this.gameParam.map == "us") this.map = "us-states_optimized.geojson";
       if (this.gameParam.map == "fr")this.map = "french-departments_optimized.geojson";
       if (this.gameParam.map == "world")this.map = "world-countries_optimized.geojson";
+      this.initMap();
 
       await this.server.exeOnChange(`lobbys/${this.lobbyID}`, () => {
          return this.updateOnValue();
       });
 
       if (this.isHost) {
-         this.elements.startRound.addEventListener('click',async ()=>{
-            await this.server.setData(`lobbys/${this.lobbyID}/game/state`,"beforeRound")
-            this.elements.startRound.style.display = "none"
-
-         })
          await this.generateGameData();
-         await this.server.onDisconnectRemove(`lobbys/${this.lobbyID}`)
-         await this.server.onDisconnectRemove(`hosts/${this.authUser.uid}`)
-         await this.server.onDisconnectRemove(`replayStack/${this.authUser.uid}`)
       }
       var canConnect = true
       this.elements.replay.addEventListener('click',async (event)=>{
@@ -68,8 +64,13 @@ export class Championnat {
          canConnect = false
       })
 
-      await this.initMap();
-      document.getElementById('map').style.display = "none"
+      this.elements.skipButton.addEventListener("click", () => {
+         this.eventAppear("skipped");
+         this.nextTurn(true);
+      });
+      await this.server.onDisconnectRemove(`lobbys/${this.lobbyID}`)
+      await this.server.onDisconnectRemove(`hosts/${this.authUser.uid}`)
+      await this.server.onDisconnectRemove(`replayStack/${this.authUser.uid}`)
    }
 
    async eventAppear(id) {
@@ -83,85 +84,40 @@ export class Championnat {
 
    async updateOnValue() {
       const gameData = await this.server.getData(`lobbys/${this.lobbyID}`);
-      this.round = gameData.game.round || 0
-      await this.update()
       if (!gameData && !this.replay) {
          this.getEl("navGames").click();
          return;
       }
+
       if (gameData.game.state != this.gameState) {
          if (gameData.game.state == "playing") await this.startGame();
-         if (gameData.game.state == "waiting") await this.updateWaiting(gameData)
-         if (gameData.game.state == "beforeRound") {
-            if (gameData.param.nextPlayers.find((player)=>player[0] == this.authUser.uid)){
-               await this.roundStartup()
-            }
-         }
-         this.gameState = gameData.game.state
+         if (gameData.game.state == "ended") await this.endGame();
       }
      
-      if (this.gameState == "ended") await this.upadteScoreBoard();
-   }
-
-   async roundStartup(){
-      document.querySelectorAll('.waiting').forEach((el)=>el.style.display = "none")
-      document.querySelectorAll('.game').forEach((el)=>el.style.display = "flex")
-      document.querySelectorAll('.game').forEach((el)=>el.style.display = "flex")
-      document.getElementById('map').style.display = "block"
-      this.elements.display.innerHTML = this.countries[this.round]
-   }
-
-   async genNextRound() {
-      console.log(this.round);
-      const gameData = await this.server.getData(`lobbys/${this.lobbyID}`);
-      const players = Object.entries(gameData.players)
-      const voeu = players.filter((player)=> player[1].team == "voeu")
-      const serment = players.filter((player)=> player[1].team == "serment")
-      const pacte = players.filter((player)=> player[1].team == "pacte")
-      const nextPlayers = [
-         voeu[this.round],
-         pacte[this.round],
-         serment[this.round],
-      ]
-      await this.server.setData(`lobbys/${this.lobbyID}/param/nextPlayers`,nextPlayers)
-      await this.server.setData(`lobbys/${this.lobbyID}/game/state`, "waiting");
-   }
-
-   async updateWaiting(gameData){
-      if (this.isHost) await this.genNextRound()
-      
-      if (document.getElementById('map')) document.getElementById('map').style.display = "none"
-      document.querySelectorAll(".game").forEach((el) => (el.style.display = "none"));
-      document.querySelectorAll(".waiting").forEach((el) => (el.style.display = "flex"));
-      if (this.isHost)this.elements.startRound.style.display = "flex"
-      const nextPlayers = gameData.param.nextPlayers
-      if (!nextPlayers) return
-      this.elements.nextRound.innerHTML = ""
-      nextPlayers.forEach((player)=>{
-         this.elements.nextRound.innerHTML += `<div class="card electricBlue rounded row"><div class="row"><img alt="profile image of user" class="userImg" src="${player[1].img}"><p>${player[1].name}</p></div>${player[1].team}</div>`
-      })
+      if (this.countries.length - 1 == this.round)
+         await this.upadteScoreBoard();
    }
 
    async startGame() {
-      this.countries = await this.server.getData(`lobbys/${this.lobbyID}/game/countries`)
-      if (!this.isHost) this.elements.startRound.style.display = "none"
-      else {
-         await this.genNextRound()
-      }
+      this.gameState = "playing"
+      const gameData = await this.server.getData(`lobbys/${this.lobbyID}/game`);
+      this.countries = gameData.countries;
+      this.elements.display.innerHTML = this.countries[this.round];
+      this.startTime = new Date()
    }
 
    async endGame() {
-      await this.server.setData(`lobbys/${this.lobbyID}/players/${this.authUser.uid}/score`,this.score);
-      await this.server.setData(`lobbys/${this.lobbyID}/game/state`,"ended")
       this.gameState = "ended"
       document.querySelectorAll(".game").forEach((el)=>el.classList.remove("shake"))
       document.querySelector('body').classList.remove('redBorders')
       document.querySelector("svg").style.display = "none";
-      document.querySelectorAll(".game").forEach((el) => (el.style.display = "none"));
-      document.querySelectorAll(".scoreBoard").forEach((el) => {el.style.display = "flex"});
-      this.elements.replay.style.display = "none"
-
-      await this.server.setData(`lobbys/${this.lobbyID}/players/${this.authUser.uid}/status`,"died");
+      document
+         .querySelectorAll(".game")
+         .forEach((el) => (el.style.display = "none"));
+      document.querySelectorAll(".scoreBoard").forEach((el) => {
+         el.style.display = "flex";
+      });
+      if (!this.isHost) this.elements.replay.style.display = "none";
       await this.upadteScoreBoard();
    }
 
@@ -183,12 +139,21 @@ export class Championnat {
 
    async generateGameData() {
       let countriesData = await (await fetch(`../assets/${this.map}`)).json();
-      countriesData = countriesData.features
-      .map((countrie) => countrie.properties.name)
-      .map(value => ({ value, sort: Math.random() }))
-      .sort((a, b) => a.sort - b.sort)
-      .map(({ value }) => value)
-      await this.server.setData(`lobbys/${this.lobbyID}/game/countries`,countriesData);
+      countriesData = countriesData.features.map(
+         (countrie) => countrie.properties.name
+      );
+      let pickedCoutries = [];
+      for (let i = 0; i < this.gameParam.len; i++) {
+         const randomIndexInArray = Math.round(
+            Math.random() * (countriesData.length - 1)
+         );
+         pickedCoutries.push(countriesData[randomIndexInArray]);
+         countriesData.splice(randomIndexInArray, 1);
+      }
+      await this.server.setData(
+         `lobbys/${this.lobbyID}/game/countries`,
+         pickedCoutries
+      );
       await this.server.setData(`lobbys/${this.lobbyID}/game/state`, "playing");
    }
 
@@ -196,16 +161,14 @@ export class Championnat {
       if (this.countries[this.round] ==  this.server.decrypt(element.id,this.lobbyID)) {
          d3.select(element).style("fill", "rgb(95, 173, 65)");
          this.eventAppear("valid");
-         await this.server.setData(`lobbys/${this.lobbyID}/game/state`,"waiting")
-         const playerFaction = await this.server.getData(`lobbys/${this.lobbyID}/players/${this.authUser.uid}/team`)
-         const currentFactionScore = await this.server.getData(`lobbys/${this.lobbyID}/game/${playerFaction}`) || 0
-         await this.server.setData(`lobbys/${this.lobbyID}/game/${playerFaction}`,currentFactionScore + 1)
-         await this.server.setData(`lobbys/${this.lobbyID}/game/state`,"waiting")
-         const currentRound = await this.server.getData(`lobbys/${this.lobbyID}/game/round`)
-         await this.server.setData(`lobbys/${this.lobbyID}/game/round`,currentRound + 1)
-         return 
+         await this.server.setData(
+            `lobbys/${this.lobbyID}/players/${this.authUser.uid}/score`,
+            1
+         );
+         return await this.server.setData(`lobbys/${this.lobbyID}/game/state`,"ended")
+      } else {
+         d3.select(element).style("fill", "rgb(188, 59, 57)");
       }
-      d3.select(element).style("fill", "rgb(188, 59, 57)");
       this.eventAppear("invalid");
    }
 
@@ -239,25 +202,16 @@ export class Championnat {
       this.server.setData(`lobbys/${this.lobbyID}/players`, playersOnLobby);
    }
 
-   async update() {
-      const scoreVoeu = await this.server.getData(`lobbys/${this.lobbyID}/game/voeu`) || 0
-      const scorePacte = await this.server.getData(`lobbys/${this.lobbyID}/game/pacte`) || 0
-      const scoreSerment = await this.server.getData(`lobbys/${this.lobbyID}/game/serment`) || 0
-      document.getElementById('voeu').innerHTML = `voeu : ${scoreVoeu}` 
-      document.getElementById('pacte').innerHTML = `pacte : ${scorePacte}` 
-      document.getElementById('serment').innerHTML = `serment : ${scoreSerment}` 
-   }
+   async update() {}
 
    async swipeNav(diretion) {}
 
    async quit() {
-      clearInterval(this.speedTimer)
-      clearInterval(this.gameTimer)
       this.getEl("content").style.paddingTop = "10vh";
       if (this.isHost) {
          this.isHost = false;
-         await this.server.stopExeOnChange(`lobbys/${this.lobbyID}`);
          await this.server.removeData(`replayStack/${this.authUser.uid}`)
+         this.server.stopExeOnChange(`lobbys/${this.lobbyID}`);
          await this.server.removeData(`lobbys/${this.lobbyID}`)
          await this.server.removeData(`hosts/${this.authUser.uid}`)
       } else {
@@ -289,7 +243,6 @@ export class Championnat {
          .select("#content")
          .append("svg")
          .attr("width", `100%`)
-         .attr("id", `map`)
          .attr("height", `100%`);
 
       const g = svg.append("g");

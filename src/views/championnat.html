@@ -1,33 +1,6 @@
-<div id="firstLine" class="container rounded light centered waiting gameUi">
-   <div id="points" class="row waiting" style="display: flex; justify-content: space-evenly;">
-      <div id="serment">Serment : 0</div>
-      <div id="pacte">Pacte : 0</div>
-      <div id="voeu">Voeu : 0</div>
-   </div>
-
-   <div class="container rounded dark">
-      <div class="title dark" style="background: none;">Prochains joueurs : </div>
-      <div id="nextRound" class="gallery">
-
-      </div>
-   </div>
-
-
-   <div id="state" style="width: 100%; text-align: center;" class="waiting title">
-      Attend ton tour !
-   </div>
-   <div id="startRound" class=" btn good">
-      Lancer le round
-   </div>
+<div id="firstLine" class="row centered game gameUi">
+   <div  id="display" style="font-size: 25px; max-width: 45vw; font-weight: bolder;" class=" title game"></div>
 </div>
-
-<div class="row game gameUi" style="width: 100%; display: flex; justify-content: space-evenly; top: 5vh;">
-   <div  id="display" style="text-align: center; font-size: 25px; max-width: 45vw; font-weight: bolder;" class=" title game"></div>
-</div>
-
-
-
-
 
 <div id="scoreBoard" class="container rounded dark scoreBoard">
    <div class="title">Resultat</div>
@@ -36,8 +9,9 @@
       Rejouer
    </a>
 </div>
-
-
+<div class="game" id="skipButton" style="padding: 10px; background-color:#2d2a32; width:fit-content; border-radius: 10px; position: absolute; bottom :13vh; right: 4vw; z-index: 1000;">
+   <i style="font-size: 50px; color: #d9d9d9;" class="fa-solid fa-forward"></i>
+</div>
 
 <div id="valid" style="position: absolute;  z-index: 10000;">
    ✅
@@ -46,5 +20,8 @@
    ❌
 </div>
 
+<div id="skipped" style="position: absolute; z-index: 10000; font-weight: bolder;">
+   PASSE
+</div>
 
 <a id="joinLobbyBtn" style="display: none;"></a>
