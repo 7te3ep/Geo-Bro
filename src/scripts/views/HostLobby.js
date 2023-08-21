@@ -87,7 +87,7 @@ export class HostLobby {
 
 
    async update() {
-      this.elements.lobbyId.innerHTML = this.lobbyID
+      /*this.elements.lobbyId.innerHTML = this.lobbyID*/
       this.elements.lobbyHostName.innerHTML = this.lobbyHostName
       this.elements.lobbyName.innerHTML = this.gameParam.lobbyName
    }
