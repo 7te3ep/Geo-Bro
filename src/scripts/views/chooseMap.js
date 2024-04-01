@@ -16,7 +16,6 @@ export class ChooseMap {
 
    }
 
-
    async init() {
       await this.router.loadPage(this.link,this.path)
       const hostData = await this.server.getData(`hosts/${this.authUser.uid}`)

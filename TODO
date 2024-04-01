@@ -1,8 +1,15 @@
-// TODO - Si on clique deux fois sur le même pays, ça ne fait pas d'erreur,
-// TODO - Choisir un niveau de difficulté,
-// TODO - un piment à la place de la fusée,
-// TODO - il faudrait que ce soit noir au-dessus du curseur (comme une jauge qui se vide),
-// TODO - je ne mettrait pas le mot "vitesse"
-// TODO - title color
-// TODO - Lobby With no gamemode
-// TODO - leaderboard
+UPDATE
+- "To the moon" : exp lvl, coins, cosmetiques basiques
+- "Bataille pour le podium" : gamemodes (random, speedrun) + leaderboards
+- "Relooking" : better game animation + swipe animation
+- "No p2w" : gamemode artiste + systeme de cosmetique complet et monetisé
+
+// secondaire
+- quick play au dashboard
+
+- page info avec point d'interrogation
+
+// 
+interface html
+systeme qui recupere les score speedrun
+logique qui rempli l'interface du leaderboard
